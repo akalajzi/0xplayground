@@ -1,0 +1,82 @@
+import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import Web3 from 'web3'
+import ProviderEngine from 'web3-provider-engine'
+import FilterSubprovider from 'web3-provider-engine/subproviders/filters'
+import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
+import { ZeroEx } from '0x.js'
+
+import INFURA from 'src/const/infura'
+import ETH from 'src/const/eth'
+import { setNetwork, setTokens } from 'src/reducers/network'
+
+class Blockchain extends Component {
+  constructor(props) {
+    super(props)
+
+    const providerEngine = new ProviderEngine();
+    providerEngine.addProvider(new FilterSubprovider());
+    providerEngine.addProvider(new RpcSubprovider({rpcUrl: INFURA.MAINNET}));
+    providerEngine.start();
+    this.zeroEx = new ZeroEx(providerEngine);
+
+  }
+
+  componentDidMount() {
+    // let web3 = window.web3
+    // if (typeof web3 !== undefined) {
+    //   console.log('not undefined => ', web3);
+    //   window.web3 = new Web3(web3.currentProvider)
+    // } else {
+    //   console.log('not injected yet...');
+    //   web3 = new Web3()
+    //   web3.setProvider(new web3.providers.HttpProvider(INFURA.KOVAN))
+    //   window.web3 = web3
+    // }
+    // this.getNetwork(web3)
+    this.getNetwork(this.zeroEx._web3Wrapper.web3)
+    this.fetchTokens()
+  }
+
+  fetchTokens = () => {
+    this.zeroEx.exchange.getContractAddressAsync()
+      .then((address) => {
+        return this.zeroEx.tokenRegistry.getTokensAsync()
+      })
+      .then((tokens) => {
+        this.props.setTokens(tokens)
+      })
+  }
+
+  getNetwork = (web3) => {
+    if (web3.version) {
+      web3.version.getNetwork((err, res) => {
+        if (err) {
+          console.log('Error fetching network version ', err);
+        } else {
+          this.props.setNetwork(res)
+        }
+      })
+    }
+
+  }
+
+  render() {
+    console.log("window web provider ", window.web3);
+    console.log("zeroEx ", this.zeroEx);
+    return null
+  }
+}
+
+export default connect((state) => {
+  return {
+    network: state.network
+  }
+}, (dispatch) => {
+  return bindActionCreators({
+    setNetwork,
+    setTokens,
+  }, dispatch)
+})(Blockchain)

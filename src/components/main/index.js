@@ -24,6 +24,7 @@ import { Page, WhenNotFound } from 'src/components/routes';
 // import logo from './reactql-logo.svg';
 
 import HeadMenu from 'src/components/common/HeadMenu'
+import Blockchain from 'src/components/Blockchain'
 
 import Home from 'src/components/pages/Home'
 
@@ -38,6 +39,7 @@ export default () => (
         content: 'Navigating the blockchain',
       }]} />
     <HeadMenu />
+    <Blockchain />
 
     {/* <Grid className="grid-example">
       <Cell size={6} tabletSize={8}>6 (8 tablet)</Cell>
