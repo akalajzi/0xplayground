@@ -8,15 +8,24 @@ import FilterSubprovider from 'web3-provider-engine/subproviders/filters'
 import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
 import { ZeroEx } from '0x.js'
 
+import { mapTokenList } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
-import { setNetwork, setTokens } from 'src/reducers/network'
+import {
+  setBlockHeight,
+  setContractAddress,
+  setLogs,
+  setNetwork,
+  setTokens
+} from 'src/reducers/network'
 
 class Blockchain extends Component {
   constructor(props) {
     super(props)
 
     this.zeroEx = this.connectZeroEx(INFURA.MAINNET)
+    // use web3 from ZeroEx
+    this.web3 = this.zeroEx._web3Wrapper.web3
   }
 
   componentDidMount() {
@@ -30,8 +39,8 @@ class Blockchain extends Component {
     //   web3.setProvider(new web3.providers.HttpProvider(INFURA.KOVAN))
     //   window.web3 = web3
     // }
-    // this.getNetwork(web3)
-    this.getNetwork(this.zeroEx._web3Wrapper.web3)
+    // this.fetchNetwork(web3)
+    this.fetchNetwork(this.web3)
     this.fetchBlockHeight()
     this.fetchTokens()
   }
@@ -44,38 +53,7 @@ class Blockchain extends Component {
     return new ZeroEx(providerEngine)
   }
 
-  fetchTokens = () => {
-    this.zeroEx.exchange.getContractAddressAsync()
-      .then((address) => {
-        console.log('contract address: ', address);
-        return this.zeroEx.tokenRegistry.getTokensAsync()
-      })
-      .then((tokens) => {
-        this.props.setTokens(tokens)
-      })
-      .then(() => {
-        this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
-        this.fetchPastTrades()
-      })
-  }
-
-  handleLogFillEvent = (err, res) => {
-    console.log('handle log fill event');
-    if (err) {
-      console.log('LogFill error', err);
-    } else {
-      console.log('got a trade! ', res);
-    }
-  }
-
-  fetchPastTrades = () => {
-    this.zeroEx.exchange.getLogsAsync("LogFill", {fromBlock: 4360002, toBlock: 4369412}, {})
-    .then((logs) => {
-      console.log("past logs: ", logs);
-    })
-  }
-
-  getNetwork = (web3) => {
+  fetchNetwork = (web3) => {
     if (web3.version) {
       web3.version.getNetwork((err, res) => {
         if (err) {
@@ -88,18 +66,64 @@ class Blockchain extends Component {
   }
 
   fetchBlockHeight = () => {
-    const web3 = this.zeroEx._web3Wrapper.web3
-    web3.eth.getBlockNumber((err, res) => {
+    this.web3.eth.getBlockNumber((err, res) => {
       if (err) {
         console.log('Error getting block number ', err);
       } else {
-        console.log('Block height: ', res);
+        this.props.setBlockHeight(res)
       }
     })
   }
 
+  fetchTokens = () => {
+    this.zeroEx.exchange.getContractAddressAsync()
+      .then((address) => {
+        this.props.setContractAddress(address)
+        return this.zeroEx.tokenRegistry.getTokensAsync()
+      })
+      .then((tokens) => {
+        this.props.setTokens(mapTokenList(tokens))
+      })
+      .then(() => {
+        this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
+        return this.fetchPastTrades(ETH.TRADE_BATCH_BLOCKS)
+      })
+      .then(() => {
+        // initial fetch done
+        // update stats
+      })
+  }
+
+  handleLogFillEvent = (err, res) => {
+    console.log('handle log fill event');
+    if (err) {
+      console.log('LogFill error', err);
+    } else {
+      console.log('got a trade! ', res);
+    }
+  }
+
+  fetchPastTrades = (blockCount) => {
+    const toBlock = this.getLastFetchedBlock()
+    const fromBlock = toBlock - blockCount
+
+    this.zeroEx.exchange.getLogsAsync("LogFill", { fromBlock, toBlock }, {})
+    .then((logs) => {
+      this.props.setLogs({logs, fromBlock})
+    })
+  }
+
+  getLastFetchedBlock = () => {
+    const { network } = this.props
+    if (network.lastFetchedBlock) {
+      return network.lastFetchedBlock
+    } else {
+      return network.blockHeight
+    }
+  }
+
   render() {
-    console.log("window web provider ", window.web3);
+    console.log("window web3 provider ", window.web3);
     console.log("zeroEx ", this.zeroEx);
     return null
   }
@@ -111,6 +135,9 @@ export default connect((state) => {
   }
 }, (dispatch) => {
   return bindActionCreators({
+    setBlockHeight,
+    setContractAddress,
+    setLogs,
     setNetwork,
     setTokens,
   }, dispatch)

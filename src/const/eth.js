@@ -11,7 +11,6 @@ export default {
     4: "https://rinkeby.etherscan.io",
     42: "https://kovan.etherscan.io",
   },
-  REFRESH_RATE: 12,
   ZEROEX_RELAY_ADDRESSES: {
     1: {
       "0xa258b39954cef5cb142fd567a46cddb31a670124": "Radar Relay",
@@ -19,4 +18,7 @@ export default {
     },
     42: {},
   },
+  REFRESH_RATE: 12,
+  TRADE_BATCH_INTERVAL: 86400,
+  TRADE_BATCH_BLOCKS: 5000,
 }
