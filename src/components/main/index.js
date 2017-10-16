@@ -15,7 +15,6 @@ import {ZeroEx} from '0x.js'
 import { Redirect } from 'kit/lib/routing';
 
 // import GraphQLMessage from 'src/components/graphql';
-import { Page, WhenNotFound } from 'src/components/routes';
 // import ReduxCounter from 'src/components/redux';
 // import Stats from 'src/components/stats';
 
@@ -27,6 +26,8 @@ import HeadMenu from 'src/components/common/HeadMenu'
 import Blockchain from 'src/components/Blockchain'
 
 import Home from 'src/components/pages/Home'
+import Page from 'src/components/pages/Page'
+import NotFoundPage from 'src/components/pages/NotFoundPage'
 
 // ----------------------
 
@@ -58,7 +59,7 @@ export default () => (
     <Switch>
       <Route exact path="/" component={Home} />
       <Route path="/page/:name" component={Page} />
-      <Route component={WhenNotFound} />
+      <Route component={NotFoundPage} />
     </Switch>
     {/* <hr />
     <ReduxCounter />
