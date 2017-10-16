@@ -21,7 +21,6 @@ import config from 'kit/config';
 /* App */
 
 // Example counter reducer.  This simply increments the counter by +1
-// import counterReducer from 'src/reducers/counter';
 import networkReducer from 'src/reducers/network'
 
 // Main component -- i.e. the 'root' React component in our app

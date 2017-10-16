@@ -16,12 +16,7 @@ class Blockchain extends Component {
   constructor(props) {
     super(props)
 
-    const providerEngine = new ProviderEngine();
-    providerEngine.addProvider(new FilterSubprovider());
-    providerEngine.addProvider(new RpcSubprovider({rpcUrl: INFURA.MAINNET}));
-    providerEngine.start();
-    this.zeroEx = new ZeroEx(providerEngine);
-
+    this.zeroEx = this.connectZeroEx(INFURA.MAINNET)
   }
 
   componentDidMount() {
@@ -39,6 +34,14 @@ class Blockchain extends Component {
     this.getNetwork(this.zeroEx._web3Wrapper.web3)
     this.fetchBlockHeight()
     this.fetchTokens()
+  }
+
+  connectZeroEx = (network) => {
+    const providerEngine = new ProviderEngine()
+    providerEngine.addProvider(new FilterSubprovider())
+    providerEngine.addProvider(new RpcSubprovider({rpcUrl: network}))
+    providerEngine.start()
+    return new ZeroEx(providerEngine)
   }
 
   fetchTokens = () => {

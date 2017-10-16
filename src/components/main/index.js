@@ -11,19 +11,12 @@ import {
 import Helmet from 'react-helmet';
 import {ZeroEx} from '0x.js'
 
-// NotFound 404 handler for unknown routes
-import { Redirect } from 'kit/lib/routing';
-
-// import GraphQLMessage from 'src/components/graphql';
-// import ReduxCounter from 'src/components/redux';
-// import Stats from 'src/components/stats';
-
 // Get the ReactQL logo.  This is a local .svg file, which will be made
 // available as a string relative to [root]/dist/assets/img/
 // import logo from './reactql-logo.svg';
 
 import HeadMenu from 'src/components/common/HeadMenu'
-import Blockchain from 'src/components/Blockchain'
+import Blockchain from 'src/components/blockchain/Blockchain'
 
 import Home from 'src/components/pages/Home'
 import Page from 'src/components/pages/Page'
@@ -42,11 +35,7 @@ export default () => (
     <HeadMenu />
     <Blockchain />
 
-    {/* <Grid className="grid-example">
-      <Cell size={6} tabletSize={8}>6 (8 tablet)</Cell>
-      <Cell size={4} tabletSize={6}>4 (6 tablet)</Cell>
-      <Cell size={2} phoneSize={4}>2 (4 phone)</Cell>
-    </Grid>
+    {/*
     <GraphQLMessage />
     <hr />
     <ul>
