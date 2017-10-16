@@ -37,17 +37,39 @@ class Blockchain extends Component {
     // }
     // this.getNetwork(web3)
     this.getNetwork(this.zeroEx._web3Wrapper.web3)
+    this.fetchBlockHeight()
     this.fetchTokens()
   }
 
   fetchTokens = () => {
     this.zeroEx.exchange.getContractAddressAsync()
       .then((address) => {
+        console.log('contract address: ', address);
         return this.zeroEx.tokenRegistry.getTokensAsync()
       })
       .then((tokens) => {
         this.props.setTokens(tokens)
       })
+      .then(() => {
+        this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
+        this.fetchPastTrades()
+      })
+  }
+
+  handleLogFillEvent = (err, res) => {
+    console.log('handle log fill event');
+    if (err) {
+      console.log('LogFill error', err);
+    } else {
+      console.log('got a trade! ', res);
+    }
+  }
+
+  fetchPastTrades = () => {
+    this.zeroEx.exchange.getLogsAsync("LogFill", {fromBlock: 4360002, toBlock: 4369412}, {})
+    .then((logs) => {
+      console.log("past logs: ", logs);
+    })
   }
 
   getNetwork = (web3) => {
@@ -60,7 +82,17 @@ class Blockchain extends Component {
         }
       })
     }
+  }
 
+  fetchBlockHeight = () => {
+    const web3 = this.zeroEx._web3Wrapper.web3
+    web3.eth.getBlockNumber((err, res) => {
+      if (err) {
+        console.log('Error getting block number ', err);
+      } else {
+        console.log('Block height: ', res);
+      }
+    })
   }
 
   render() {
