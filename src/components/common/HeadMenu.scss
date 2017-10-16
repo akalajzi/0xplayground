@@ -1,13 +1,23 @@
 .headTitle {
   margin: 12px;
 
+  .logo {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    float: left;
+  }
+
   .title {
     font-size:18px;
     font-weight: 700;
+    padding-left: 10px;
+    display: inline-flex;
   }
 }
 
 .connection {
+  padding-left: 50px;
   font-size: 11px;
   font-weight: 700;
   font-style: italic;

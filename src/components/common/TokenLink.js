@@ -10,13 +10,13 @@ class TokenLink extends PureComponent {
   }
 
   render() {
-    const { address, networkId, tokens } = this.props
+    const { address, networkId, tokens, style } = this.props
     const token = tokens[address] || null
     const url = ETH.NETWORK_BLOCK_EXPLORER[networkId] + '/address/' + address
     const symbol = token ? token.symbol : '?'
 
     return(
-      <a href={url} target="_blank">{symbol}</a>
+      <a href={url} target="_blank" style={style}>{symbol}</a>
     )
   }
 }

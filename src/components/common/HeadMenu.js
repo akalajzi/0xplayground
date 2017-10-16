@@ -34,6 +34,9 @@ const Title = (props) => {
   const networkName = props.networkId ? ETH.NETWORK_NAME[props.networkId] : null
   return (
     <div className={css.headTitle}>
+      <div className={css.logo}>
+        <img src='/shrimp-white-40.png' />
+      </div>
       <div className={css.title}>0xrelay.network</div>
       {
         networkName

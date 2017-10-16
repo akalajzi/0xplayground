@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import ETH from 'src/const/eth'
 
 import {
+  FontIcon,
   DataTable,
   TableHeader,
   TableBody,
@@ -13,6 +14,7 @@ import {
 
 import TokenAmount from 'src/components/common/TokenAmount'
 import RelayerLink from 'src/components/common/RelayerLink'
+import TooltipLink from 'src/components/common/TooltipLink'
 
 class TradesTable extends Component {
 
@@ -27,6 +29,50 @@ class TradesTable extends Component {
       // TODO: track unknown
       return 'Unknown'
     }
+  }
+
+  renderTrade = (trade) => {
+    return(
+      <div>
+        { this.renderTransactionIcon(trade) }
+        <TokenAmount
+          showSymbol
+          amount={trade.args.filledMakerTokenAmount}
+          tokenAddress={trade.args.makerToken}
+        />
+        <FontIcon style={{
+          verticalAlign: 'text-top',
+          fontSize: '16px',
+          padding: '0px 4px',
+        }}>swap_horiz</FontIcon>
+        <TokenAmount
+          showSymbol
+          amount={trade.args.filledTakerTokenAmount}
+          tokenAddress={trade.args.takerToken}
+        />
+      </div>
+    )
+  }
+
+  renderTransactionIcon = (trade) => {
+    const networkId = this.props.networkId
+    const url = ETH.NETWORK_BLOCK_EXPLORER[networkId] + '/tx/' + trade.transactionHash
+    return(
+      <TooltipLink
+        tooltipLabel='Click to see transaction'
+        tooltipPosition='top'
+        href={url}
+        target='_blank'
+      >
+        <FontIcon
+          primary
+          style={{
+            paddingRight: '10px',
+            fontSize: '16px',
+            verticalAlign: 'text-top',
+        }}>assignment_late</FontIcon>
+      </TooltipLink>
+    )
   }
 
   render() {
@@ -50,7 +96,7 @@ class TradesTable extends Component {
                 <TableRow key={i}>
                   <TableColumn>timestamp</TableColumn>
                   <TableColumn>
-                    trade
+                    { this.renderTrade(trade) }
                   </TableColumn>
                   <TableColumn>
                     price
@@ -62,14 +108,14 @@ class TradesTable extends Component {
                     <TokenAmount
                       showSymbol
                       amount={trade.args.paidMakerFee}
-                      tokenAddress={trade.args.makerToken}
+                      tokenAddress={ETH.ZRX_CONTRACT_ADDRESS}
                     />
                   </TableColumn>
                   <TableColumn>
                     <TokenAmount
                       showSymbol
                       amount={trade.args.paidTakerFee}
-                      tokenAddress={trade.args.takerToken}
+                      tokenAddress={ETH.ZRX_CONTRACT_ADDRESS}
                     />
                   </TableColumn>
                 </TableRow>

@@ -18,7 +18,8 @@ export default {
     },
     42: {},
   },
+  ZRX_CONTRACT_ADDRESS: "0xe41d2489571d322189246dafa5ebde1f4699f498", // TODO: remove hardcoded constant
   REFRESH_RATE: 12,
   TRADE_BATCH_INTERVAL: 86400,
-  TRADE_BATCH_BLOCKS: 5000,
+  TRADE_BATCH_BLOCKS: 10000,
 }

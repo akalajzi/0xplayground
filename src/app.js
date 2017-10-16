@@ -29,7 +29,6 @@ import Main from 'src/components/main';
 // Init global styles.  These will be added to the resulting CSS automatically
 // without any class hashing.  Use this to include default or framework CSS.
 import './styles.global.css';
-import './style.scss';
 
 
 // ----------------------
