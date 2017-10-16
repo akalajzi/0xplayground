@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import BigNumber from 'bignumber.js'
-
 import PropTypes from 'prop-types'
+
+import TokenLink from 'src/components/common/TokenLink'
 
 class TokenAmount extends Component {
 	static propTypes = {
@@ -22,12 +23,10 @@ class TokenAmount extends Component {
 
 		const cAmount = amount.div(10**token.decimals)
 		const cAmountNormalized = new BigNumber(cAmount).toDigits(6).toNumber()
-		const symbol = token.symbol
 
 		return(
 			<div>
-				{ cAmountNormalized }
-				<div>{ symbol }</div>
+				{ cAmountNormalized } <TokenLink address={tokenAddress} />
 			</div>
 		)
 	}

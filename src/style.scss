@@ -9,3 +9,16 @@
 body {
 	margin: 0;
 }
+
+.TradesTable {
+  background: #c3c3c3;
+
+  table {
+
+    td.md-table-column {
+      font-size: 12px;
+      height: 18px;
+      padding: 8px;
+    }
+  }
+}

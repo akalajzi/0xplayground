@@ -34,7 +34,7 @@ const Title = (props) => {
   const networkName = props.networkId ? ETH.NETWORK_NAME[props.networkId] : null
   return (
     <div className={css.headTitle}>
-      <div className={css.title}>0xplorer</div>
+      <div className={css.title}>0xrelay.network</div>
       {
         networkName
         ? <div className={css.connection}><span>Connected to</span> {networkName.toUpperCase()}</div>

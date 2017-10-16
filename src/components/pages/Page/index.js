@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 // Helper component that will be conditionally shown when the route matches.
 // This gives you an idea how React Router v4 works -- we have a `match`
 // prop that gives us information on the route we can use within the component
-export const Page = ({ match }) => (
+const Page = ({ match }) => (
   <h1>Changed route: {match.params.name}</h1>
 );
 
@@ -15,3 +15,5 @@ Page.propTypes = {
     params: PropTypes.object,
   }).isRequired,
 };
+
+export default Page
