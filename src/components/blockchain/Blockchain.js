@@ -16,7 +16,8 @@ import {
   setContractAddress,
   setLogs,
   setNetwork,
-  setTokens
+  setTokens,
+  setZrxContractAddress,
 } from 'src/reducers/network'
 
 class Blockchain extends Component {
@@ -41,6 +42,7 @@ class Blockchain extends Component {
     // }
     // this.fetchNetwork(web3)
     this.fetchNetwork(this.web3)
+    this.fetchZrxTokenAddress()
     this.fetchBlockHeight()
     this.fetchTokens()
   }
@@ -63,6 +65,13 @@ class Blockchain extends Component {
         }
       })
     }
+  }
+
+  fetchZrxTokenAddress = () => {
+    this.zeroEx.exchange.getZRXTokenAddressAsync()
+      .then((res) => {
+        this.props.setZrxContractAddress(res)
+      })
   }
 
   fetchBlockHeight = () => {
@@ -140,5 +149,6 @@ export default connect((state) => {
     setLogs,
     setNetwork,
     setTokens,
+    setZrxContractAddress,
   }, dispatch)
 })(Blockchain)

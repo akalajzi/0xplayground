@@ -3,6 +3,7 @@ const initialState = {
   blockHeight: null,
   lastFetchedBlock: null,
   contractAddress: null,
+  zrxContractAddress: null,
   tokens: null,
   logs: null,
 }
@@ -25,6 +26,8 @@ export default function reducer(state, action) {
       return { ...state, id: action.id }
     case 'SET_TOKENS':
       return { ...state, tokens: action.tokens }
+    case 'SET_ZRX_CONTRACT_ADDRESS':
+      return { ...state, zrxContractAddress: action.address }
     default:
       return state;
   }
@@ -52,4 +55,8 @@ export function setNetwork(id) {
 
 export function setTokens(tokens) {
   return { type: 'SET_TOKENS', tokens }
+}
+
+export function setZrxContractAddress(address) {
+  return {type: 'SET_ZRX_CONTRACT_ADDRESS', address}
 }

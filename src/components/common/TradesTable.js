@@ -76,7 +76,7 @@ class TradesTable extends Component {
   }
 
   render() {
-    const { logs, tokens, networkId } = this.props
+    const { logs, tokens, networkId, zrxContractAddress } = this.props
     return(
       <DataTable plain className="TradesTable">
         <TableHeader>
@@ -108,14 +108,14 @@ class TradesTable extends Component {
                     <TokenAmount
                       showSymbol
                       amount={trade.args.paidMakerFee}
-                      tokenAddress={ETH.ZRX_CONTRACT_ADDRESS}
+                      tokenAddress={zrxContractAddress}
                     />
                   </TableColumn>
                   <TableColumn>
                     <TokenAmount
                       showSymbol
                       amount={trade.args.paidTakerFee}
-                      tokenAddress={ETH.ZRX_CONTRACT_ADDRESS}
+                      tokenAddress={zrxContractAddress}
                     />
                   </TableColumn>
                 </TableRow>
@@ -133,5 +133,6 @@ export default connect((state) => {
     networkId: state.network.id,
     logs: state.network.logs,
     tokens: state.network.tokens,
+    zrxContractAddress: state.network.zrxContractAddress,
   }
 })(TradesTable)
