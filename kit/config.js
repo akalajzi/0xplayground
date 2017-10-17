@@ -18,7 +18,7 @@ class Common {
     this.graphQLEndpoint = null;
 
     // Set to true if we're using an internal GraphQL server
-    this.graphQLServer = false;
+    this.graphQLServer = true;
   }
 
   /* REDUX */

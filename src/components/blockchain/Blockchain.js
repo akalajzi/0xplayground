@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 import Web3 from 'web3'
 import ProviderEngine from 'web3-provider-engine'

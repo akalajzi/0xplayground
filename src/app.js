@@ -20,8 +20,10 @@ import config from 'kit/config';
 
 /* App */
 
-// Example counter reducer.  This simply increments the counter by +1
 import networkReducer from 'src/reducers/network'
+import { initialState as networkInitialState } from 'src/reducers/network'
+import walletReducer from 'src/reducers/wallet'
+import { initialState as walletInitialState } from 'src/reducers/wallet'
 
 // Main component -- i.e. the 'root' React component in our app
 import Main from 'src/components/main';
@@ -39,8 +41,8 @@ import './styles.global.scss';
 // Note:  The initial state (3rd param) will automatically be wrapped in
 // `seamless-immutable` by the kit's Redux init code, so plain objects are
 // automatically immutable by default
-// config.addReducer('counter', counterReducer, { count: 0 });
-config.addReducer('network', networkReducer, {})
+config.addReducer('network', networkReducer, networkInitialState)
+config.addReducer('wallet', walletReducer, walletInitialState)
 
 /* GRAPHQL */
 
