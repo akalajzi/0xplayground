@@ -91,7 +91,7 @@ class TradesTable extends Component {
               { this.renderTrade(trade) }
             </TableColumn>
             <TableColumn>
-              price
+              { trade.price }
             </TableColumn>
             <TableColumn>
               { this.renderRelayer(trade) }

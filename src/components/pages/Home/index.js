@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { Paper } from 'react-md'
+import { Grid, Cell, Paper } from 'react-md'
 
 
 import TradesTable from 'src/components/common/TradesTable'
@@ -10,12 +10,16 @@ import TradesTable from 'src/components/common/TradesTable'
 class Home extends Component {
   render() {
     return(
-      <Paper
-        zDepth={1}
-        className="papers__example"
-      >
-        <TradesTable />
-      </Paper>
+      <Grid>
+        <Cell align='stretch' size={12}>
+          <Paper
+            zDepth={2}
+            className="papers__example"
+          >
+            <TradesTable />
+          </Paper>
+        </Cell>
+      </Grid>
     )
   }
 }

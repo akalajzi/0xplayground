@@ -26,7 +26,6 @@ export default function reducer(state, action) {
       return { ...state, id: action.id }
     case 'SET_TIMESTAMP_TRADE':
       const newLogs = {...state.logs}
-      console.log("gimme dis ", state.logs);
       newLogs[action.blockNumber] = action.trade
       return {
         ...state,

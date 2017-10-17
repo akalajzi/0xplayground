@@ -119,7 +119,7 @@ class Blockchain extends Component {
 
     this.zeroEx.exchange.getLogsAsync("LogFill", { fromBlock, toBlock }, {})
     .then((logs) => {
-      const mappedLogs = mapLogs(logs, this.web3)
+      const mappedLogs = mapLogs(logs, this.props.network.tokens, this.web3)
       this.props.setLogs({logs: mappedLogs, fromBlock})
       this.mapLogsWithTimestamp(mappedLogs)
     })
@@ -149,8 +149,8 @@ class Blockchain extends Component {
   }
 
   render() {
-    console.log("window web3 provider ", window.web3);
-    console.log("zeroEx ", this.zeroEx);
+    // console.log("window web3 provider ", window.web3);
+    // console.log("zeroEx ", this.zeroEx);
     return null
   }
 }
