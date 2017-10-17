@@ -24,6 +24,14 @@ export default function reducer(state, action) {
       }
     case 'SET_NETWORK':
       return { ...state, id: action.id }
+    case 'SET_TIMESTAMP_TRADE':
+      const newLogs = {...state.logs}
+      console.log("gimme dis ", state.logs);
+      newLogs[action.blockNumber] = action.trade
+      return {
+        ...state,
+        logs: newLogs,
+      }
     case 'SET_TOKENS':
       return { ...state, tokens: action.tokens }
     case 'SET_ZRX_CONTRACT_ADDRESS':
@@ -51,6 +59,14 @@ export function setLogs(data) {
 
 export function setNetwork(id) {
   return { type: 'SET_NETWORK', id }
+}
+
+export function setTimestampOnTrade(data) {
+  return {
+    type: 'SET_TIMESTAMP_TRADE',
+    blockNumber: data.blockNumber,
+    trade: data.timestampedTrade,
+  }
 }
 
 export function setTokens(tokens) {

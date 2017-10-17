@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 
 import ETH from 'src/const/eth'
 
@@ -76,8 +77,49 @@ class TradesTable extends Component {
     )
   }
 
+  renderTrades = (logs) => {
+    let tableRows = []
+    for (let key in logs) {
+      if (logs.hasOwnProperty(key)) {
+        const trade = logs[key]
+        tableRows.push(
+          <TableRow key={key}>
+            <TableColumn>
+              { trade.timestamp ? moment(trade.timestamp*1000).format('MM/DD/YYYY - HH:mm:ss') : key }
+            </TableColumn>
+            <TableColumn>
+              { this.renderTrade(trade) }
+            </TableColumn>
+            <TableColumn>
+              price
+            </TableColumn>
+            <TableColumn>
+              { this.renderRelayer(trade) }
+            </TableColumn>
+            <TableColumn>
+              <TokenAmount
+                showSymbol
+                amount={trade.args.paidMakerFee}
+                tokenAddress={this.props.zrxContractAddress}
+              />
+            </TableColumn>
+            <TableColumn>
+              <TokenAmount
+                showSymbol
+                amount={trade.args.paidTakerFee}
+                tokenAddress={this.props.zrxContractAddress}
+              />
+            </TableColumn>
+          </TableRow>
+        )
+      }
+    }
+    // TODO: Fix this, and sort properly
+    return tableRows.reverse()
+  }
+
   render() {
-    const { logs, tokens, networkId, zrxContractAddress } = this.props
+    const { logs, tokens, networkId } = this.props
     return(
       <DataTable plain className="TradesTable">
         <TableHeader>
@@ -91,38 +133,7 @@ class TradesTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {
-            logs && logs.map((trade, i) => {
-              return (
-                <TableRow key={i}>
-                  <TableColumn>timestamp</TableColumn>
-                  <TableColumn>
-                    { this.renderTrade(trade) }
-                  </TableColumn>
-                  <TableColumn>
-                    price
-                  </TableColumn>
-                  <TableColumn>
-                    { this.renderRelayer(trade) }
-                  </TableColumn>
-                  <TableColumn>
-                    <TokenAmount
-                      showSymbol
-                      amount={trade.args.paidMakerFee}
-                      tokenAddress={zrxContractAddress}
-                    />
-                  </TableColumn>
-                  <TableColumn>
-                    <TokenAmount
-                      showSymbol
-                      amount={trade.args.paidTakerFee}
-                      tokenAddress={zrxContractAddress}
-                    />
-                  </TableColumn>
-                </TableRow>
-              )
-            })
-          }
+          { logs && this.renderTrades(logs) }
         </TableBody>
       </DataTable>
     )

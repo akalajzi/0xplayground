@@ -8,7 +8,7 @@ import FilterSubprovider from 'web3-provider-engine/subproviders/filters'
 import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
 import { ZeroEx } from '0x.js'
 
-import { mapTokenList } from './helper'
+import { mapTokenList, mapLogs } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
 import {
@@ -16,6 +16,7 @@ import {
   setContractAddress,
   setLogs,
   setNetwork,
+  setTimestampOnTrade,
   setTokens,
   setZrxContractAddress,
 } from 'src/reducers/network'
@@ -118,8 +119,24 @@ class Blockchain extends Component {
 
     this.zeroEx.exchange.getLogsAsync("LogFill", { fromBlock, toBlock }, {})
     .then((logs) => {
-      this.props.setLogs({logs, fromBlock})
+      const mappedLogs = mapLogs(logs, this.web3)
+      this.props.setLogs({logs: mappedLogs, fromBlock})
+      this.mapLogsWithTimestamp(mappedLogs)
     })
+  }
+
+  mapLogsWithTimestamp = (logs) => {
+    for (let key in logs) {
+      if (logs.hasOwnProperty(key)) {
+        const trade = logs[key]
+        const blockNumber = this.web3.toDecimal(trade.blockNumber)
+        this.web3.eth.getBlock(blockNumber, (err, res) => {
+          const timestamp = res.timestamp
+          const timestampedTrade = {...trade, timestamp }
+          this.props.setTimestampOnTrade({blockNumber, timestampedTrade})
+        })
+      }
+    }
   }
 
   getLastFetchedBlock = () => {
@@ -148,6 +165,7 @@ export default connect((state) => {
     setContractAddress,
     setLogs,
     setNetwork,
+    setTimestampOnTrade,
     setTokens,
     setZrxContractAddress,
   }, dispatch)
