@@ -65,12 +65,13 @@ class TradesTable extends Component {
         target='_blank'
       >
         <FontIcon
-          primary
+          secondary
           style={{
             paddingRight: '10px',
             fontSize: '16px',
             verticalAlign: 'text-top',
-        }}>assignment_late</FontIcon>
+          }}
+        >assignment_late</FontIcon>
       </TooltipLink>
     )
   }

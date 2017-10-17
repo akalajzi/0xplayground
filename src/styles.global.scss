@@ -2,8 +2,15 @@
 you can import locally, and they wind up in the resulting bundle */
 @import url('https://fonts.googleapis.com/css?family=Gentium+Basic');
 
+@import '~react-md/src/scss/react-md';
+
+$md-primary-color: $md-grey-900;
+$md-secondary-color: $md-red-800;
+
+@include react-md-everything;
+
 body {
-	margin: 0;
+  margin: 0;
 }
 
 html {
@@ -12,7 +19,6 @@ html {
   font-family: 'Gentium Basic', serif;
   font-size: 14px;
 
-  /* We can nest rules, thanks to cssnext */
   .TradesTable {
 
     table {
@@ -25,7 +31,14 @@ html {
     }
 
     a {
+      color: $md-secondary-color;
       text-decoration: none;
     }
   }
+}
+
+
+/* COLORS */
+.color-grey {
+	color: $md-grey-600;
 }
