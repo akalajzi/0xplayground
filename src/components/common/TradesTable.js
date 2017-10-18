@@ -32,12 +32,13 @@ class TradesTable extends Component {
     }
   }
 
-  renderTrade = (trade) => {
+  renderTrade = (trade, walletIsMaker, walletIsTaker) => {
     return(
       <div>
         { this.renderTransactionIcon(trade) }
         <TokenAmount
           showSymbol
+          highlight={walletIsMaker}
           amount={trade.args.filledMakerTokenAmount}
           tokenAddress={trade.args.makerToken}
         />
@@ -48,6 +49,7 @@ class TradesTable extends Component {
         }}>swap_horiz</FontIcon>
         <TokenAmount
           showSymbol
+          highlight={walletIsTaker}
           amount={trade.args.filledTakerTokenAmount}
           tokenAddress={trade.args.takerToken}
         />
@@ -77,18 +79,28 @@ class TradesTable extends Component {
     )
   }
 
-  renderTrades = (logs) => {
+  renderTrades = (logs, walletAccount) => {
     let tableRows = []
+
     for (let key in logs) {
       if (logs.hasOwnProperty(key)) {
         const trade = logs[key]
+        let cssRow = ''
+
+        const walletIsMaker = trade.args.maker === walletAccount
+        const walletIsTaker = trade.args.taker === walletAccount
+
+        if (walletIsMaker || walletIsTaker) {
+          cssRow = 'bg-my-highlight'
+        }
+
         tableRows.push(
-          <TableRow key={key}>
+          <TableRow key={key} className={cssRow}>
             <TableColumn>
               { trade.timestamp ? moment(trade.timestamp*1000).format('MM/DD/YYYY - HH:mm:ss') : key }
             </TableColumn>
             <TableColumn>
-              { this.renderTrade(trade) }
+              { this.renderTrade(trade, walletIsMaker, walletIsTaker) }
             </TableColumn>
             <TableColumn>
               { trade.price }
@@ -119,7 +131,7 @@ class TradesTable extends Component {
   }
 
   render() {
-    const { logs, tokens, networkId } = this.props
+    const { logs, tokens, networkId, walletAccount } = this.props
     return(
       <DataTable plain className="TradesTable">
         <TableHeader>
@@ -133,7 +145,7 @@ class TradesTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          { logs && this.renderTrades(logs) }
+          { logs && this.renderTrades(logs, walletAccount) }
         </TableBody>
       </DataTable>
     )
@@ -146,5 +158,6 @@ export default connect((state) => {
     logs: state.network.logs,
     tokens: state.network.tokens,
     zrxContractAddress: state.network.zrxContractAddress,
+    walletAccount: state.wallet.activeAccount,
   }
 })(TradesTable)

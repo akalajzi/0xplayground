@@ -31,13 +31,13 @@ class Wallet extends Component {
     }
   }
 
-  getActiveAccount = (web3) => {
+  getActiveAccount = (web3, activeAccount) => {
     if (!web3) { return null }
 
     web3.eth.getAccounts((err, res) => {
-      const activeAccount = err ? null : res[0]
-      if (activeAccount !== this.props.wallet.activeAccount) {
-        this.props.setActiveAccount(activeAccount)
+      const newActiveAccount = err ? null : res[0]
+      if (newActiveAccount !== activeAccount) {
+        this.props.setActiveAccount(newActiveAccount)
       }
     })
   }
@@ -45,7 +45,7 @@ class Wallet extends Component {
   pollForActiveAccount = () => {
     setInterval(() => {
       this.getWeb3Provider()
-      this.getActiveAccount(this.state.web3)
+      this.getActiveAccount(this.state.web3, this.props.wallet.activeAccount)
     }, 120)
   }
 
@@ -53,7 +53,7 @@ class Wallet extends Component {
     if (!web3) { return null }
 
     web3.version.getNetwork((err, netId) => {
-      if (!err) {
+      if (!err && netId !== this.props.networkId) {
         this.props.setNetwork(netId)
       }
     })

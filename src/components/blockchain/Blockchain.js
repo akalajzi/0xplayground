@@ -133,7 +133,7 @@ class Blockchain extends Component {
         this.web3.eth.getBlock(blockNumber, (err, res) => {
           const timestamp = res.timestamp
           const timestampedTrade = {...trade, timestamp }
-          this.props.setTimestampOnTrade({blockNumber, timestampedTrade})
+          this.props.setTimestampOnTrade({blockNumber, timestampedTrade}) // this is fine, batch requests do not make querying faster
         })
       }
     }

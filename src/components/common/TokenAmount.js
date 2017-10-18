@@ -8,6 +8,7 @@ import TokenLink from 'src/components/common/TokenLink'
 class TokenAmount extends Component {
   static propTypes = {
     tokens: PropTypes.object || null,
+    highlight: PropTypes.bool || null,
     showSymbol: PropTypes.bool,
     amount: PropTypes.object,
     tokenAddress: PropTypes.string,
@@ -23,8 +24,12 @@ class TokenAmount extends Component {
       ? new BigNumber(amount.div(10**decimals)).toDigits(6).toNumber()
       : 0
 
+    const cssStyle = this.props.highlight
+      ? { display: 'inline', textDecoration: 'underline', fontWeight: '900' }
+      : { display: 'inline' }
+
     return(
-      <div style={{ display: 'inline' }}>
+      <div style={cssStyle}>
         { cAmount }
         {
           token

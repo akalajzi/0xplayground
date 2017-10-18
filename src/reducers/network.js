@@ -9,6 +9,7 @@ export const initialState = {
 }
 
 export default function reducer(state, action) {
+  let newLogs = null
   switch(action.type) {
     case 'network/RESET':
       return initialState
@@ -17,6 +18,7 @@ export default function reducer(state, action) {
     case 'network/SET_CONTRACT_ADDRESS':
       return { ...state, contractAddress: action.address }
     case 'network/SET_LOGS':
+      // TODO: No good, fixme
       return {
         ...state,
         logs: action.logs,
@@ -25,7 +27,7 @@ export default function reducer(state, action) {
     case 'network/SET_NETWORK':
       return { ...state, id: action.id }
     case 'network/SET_TIMESTAMP_TRADE':
-      const newLogs = {...state.logs}
+      newLogs = {...state.logs}
       newLogs[action.blockNumber] = action.trade
       return {
         ...state,
