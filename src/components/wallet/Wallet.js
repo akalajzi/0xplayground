@@ -19,7 +19,7 @@ class Wallet extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.networkId && nextProps.networkId) {
+    if (!this.props.zrxNetworkId && nextProps.zrxNetworkId) {
       this.getWeb3Provider()
     }
   }
@@ -31,7 +31,9 @@ class Wallet extends Component {
     }
   }
 
-  getActiveAccount = (web3, activeAccount) => {
+  getActiveAccount = () => {
+    const web3 = this.state.web3
+    const activeAccount = this.props.wallet.activeAccount
     if (!web3) { return null }
 
     web3.eth.getAccounts((err, res) => {
@@ -42,28 +44,31 @@ class Wallet extends Component {
     })
   }
 
-  pollForActiveAccount = () => {
-    setInterval(() => {
-      this.getWeb3Provider()
-      this.getActiveAccount(this.state.web3, this.props.wallet.activeAccount)
-      this.getInjectedNetwork(this.state.web3)
-    }, 120)
-  }
-
-  getInjectedNetwork = (web3) => {
+  getInjectedNetwork = () => {
+    const web3 = this.state.web3
     if (!web3) { return null }
 
     web3.version.getNetwork((err, netId) => {
-      if (!err && netId !== this.props.networkId) {
+      if (!err && (netId !== this.props.wallet.networkId)) {
         this.props.setNetwork(netId)
       }
     })
   }
 
+  pollForActiveAccount = () => {
+    setInterval(() => {
+      this.getWeb3Provider()
+      this.getActiveAccount()
+      this.getInjectedNetwork()
+    }, 350)
+  }
+    
   render() {
-    const { networkId, activeAccount } = this.props
+    const { networkId, activeAccount } = this.props.wallet
     if (!this.state.web3) {
-      return <div className="Wallet">Wallet not connected.</div>
+      return <div className="Wallet">Web3 not found. Get MetaMask!</div>
+    } else if (!activeAccount) {
+      return <div className="Wallet">Wallet not reachable. Are you logged in to your wallet?</div>
     }
 
     return(
@@ -77,7 +82,7 @@ class Wallet extends Component {
 
 export default connect((state) => {
   return {
-    networkId: state.network.id,
+    zrxNetworkId: state.network.id,
     wallet: state.wallet,
   }
 }, (dispatch) => {
