@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-
+import ETH from 'src/const/eth'
 import { setActiveAccount, setNetwork } from 'src/reducers/wallet'
 
 class Wallet extends Component {
@@ -46,6 +46,7 @@ class Wallet extends Component {
     setInterval(() => {
       this.getWeb3Provider()
       this.getActiveAccount(this.state.web3, this.props.wallet.activeAccount)
+      this.getInjectedNetwork(this.state.web3)
     }, 120)
   }
 
@@ -60,17 +61,15 @@ class Wallet extends Component {
   }
 
   render() {
+    const { networkId, activeAccount } = this.props
     if (!this.state.web3) {
       return <div className="Wallet">Wallet not connected.</div>
     }
 
-    // TODO: move this from render
-    this.getInjectedNetwork(this.state.web3)
-
     return(
       <div className="Wallet">
-        <div>Connected Network: { this.props.wallet.networkId }</div>
-        <div>Connected Account: { this.props.wallet.activeAccount }</div>
+        <div>Connected Network: { ETH.NETWORK_NAME[networkId] }</div>
+        <div>Connected Account: { activeAccount }</div>
       </div>
     )
   }
