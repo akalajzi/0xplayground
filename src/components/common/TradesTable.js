@@ -90,6 +90,8 @@ class TradesTable extends Component {
         const walletIsMaker = trade.args.maker === walletAccount
         const walletIsTaker = trade.args.taker === walletAccount
 
+        const totalFee = trade.args.paidMakerFee.add(trade.args.paidTakerFee)
+
         if (walletIsMaker || walletIsTaker) {
           cssRow = 'bg-my-highlight'
         }
@@ -122,6 +124,13 @@ class TradesTable extends Component {
                 tokenAddress={this.props.zrxContractAddress}
               />
             </TableColumn>
+            <TableColumn>
+              <TokenAmount
+                showSymbol
+                amount={totalFee}
+                tokenAddress={this.props.zrxContractAddress}
+              />
+            </TableColumn>
           </TableRow>
         )
       }
@@ -142,6 +151,7 @@ class TradesTable extends Component {
             <TableColumn>Relay</TableColumn>
             <TableColumn>Maker Fee</TableColumn>
             <TableColumn>Taker Fee</TableColumn>
+            <TableColumn>Total Fee</TableColumn>
           </TableRow>
         </TableHeader>
         <TableBody>
