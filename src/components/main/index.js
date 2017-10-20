@@ -50,10 +50,6 @@ export default () => (
       <Route path="/page/:name" component={Page} />
       <Route component={NotFoundPage} />
     </Switch>
-    {/* <hr />
-    <ReduxCounter />
-    <hr />
-    <p>Runtime info:</p>
-    <Stats /> */}
+
   </div>
 );

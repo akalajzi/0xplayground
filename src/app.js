@@ -17,6 +17,7 @@
 
 // Config API, for adding reducers and configuring our ReactQL app
 import config from 'kit/config';
+import api from 'src/const/api'
 
 /* App */
 
@@ -54,7 +55,8 @@ config.addReducer('wallet', walletReducer, walletInitialState)
 //
 // 2.  On the client, it will append the correct server URL so that we can
 // call the ReactQL host properly, and let the server handle our requests
-config.enableGraphQLServer();
+// config.enableGraphQLServer();
+config.setGraphQLEndpoint(api.graphcool.simple, true);
 
 /* SERVER */
 
@@ -96,7 +98,8 @@ if (SERVER) {
   // Pass in the schema to use for our internal GraphQL server.  Note we're
   // doing this inside a `SERVER` block to avoid importing a potentially large
   // file, which would then inflate our client bundle unnecessarily
-  config.setGraphQLSchema(require('src/graphql/schema').default);
+
+  // config.setGraphQLSchema(require('src/graphql/schema').default);
 
   /* CUSTOM ROUTES */
 
@@ -113,6 +116,10 @@ if (SERVER) {
     // from within our root, or fire action handlers!
     ctx.body = `Hello from your ReactQL route. Redux dump: ${stateDump}`;
   });
+
+  config.addPostRoute('/token', async ctx => {
+    ctx.body = JSON.stringify(ctx.request.body);
+  })
 
   /* CUSTOM 404 HANDLER */
 
@@ -137,7 +144,7 @@ if (SERVER) {
     ctx.status = 404;
 
     // Set the body
-    ctx.body = `This route does not exist on the server - Redux dump: ${stateDump}`;
+    ctx.body = `This route does not exist`;
   });
 
   /* CUSTOM ERROR HANDLER */

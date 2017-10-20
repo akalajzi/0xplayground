@@ -1,7 +1,5 @@
 // Simple class to act as a singleton for app-wide configuration.
 
-// We'll start with a common config that can be extended separately by the
-// server/client, to provide environment-specific functionality
 class Common {
   constructor() {
     // Store reducers in a `Map`, for easy key retrieval
@@ -18,7 +16,7 @@ class Common {
     this.graphQLEndpoint = null;
 
     // Set to true if we're using an internal GraphQL server
-    this.graphQLServer = true;
+    this.graphQLServer = false;
   }
 
   /* REDUX */
