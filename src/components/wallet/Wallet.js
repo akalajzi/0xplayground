@@ -62,7 +62,7 @@ class Wallet extends Component {
       this.getInjectedNetwork()
     }, 350)
   }
-    
+
   render() {
     const { networkId, activeAccount } = this.props.wallet
     if (!this.state.web3) {

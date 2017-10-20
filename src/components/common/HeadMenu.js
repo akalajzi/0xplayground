@@ -7,18 +7,19 @@ import css from './HeadMenu.scss'
 
 class HeadMenu extends Component {
   render() {
+    // const headActions = [<MenuButton
+    //     id={'kebab-menu-toolbar'}
+    //     icon
+    //     menuItems={['Settings', 'Help']}
+    //   >
+    //     more_vert
+    //   </MenuButton>]
+
     return (
       <Toolbar
         colored
-        nav={<Button icon>menu</Button>}
+        nav={<Button icon onClick={this.props.onNavClick}>menu</Button>}
         title={<Title networkId={this.props.network.id} />}
-        actions={<MenuButton
-          id={'kebab-menu-toolbar'}
-          icon
-          menuItems={['Settings', 'Help']}
-        >
-          more_vert
-        </MenuButton>}
       />
     )
   }
