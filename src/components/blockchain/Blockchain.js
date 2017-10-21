@@ -3,12 +3,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import Web3 from 'web3'
-import ProviderEngine from 'web3-provider-engine'
-import FilterSubprovider from 'web3-provider-engine/subproviders/filters'
-import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
-import { ZeroEx } from '0x.js'
 
-import { mapTokenList, mapLogs } from './helper'
+import { connectZeroEx, mapTokenList, mapLogs } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
 import {
@@ -25,7 +21,7 @@ class Blockchain extends Component {
   constructor(props) {
     super(props)
 
-    this.zeroEx = this.connectZeroEx(INFURA.MAINNET)
+    this.zeroEx = connectZeroEx(INFURA.MAINNET)
     // use web3 from ZeroEx
     this.web3 = this.zeroEx._web3Wrapper.web3
   }
@@ -46,14 +42,6 @@ class Blockchain extends Component {
     this.fetchZrxTokenAddress()
     this.fetchBlockHeight()
     this.fetchTokens()
-  }
-
-  connectZeroEx = (network) => {
-    const providerEngine = new ProviderEngine()
-    providerEngine.addProvider(new FilterSubprovider())
-    providerEngine.addProvider(new RpcSubprovider({rpcUrl: network}))
-    providerEngine.start()
-    return new ZeroEx(providerEngine)
   }
 
   fetchNetwork = (web3) => {

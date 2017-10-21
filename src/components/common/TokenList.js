@@ -13,10 +13,13 @@ import {
   TableRow,
   TableColumn,
   TableBody,
+  Grid,
+  Cell,
 } from 'react-md'
 
+import INFURA from 'src/const/infura'
 import { TOKEN_LIST_QUERY, CREATE_TOKEN_MUTATION, DELETE_TOKEN_MUTATION } from 'src/graphql/token.graphql'
-import { mapTokenList } from 'src/components/blockchain/helper'
+import { connectZeroEx, mapTokenList } from 'src/components/blockchain/helper'
 
 class TokenList extends Component {
   constructor(props) {
@@ -91,6 +94,23 @@ class TokenList extends Component {
     return tokenItems
   }
 
+  updateTokensFromProvider = () => {
+    const zeroEx = connectZeroEx(INFURA.MAINNET)
+    // TODO: see console log
+    console.log('Check for existance before pushing it to gql');
+    zeroEx.tokenRegistry.getTokensAsync()
+      .then((tokens) => {
+        _.forEach(tokens, (token) => {
+          this.props.createToken({
+            name: token.name,
+            symbol: token.symbol,
+            address: token.address,
+            decimals: token.decimals,
+          })
+        })
+      })
+  }
+
   render() {
     const {tokens} = this.props
     const { addTokenModalShow } = this.state
@@ -101,9 +121,11 @@ class TokenList extends Component {
 
     return(
       <div>
-        <h1>TokenList</h1>
         <div className="">
-          <Button raised onClick={this.show}>Add Token</Button>
+          <div className="buttons__group">
+            <Button raised onClick={this.show}>Add Token</Button>
+            <Button raised secondary onClick={this.updateTokensFromProvider}>Update tokens from provider</Button>
+          </div>
           <DialogContainer
             id="simple-action-dialog"
             visible={addTokenModalShow}

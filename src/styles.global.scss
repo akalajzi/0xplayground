@@ -37,6 +37,12 @@ html {
   }
 }
 
+/** layout fixers **/
+.buttons__group {
+  .md-btn {
+    margin: 1rem;
+  }
+}
 
 /* COLORS */
 .color-grey {

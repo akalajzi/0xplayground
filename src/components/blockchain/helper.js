@@ -1,4 +1,17 @@
 import BigNumber from 'bignumber.js'
+import ProviderEngine from 'web3-provider-engine'
+import FilterSubprovider from 'web3-provider-engine/subproviders/filters'
+import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
+import { ZeroEx } from '0x.js'
+
+
+export function connectZeroEx(network) {
+  const providerEngine = new ProviderEngine()
+  providerEngine.addProvider(new FilterSubprovider())
+  providerEngine.addProvider(new RpcSubprovider({rpcUrl: network}))
+  providerEngine.start()
+  return new ZeroEx(providerEngine)
+}
 
 export function mapTokenList(tokens) {
   if (!tokens) { return null }
