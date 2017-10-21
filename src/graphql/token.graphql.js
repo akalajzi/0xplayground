@@ -29,12 +29,12 @@ const CREATE_TOKEN_MUTATION = gql`
 `
 
 const DELETE_TOKEN_MUTATION = gql`
-  mutation deleteToken($address: String!) {
-    deleteToken(address: $address) {
+  mutation deleteToken($id: ID!) {
+    deleteToken(id: $id) {
+      id
       address
     }
   }
-  ${TOKEN_FRAGMENT}
 `
 
 export {

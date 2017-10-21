@@ -4,9 +4,18 @@ import { graphql, compose } from 'react-apollo'
 import update from 'immutability-helper';
 import _ from 'lodash'
 
-import { List, ListItem, Button, DialogContainer, TextField } from 'react-md'
+import {
+  Button,
+  DialogContainer,
+  TextField,
+  DataTable,
+  TableHeader,
+  TableRow,
+  TableColumn,
+  TableBody,
+} from 'react-md'
 
-import { TOKEN_LIST_QUERY, CREATE_TOKEN_MUTATION } from 'src/graphql/token.graphql'
+import { TOKEN_LIST_QUERY, CREATE_TOKEN_MUTATION, DELETE_TOKEN_MUTATION } from 'src/graphql/token.graphql'
 import { mapTokenList } from 'src/components/blockchain/helper'
 
 class TokenList extends Component {
@@ -33,13 +42,13 @@ class TokenList extends Component {
   newTokenSubmit = () => {
     const { newContractAddress, newSymbol, newDecimals, newName } = this.state
     if (newContractAddress.length && newSymbol.length && newDecimals) {
-      console.log('We should save this ', this.state);
       this.props.createToken({
         name: newName.length ? newName : newSymbol,
         symbol: newSymbol,
         address: newContractAddress,
         decimals: newDecimals,
       })
+      this.hide()
     }
   }
 
@@ -56,23 +65,27 @@ class TokenList extends Component {
   }
 
   onDecimalsChange = (value) => {
-    if (_.isNumber(value)) {
-      this.setState({newDecimals: value})
-    } else {
-      console.error("Not a number!")
-    }
+    this.setState({newDecimals: parseInt(value, 10)})
+  }
+
+  deleteToken = (id) => {
+    this.props.deleteToken({id})
   }
 
   renderTokenItems = (tokens) => {
     const tokenItems = []
 
-    const out = _.forEach(tokens, (token, i) => {
+    _.forEach(tokens, (token, i) => {
       tokenItems.push(
-        <ListItem
-          key={i}
-          primaryText={`${token.symbol} - ${token.name}`}
-          secondaryText={`${token.decimals} decimals`}
-        />
+        <TableRow key={i}>
+          <TableColumn>{token.symbol}</TableColumn>
+          <TableColumn>{token.name}</TableColumn>
+          <TableColumn>{token.decimals}</TableColumn>
+          <TableColumn>{i}</TableColumn>
+          <TableColumn>
+            <Button flat secondary onClick={this.deleteToken.bind(this, token.id)}>Delete</Button>
+          </TableColumn>
+        </TableRow>
       )
     })
     return tokenItems
@@ -104,10 +117,20 @@ class TokenList extends Component {
             <TextField id="token-decimals" label="Decimals of Precision" defaultValue="18" type='number' onChange={this.onDecimalsChange} />
           </DialogContainer>
         </div>
-        <List>
-          { tokens && this.renderTokenItems(tokens) }
-        </List>
-
+        <DataTable plain className="TokenListTable">
+          <TableHeader>
+            <TableRow>
+              <TableColumn>Symbol</TableColumn>
+              <TableColumn>Name</TableColumn>
+              <TableColumn>Decimals</TableColumn>
+              <TableColumn>Address</TableColumn>
+              <TableColumn></TableColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            { tokens && this.renderTokenItems(tokens) }
+          </TableBody>
+        </DataTable>
       </div>
     )
   }
@@ -150,7 +173,29 @@ const createToken = graphql(CREATE_TOKEN_MUTATION, {
   })
 })
 
+const deleteToken = graphql(DELETE_TOKEN_MUTATION, {
+  props: ({ ownProps, mutate }) => ({
+    deleteToken: ({ id }) => {
+      mutate({
+        variables: { id },
+        updateQueries: {
+          Tokens: (previousResult, { mutationResult }) => {
+            const deletedToken = mutationResult.data.deleteToken
+            return update(previousResult, {
+              allTokens: {
+                $set: previousResult.allTokens
+                  .filter(token => deletedToken.id !== token.id)
+              }
+            })
+          }
+        }
+      })
+    }
+  })
+})
+
 export default compose(
   tokenListQuery,
   createToken,
+  deleteToken,
 )(TokenList)
