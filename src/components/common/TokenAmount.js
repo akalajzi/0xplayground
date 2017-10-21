@@ -16,7 +16,12 @@ class TokenAmount extends Component {
 
   render() {
     const { tokens, showSymbol, amount, tokenAddress } = this.props
+    if (!tokens) { return null }
+
     const token = tokens[tokenAddress] || null
+    if (!token) {
+      console.log('Unknown token address: ', tokenAddress)
+    }
     // TODO: fallback to 18 decimals as default, figure out a way to know for sure
     const decimals = token ? token.decimals : 1
 

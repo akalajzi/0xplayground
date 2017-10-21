@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { graphql, compose } from 'react-apollo'
 
 import Web3 from 'web3'
 
 import { connectZeroEx, mapTokenList, mapLogs } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
+import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
+
 import {
   setBlockHeight,
   setContractAddress,
@@ -41,7 +44,13 @@ class Blockchain extends Component {
     this.fetchNetwork(this.web3)
     this.fetchZrxTokenAddress()
     this.fetchBlockHeight()
-    this.fetchTokens()
+    this.fetchTrades()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.tokens && nextProps.tokens) {
+      this.props.setTokens(nextProps.tokens)
+    }
   }
 
   fetchNetwork = (web3) => {
@@ -73,14 +82,10 @@ class Blockchain extends Component {
     })
   }
 
-  fetchTokens = () => {
+  fetchTrades = () => {
     this.zeroEx.exchange.getContractAddressAsync()
       .then((address) => {
         this.props.setContractAddress(address)
-        return this.zeroEx.tokenRegistry.getTokensAsync()
-      })
-      .then((tokens) => {
-        this.props.setTokens(mapTokenList(tokens))
       })
       .then(() => {
         this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
@@ -102,12 +107,14 @@ class Blockchain extends Component {
   }
 
   fetchPastTrades = (blockCount) => {
+    //TODO: temp fix
+    blockCount = 2000
     const toBlock = this.getLastFetchedBlock()
     const fromBlock = toBlock - blockCount
 
     this.zeroEx.exchange.getLogsAsync("LogFill", { fromBlock, toBlock }, {})
     .then((logs) => {
-      const mappedLogs = mapLogs(logs, this.props.network.tokens, this.web3)
+      const mappedLogs = mapLogs(logs, this.props.tokens, this.web3)
       this.props.setLogs({logs: mappedLogs, fromBlock})
       this.mapLogsWithTimestamp(mappedLogs)
     })
@@ -143,18 +150,43 @@ class Blockchain extends Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    network: state.network
-  }
-}, (dispatch) => {
-  return bindActionCreators({
-    setBlockHeight,
-    setContractAddress,
-    setLogs,
-    setNetwork,
-    setTimestampOnTrade,
-    setTokens,
-    setZrxContractAddress,
-  }, dispatch)
-})(Blockchain)
+const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
+  props: ({ data: {allTokens} }) => ({
+    tokens: mapTokenList(allTokens)
+  }),
+})
+
+export default compose(
+  tokenListQuery,
+  connect((state) => {
+    return {
+      network: state.network
+    }
+  }, (dispatch) => {
+    return bindActionCreators({
+      setBlockHeight,
+      setContractAddress,
+      setLogs,
+      setNetwork,
+      setTimestampOnTrade,
+      setTokens,
+      setZrxContractAddress,
+    }, dispatch)
+  })
+)(Blockchain)
+
+// export default connect((state) => {
+//   return {
+//     network: state.network
+//   }
+// }, (dispatch) => {
+//   return bindActionCreators({
+//     setBlockHeight,
+//     setContractAddress,
+//     setLogs,
+//     setNetwork,
+//     setTimestampOnTrade,
+//     setTokens,
+//     setZrxContractAddress,
+//   }, dispatch)
+// })(Blockchain)
