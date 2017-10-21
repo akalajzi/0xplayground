@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 
 export function mapTokenList(tokens) {
+  if (!tokens) { return null }
   let data = {}
   for (let i=0; i < tokens.length; i++) {
     data[tokens[i].address] = {

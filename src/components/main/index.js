@@ -64,8 +64,8 @@ export default class Main extends Component {
           visible={this.state.drawerVisible}
           onVisibilityChange={this.handleVisibilityChange}
           navItems={[
-            <Link to="/"><Button flat>Home</Button></Link>,
-            <Link to="/control"><Button flat>Control</Button></Link>
+            <Link key={'home'} to="/"><Button flat>Home</Button></Link>,
+            <Link key={'control'} to="/control"><Button flat>Control</Button></Link>
           ]}
           header={(
             <Toolbar
