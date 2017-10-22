@@ -22,9 +22,7 @@ class TradesTable extends Component {
   renderRelayer = (trade) => {
     const { networkId } = this.props
 
-    if (trade.args.feeRecipient === '0x0000000000000000000000000000000000000000') {
-      return 'OTC'
-    } else if (ETH.ZEROEX_RELAY_ADDRESSES[networkId][trade.args.feeRecipient]) {
+    if (ETH.ZEROEX_RELAY_ADDRESSES[networkId][trade.args.feeRecipient]) {
       return <RelayerLink address={trade.args.feeRecipient} networkId={networkId} />
     } else {
       // TODO: track unknown

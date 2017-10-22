@@ -86,7 +86,10 @@ class TokenList extends Component {
           <TableColumn>{token.decimals}</TableColumn>
           <TableColumn>{i}</TableColumn>
           <TableColumn>
-            <Button flat secondary onClick={this.deleteToken.bind(this, token.id)}>Delete</Button>
+            {
+              this.props.amMe &&
+              <Button flat secondary onClick={this.deleteToken.bind(this, token.id)}>Delete</Button>
+            }
           </TableColumn>
         </TableRow>
       )
@@ -122,10 +125,13 @@ class TokenList extends Component {
     return(
       <div>
         <div className="">
-          <div className="buttons__group">
-            <Button raised onClick={this.show}>Add Token</Button>
-            <Button raised secondary onClick={this.updateTokensFromProvider}>Update tokens from provider</Button>
-          </div>
+          {
+            this.props.amMe &&
+            <div className="buttons__group">
+              <Button raised onClick={this.show}>Add Token</Button>
+              <Button raised secondary onClick={this.updateTokensFromProvider}>Update tokens from provider</Button>
+            </div>
+          }
           <DialogContainer
             id="simple-action-dialog"
             visible={addTokenModalShow}

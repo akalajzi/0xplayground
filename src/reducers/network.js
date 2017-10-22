@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const initialState = {
   id: null,
   blockHeight: null,
@@ -18,10 +20,10 @@ export default function reducer(state, action) {
     case 'network/SET_CONTRACT_ADDRESS':
       return { ...state, contractAddress: action.address }
     case 'network/ADD_LOG':
-      newLogs[data]
+      newLogs[_.trimStart(action.data.transactionHash, '0x')] = action.data
       return {
         ...state,
-
+        logs: newLogs,
       }
     case 'network/SET_LOGS':
       // TODO: No good, fixme
@@ -59,9 +61,9 @@ export function setContractAddress(address) {
 export function addLog(data) {
   console.log('add log data: ', data);
   return null
-  // return {
-  //   type: 'network/ADD_LOG', data
-  // }
+  return {
+    type: 'network/ADD_LOG', data
+  }
 }
 
 export function setLogs(data) {

@@ -13,7 +13,7 @@ class Home extends Component {
   render() {
     return(
       <div className="home">
-        <Blockchain />
+        <Blockchain fetchPastTrades />
 
         <Grid>
           <Wallet />

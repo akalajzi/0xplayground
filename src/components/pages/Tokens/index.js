@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux'
 import { Grid, Cell } from 'react-md'
 
 import Wallet from 'src/components/wallet/Wallet'
-import TokenList from 'src/components/common/TokenList'
+import TokenList from './TokenList'
 
-class Admin extends Component {
+class Tokens extends Component {
   render() {
     const amMe = this.props.wallet.activeAccount === "0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af"
 
@@ -16,15 +16,11 @@ class Admin extends Component {
         <Grid>
           <Wallet />
         </Grid>
-        {
-          amMe
-          ? <Grid>
-            <Cell align='stretch' size={12}>
-              <TokenList />
-            </Cell>
-          </Grid>
-          : <div className="">404 - Not found</div>
-        }
+        <Grid>
+          <Cell align='stretch' size={12}>
+            <TokenList amMe={amMe} />
+          </Cell>
+        </Grid>
       </div>
     )
   }
@@ -38,4 +34,4 @@ export default connect((state) => {
   return bindActionCreators({
     //,
   }, dispatch)
-})(Admin)
+})(Tokens)

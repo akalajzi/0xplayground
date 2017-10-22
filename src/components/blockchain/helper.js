@@ -5,6 +5,7 @@ import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
 import { ZeroEx } from '0x.js'
 import _ from 'lodash'
 
+import api from 'src/const/api'
 
 export function connectZeroEx(network) {
   const providerEngine = new ProviderEngine()
@@ -29,7 +30,6 @@ export function mapTokenList(tokens) {
 }
 
 export function mapLogs(tradeLogs, tokens, web3) {
-  //  TODO: WRONG! multiple trades possible in the same block
   let data = {}
   const logs = tradeLogs.reverse()
   for (let i=0; i < logs.length; i++) {
@@ -69,8 +69,25 @@ export function mapLogs(tradeLogs, tokens, web3) {
   return data
 }
 
+export function getFiatValue(tokenSymbol, amountDecimal, fiatSymbol, timestamp) {
+  // https://min-api.cryptocompare.com/data/pricehistorical?fsym=ZRX&tsyms=USD&ts=1508490121&extraParams=your_app_name
+  fetch(api.pricehistorical, {
+    method: 'GET',
+    query: {
+      fsym: tokenSymbol.toUpperCase(),
+      tsyms: fiatSymbol.toUpperCase(),
+      ts: timestamp,
+    }
+  }).then((response) => {
+    const value = response[tokenSymbol][fiatSymbol] * amountDecimal
+    return value
+  }).catch((error) => {
+    return null
+  })
+}
+
 function normalizeTokenAmount(token, tokenAmount) {
-  // TODO: fallback to 1 decimal as default, figure out a way to know for sure
+  // TODO: fallback to 1 decimal as default
   const decimals = token ? token.decimals : 1
   return parseInt(tokenAmount) !== 0
     ? new BigNumber(tokenAmount.div(10**decimals)).toDigits(6).toNumber()

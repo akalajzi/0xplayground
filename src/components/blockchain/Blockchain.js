@@ -34,7 +34,9 @@ class Blockchain extends Component {
     this.fetchNetwork(this.web3)
     this.fetchZrxTokenAddress()
     this.fetchBlockHeight()
-    this.fetchTrades()
+    if (this.props.fetchPastTrades) {
+      this.fetchTrades()
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -102,7 +104,7 @@ class Blockchain extends Component {
 
   fetchPastTrades = (blockCount) => {
     //TODO: temp fix
-    blockCount = 2000
+    blockCount = 4000
     const toBlock = this.getLastFetchedBlock()
     const fromBlock = toBlock - blockCount
 
@@ -169,19 +171,3 @@ export default compose(
     }, dispatch)
   })
 )(Blockchain)
-
-// export default connect((state) => {
-//   return {
-//     network: state.network
-//   }
-// }, (dispatch) => {
-//   return bindActionCreators({
-//     setBlockHeight,
-//     setContractAddress,
-//     setLogs,
-//     setNetwork,
-//     setTimestampOnTrade,
-//     setTokens,
-//     setZrxContractAddress,
-//   }, dispatch)
-// })(Blockchain)

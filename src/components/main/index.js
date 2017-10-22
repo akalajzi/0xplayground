@@ -7,17 +7,18 @@ import {
 
 import Helmet from 'react-helmet';
 import {
-  Button,
-  Drawer,
   NavigationDrawer,
-  Toolbar
 } from 'react-md';
+
+import Blockchain from 'src/components/blockchain/Blockchain'
 
 import NavLink from './NavLink'
 import Title from './Title'
 
 import Home from 'src/components/pages/Home'
-import Control from 'src/components/pages/Control'
+import Relayers from 'src/components/pages/Relayers'
+import Tokens from 'src/components/pages/Tokens'
+import History from 'src/components/pages/History'
 import Page from 'src/components/pages/Page'
 import NotFoundPage from 'src/components/pages/NotFoundPage'
 
@@ -31,10 +32,20 @@ const navItems = [
     icon: 'home',
   },
   {
-    label: 'Control',
-    to: '/control',
-    icon: 'star',
+    label: 'Relayers',
+    to: '/relayers',
+    icon: 'settings_input_antenna',
   },
+  {
+    label: 'Tokens',
+    to: '/tokens',
+    icon: 'copyright',
+  },
+  {
+    label: 'History',
+    to: "/history",
+    icon: 'timeline',
+  }
 ]
 
 const styles = {
@@ -51,7 +62,7 @@ export default class Main extends Component {
             name: 'description',
             content: 'Navigating the blockchain',
           }]} />
-
+        <Blockchain />
         <NavigationDrawer
           autoclose
           toolbarTitle={<Title />}
@@ -66,7 +77,9 @@ export default class Main extends Component {
           >
             <Switch key={location.pathname}>
               <Route exact path={navItems[0].to} component={Home} />
-              <Route exact path={navItems[1].to} component={Control} />
+              <Route exact path={navItems[1].to} component={Relayers} />
+              <Route exact path={navItems[2].to} component={Tokens} />
+              <Route exact path={navItems[3].to} component={History} />
               <Route component={NotFoundPage} />
             </Switch>
           </NavigationDrawer>
