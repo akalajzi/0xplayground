@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux'
 
 import { Grid, Cell, Paper } from 'react-md'
 
-import GraphQL from 'src/components/graphql'
 import TradesTable from 'src/components/common/TradesTable'
 import Wallet from 'src/components/wallet/Wallet'
 import Blockchain from 'src/components/blockchain/Blockchain'
