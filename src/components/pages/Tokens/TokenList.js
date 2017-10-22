@@ -13,8 +13,6 @@ import {
   TableRow,
   TableColumn,
   TableBody,
-  Grid,
-  Cell,
 } from 'react-md'
 
 import INFURA from 'src/const/infura'

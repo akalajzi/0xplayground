@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-
-import ETH from 'src/const/eth'
-
+import { graphql, compose } from 'react-apollo'
 import {
   FontIcon,
   DataTable,
@@ -14,16 +12,19 @@ import {
 } from 'react-md';
 
 import TokenAmount from 'src/components/common/TokenAmount'
-import RelayerLink from 'src/components/common/RelayerLink'
 import TooltipLink from 'src/components/common/TooltipLink'
+
+import ETH from 'src/const/eth'
+import { RELAY_LIST } from 'src/graphql/relay.graphql'
 
 class TradesTable extends Component {
 
   renderRelayer = (trade) => {
-    const { networkId } = this.props
+    const { networkId, relayers } = this.props
 
-    if (ETH.ZEROEX_RELAY_ADDRESSES[networkId][trade.args.feeRecipient]) {
-      return <RelayerLink address={trade.args.feeRecipient} networkId={networkId} />
+    const relayer = _.find(relayers, (relay) => relay.address === trade.args.feeRecipient)
+    if (relayer) {
+      return <a href={relayer.url} target='_blank'>{relayer.name}</a>
     } else {
       // TODO: track unknown
       return 'Unknown'
@@ -160,12 +161,21 @@ class TradesTable extends Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    networkId: state.network.id,
-    logs: state.network.logs,
-    tokens: state.network.tokens,
-    zrxContractAddress: state.network.zrxContractAddress,
-    walletAccount: state.wallet.activeAccount,
-  }
-})(TradesTable)
+const relayListQuery = graphql(RELAY_LIST, {
+  props: ({ data: {allRelays} }) => ({
+    relayers: allRelays
+  }),
+})
+
+export default compose(
+  relayListQuery,
+  connect((state) => {
+    return {
+      networkId: state.network.id,
+      logs: state.network.logs,
+      tokens: state.network.tokens,
+      zrxContractAddress: state.network.zrxContractAddress,
+      walletAccount: state.wallet.activeAccount,
+    }
+  })
+)(TradesTable)
