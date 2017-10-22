@@ -17,6 +17,12 @@ export default function reducer(state, action) {
       return { ...state, blockHeight: action.block }
     case 'network/SET_CONTRACT_ADDRESS':
       return { ...state, contractAddress: action.address }
+    case 'network/ADD_LOG':
+      newLogs[data]
+      return {
+        ...state,
+
+      }
     case 'network/SET_LOGS':
       // TODO: No good, fixme
       return {
@@ -48,6 +54,14 @@ export function setBlockHeight(block) {
 
 export function setContractAddress(address) {
   return { type: 'network/SET_CONTRACT_ADDRESS', address}
+}
+
+export function addLog(data) {
+  console.log('add log data: ', data);
+  return null
+  // return {
+  //   type: 'network/ADD_LOG', data
+  // }
 }
 
 export function setLogs(data) {

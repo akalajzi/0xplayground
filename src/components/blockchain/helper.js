@@ -3,6 +3,7 @@ import ProviderEngine from 'web3-provider-engine'
 import FilterSubprovider from 'web3-provider-engine/subproviders/filters'
 import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
 import { ZeroEx } from '0x.js'
+import _ from 'lodash'
 
 
 export function connectZeroEx(network) {
@@ -48,9 +49,10 @@ export function mapLogs(tradeLogs, tokens, web3) {
       .toDigits(6)
       .toNumber()
 
-    data[blockNumber] = {
+    data[_.trimStart(trade.transactionHash, '0x')] = {
       address: trade.address,
       blockNumber: trade.blockNumber,
+      blockNumberDecimal: blockNumber,
       transactionHash: trade.transactionHash,
       transactionIndex: trade.transactionIndex,
       blockHash: trade.blockHash,

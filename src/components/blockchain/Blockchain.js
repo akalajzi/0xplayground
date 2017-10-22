@@ -13,6 +13,7 @@ import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 import {
   setBlockHeight,
   setContractAddress,
+  addLog,
   setLogs,
   setNetwork,
   setTimestampOnTrade,
@@ -30,17 +31,6 @@ class Blockchain extends Component {
   }
 
   componentDidMount() {
-    // let web3 = window.web3
-    // if (typeof web3 !== undefined) {
-    //   console.log('not undefined => ', web3);
-    //   window.web3 = new Web3(web3.currentProvider)
-    // } else {
-    //   console.log('not injected yet...');
-    //   web3 = new Web3()
-    //   web3.setProvider(new web3.providers.HttpProvider(INFURA.KOVAN))
-    //   window.web3 = web3
-    // }
-    // this.fetchNetwork(web3)
     this.fetchNetwork(this.web3)
     this.fetchZrxTokenAddress()
     this.fetchBlockHeight()
@@ -103,6 +93,10 @@ class Blockchain extends Component {
       console.log('LogFill error', err);
     } else {
       console.log('got a trade! ', res);
+      const mappedLog = mapLogs(res, this.props.tokens, this.web3)
+      console.log('mapped new trade: ', mappedLog);
+      this.props.addLog(mappedLog)
+      this.mapLogsWithTimestamp(mappedLog)
     }
   }
 
@@ -166,6 +160,7 @@ export default compose(
     return bindActionCreators({
       setBlockHeight,
       setContractAddress,
+      addLog,
       setLogs,
       setNetwork,
       setTimestampOnTrade,
