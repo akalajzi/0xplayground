@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 
 import { Grid, Cell } from 'react-md'
 
-import Wallet from 'src/components/wallet/Wallet'
+import Wallet from 'src/components/common/Wallet'
 import TokenList from './TokenList'
 
 class Tokens extends Component {

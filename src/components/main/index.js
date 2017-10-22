@@ -19,7 +19,6 @@ import Home from 'src/components/pages/Home'
 import Relayers from 'src/components/pages/Relayers'
 import Tokens from 'src/components/pages/Tokens'
 import History from 'src/components/pages/History'
-import Page from 'src/components/pages/Page'
 import NotFoundPage from 'src/components/pages/NotFoundPage'
 
 // ----------------------

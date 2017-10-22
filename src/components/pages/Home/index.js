@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import { Grid, Cell, Paper } from 'react-md'
 
 import TradesTable from 'src/components/common/TradesTable'
-import Wallet from 'src/components/wallet/Wallet'
+import Wallet from 'src/components/common/Wallet'
 import Blockchain from 'src/components/blockchain/Blockchain'
 
 
@@ -14,7 +14,6 @@ class Home extends Component {
     return(
       <div className="home">
         <Blockchain fetchPastTrades />
-
         <Grid>
           <Wallet />
         </Grid>

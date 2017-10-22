@@ -24,7 +24,9 @@ class TradesTable extends Component {
 
     const relayer = _.find(relayers, (relay) => relay.address === trade.args.feeRecipient)
     if (relayer) {
-      return <a href={relayer.url} target='_blank'>{relayer.name}</a>
+      return relayer.url
+        ? <a href={relayer.url} target='_blank'>{relayer.name}</a>
+        : <span>{relayer.name}</span>
     } else {
       // TODO: track unknown
       return 'Unknown'

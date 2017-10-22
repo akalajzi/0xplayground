@@ -11,11 +11,16 @@ class Wallet extends Component {
 
     this.state = {
       web3: null,
+      intervalId: null,
     }
   }
 
   componentDidMount() {
     this.pollForActiveAccount()
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.intervalId)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -56,11 +61,12 @@ class Wallet extends Component {
   }
 
   pollForActiveAccount = () => {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       this.getWeb3Provider()
       this.getActiveAccount()
       this.getInjectedNetwork()
-    }, 350)
+    }, 500)
+    this.setState({ intervalId })
   }
 
   render() {
