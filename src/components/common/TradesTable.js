@@ -10,7 +10,7 @@ import {
   TableBody,
   TableRow,
   TableColumn,
-} from 'react-md';
+} from 'react-md'
 
 import { mapTokenList } from 'src/components/blockchain/helper'
 

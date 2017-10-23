@@ -4,10 +4,9 @@ import { bindActionCreators } from 'redux'
 
 import { Grid, Cell, Paper } from 'react-md'
 
-import TradesTable from 'src/components/common/TradesTable'
 import Wallet from 'src/components/common/Wallet'
 import Blockchain from 'src/components/blockchain/Blockchain'
-
+import Last24HoursStats from './Last24HoursStats'
 
 class Home extends Component {
   render() {
@@ -19,12 +18,7 @@ class Home extends Component {
         </Grid>
         <Grid>
           <Cell align='stretch' size={12}>
-            <Paper
-              zDepth={2}
-              className="papers__example"
-            >
-              <TradesTable />
-            </Paper>
+            <Last24HoursStats />
           </Cell>
         </Grid>
       </div>
