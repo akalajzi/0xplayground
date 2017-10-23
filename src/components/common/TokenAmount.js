@@ -1,35 +1,26 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import React, { PureComponent } from 'react'
 import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 
 import TokenLink from 'src/components/common/TokenLink'
 
-class TokenAmount extends Component {
+export default class TokenAmount extends PureComponent {
   static propTypes = {
-    tokens: PropTypes.object || null,
     highlight: PropTypes.bool || null,
     showSymbol: PropTypes.bool,
     amount: PropTypes.object,
-    tokenAddress: PropTypes.string,
+    // token: PropTypes.object || null,
   }
 
   render() {
-    const { tokens, showSymbol, amount, tokenAddress } = this.props
-    if (!tokens) { return null }
-
-    const token = tokens[tokenAddress] || null
-    if (!token) {
-      console.log('Unknown token address: ', tokenAddress)
-    }
-    // TODO: fallback to 18 decimals as default, figure out a way to know for sure
+    const { token, showSymbol, amount, highlight } = this.props
     const decimals = token ? token.decimals : 1
-
     const cAmount = parseInt(amount) !== 0
       ? new BigNumber(amount.div(10**decimals)).toDigits(6).toNumber()
       : 0
 
-    const cssStyle = this.props.highlight
+    const cssStyle = highlight
       ? { display: 'inline', textDecoration: 'underline', fontWeight: '900' }
       : { display: 'inline' }
 
@@ -38,16 +29,10 @@ class TokenAmount extends Component {
         { cAmount }
         {
           token
-          ? <TokenLink style={{ paddingLeft: '4px' }} address={tokenAddress} />
+          ? <TokenLink style={{ paddingLeft: '4px' }} token={token} />
           : <span style={{ paddingLeft: '4px' }}>?</span>
         }
       </div>
     )
   }
 }
-
-export default connect((state) => {
-  return {
-    tokens: state.network.tokens,
-  }
-})(TokenAmount)

@@ -6,13 +6,13 @@ import ETH from 'src/const/eth'
 
 class TokenLink extends PureComponent {
   static propTypes = {
-    address: PropTypes.string,
+    token: PropTypes.object || null,
+    style: PropTypes.object || null,
   }
 
   render() {
-    const { address, networkId, tokens, style } = this.props
-    const token = tokens[address] || null
-    const url = ETH.NETWORK_BLOCK_EXPLORER[networkId] + '/address/' + address
+    const { networkId, token, style } = this.props
+    const url = ETH.NETWORK_BLOCK_EXPLORER[networkId] + '/address/' + token.address
     const symbol = token ? token.symbol : '?'
 
     return(
@@ -24,6 +24,5 @@ class TokenLink extends PureComponent {
 export default connect((state) => {
   return {
     networkId: state.network.id,
-    tokens: state.network.tokens,
   }
 })(TokenLink)

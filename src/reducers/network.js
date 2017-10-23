@@ -8,10 +8,12 @@ export const initialState = {
   zrxContractAddress: null,
   tokens: null,
   logs: null,
+  latestTrades: [],
 }
 
 export default function reducer(state, action) {
   let newLogs = null
+  let newTrades = null
   switch(action.type) {
     case 'network/RESET':
       return initialState
@@ -24,6 +26,12 @@ export default function reducer(state, action) {
       return {
         ...state,
         logs: newLogs,
+      }
+    case 'network/SET_LATEST_TRADES':
+      newTrades = _.concat(state.latestTrades, action.trades)
+      return {
+        ...state,
+        latestTrades: newTrades,
       }
     case 'network/SET_LOGS':
       // TODO: No good, fixme
@@ -72,6 +80,10 @@ export function setLogs(data) {
     logs: data.logs,
     fromBlock: data.fromBlock,
   }
+}
+
+export function setLatestTrades(trades) {
+  return { type: 'network/SET_LATEST_TRADES', trades }
 }
 
 export function setNetwork(id) {

@@ -2,23 +2,24 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { graphql, compose } from 'react-apollo'
-
 import Web3 from 'web3'
+import moment from 'moment'
 
-import { connectZeroEx, mapTokenList, mapLogs } from './helper'
+import { connectZeroEx, mapTokenList, mapLog } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 import {
   setBlockHeight,
-  setContractAddress,
+  // setContractAddress,
+  setLatestTrades,
   addLog,
   setLogs,
   setNetwork,
   setTimestampOnTrade,
   setTokens,
-  setZrxContractAddress,
+  // setZrxContractAddress,
 } from 'src/reducers/network'
 
 class Blockchain extends Component {
@@ -28,24 +29,28 @@ class Blockchain extends Component {
     this.zeroEx = connectZeroEx(INFURA.MAINNET)
     // use web3 from ZeroEx
     this.web3 = this.zeroEx._web3Wrapper.web3
+    this.web3Sync = new Web3(new Web3.providers.HttpProvider(INFURA.MAINNET))
+
+    this.state = {
+      lastFetchedBlock: null,
+    }
   }
 
   componentDidMount() {
-    this.fetchNetwork(this.web3)
-    this.fetchZrxTokenAddress()
+    this.fetchNetworkId(this.web3)
     this.fetchBlockHeight()
-    if (this.props.fetchPastTrades) {
-      this.fetchTrades()
+  }
+
+  componentDidUpdate(prevProps) {
+    // in case we mounted before blockheight was fetched
+    if (!prevProps.network.blockHeight && this.props.network.blockHeight) {
+      if (this.props.fetchPastTrades) {
+        this.fetch24hTrades()
+      }
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.tokens && nextProps.tokens) {
-      this.props.setTokens(nextProps.tokens)
-    }
-  }
-
-  fetchNetwork = (web3) => {
+  fetchNetworkId = (web3) => {
     if (web3.version) {
       web3.version.getNetwork((err, res) => {
         if (err) {
@@ -55,13 +60,6 @@ class Blockchain extends Component {
         }
       })
     }
-  }
-
-  fetchZrxTokenAddress = () => {
-    this.zeroEx.exchange.getZRXTokenAddressAsync()
-      .then((res) => {
-        this.props.setZrxContractAddress(res)
-      })
   }
 
   fetchBlockHeight = () => {
@@ -74,76 +72,87 @@ class Blockchain extends Component {
     })
   }
 
-  fetchTrades = () => {
-    this.zeroEx.exchange.getContractAddressAsync()
-      .then((address) => {
-        this.props.setContractAddress(address)
-      })
-      .then(() => {
-        this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
-        return this.fetchPastTrades(ETH.TRADE_BATCH_BLOCKS)
-      })
-      .then(() => {
-        // initial fetch done
-        // update stats
-      })
-  }
+  fetch24hTrades = (dailylogs = [], i = 1) => { // iterator is just a control factor, remove later
+    const now = moment().utc()
+    const startTime = now.subtract(24, 'hours').unix()
+    // console.log('startTime ', moment(startTime*1000).format('DD.MM.YYYY - HH:mm:ss'));
+    // subscribe for ongoing trades
+    this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
 
-  handleLogFillEvent = (err, res) => {
-    console.log('handle log fill event');
-    if (err) {
-      console.log('LogFill error', err);
-    } else {
-      console.log('got a trade! ', res);
-      const mappedLog = mapLogs(res, this.props.tokens, this.web3)
-      console.log('mapped new trade: ', mappedLog);
-      this.props.addLog(mappedLog)
-      this.mapLogsWithTimestamp(mappedLog)
-    }
-  }
+    const toBlock = this.state.lastFetchedBlock || this.props.network.blockHeight
+    const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
 
-  fetchPastTrades = (blockCount) => {
-    //TODO: temp fix
-    blockCount = 4000
-    const toBlock = this.getLastFetchedBlock()
-    const fromBlock = toBlock - blockCount
-
-    this.zeroEx.exchange.getLogsAsync("LogFill", { fromBlock, toBlock }, {})
-    .then((logs) => {
-      const mappedLogs = mapLogs(logs, this.props.tokens, this.web3)
-      this.props.setLogs({logs: mappedLogs, fromBlock})
-      this.mapLogsWithTimestamp(mappedLogs)
+    this.processLogBatch(fromBlock, toBlock, startTime)
+    .then(({ mappedLogs, overTheLimit}) => {
+      const collectedLogs = dailylogs.concat(mappedLogs)
+      if (!overTheLimit) {
+        this.fetch24hTrades(collectedLogs, i + 1)
+      } else {
+        // console.log('24 HOURS LOGGED: ', collectedLogs);
+        this.props.setLatestTrades(collectedLogs)
+      }
     })
   }
 
-  mapLogsWithTimestamp = (logs) => {
-    for (let key in logs) {
-      if (logs.hasOwnProperty(key)) {
-        const trade = logs[key]
-        const blockNumber = this.web3.toDecimal(trade.blockNumber)
-        this.web3.eth.getBlock(blockNumber, (err, res) => {
-          const timestamp = res.timestamp
-          const timestampedTrade = {...trade, timestamp }
-          this.props.setTimestampOnTrade({blockNumber, timestampedTrade}) // this is fine, batch requests do not make querying faster
+  processLogBatch = (fromBlock, toBlock, startTime) => {
+    return new Promise ( resolve =>
+      this.zeroEx.exchange.getLogsAsync("LogFill", { fromBlock, toBlock }, {})
+      .then((logs) => {
+        let mappedLogs = []
+        let overTheLimit = false
+        this.setState({ lastFetchedBlock: fromBlock })
+
+        if (logs.length === 0) {
+          resolve({mappedLogs, overTheLimit: false})
+          return
+        }
+
+        this.getTimestampsForBatch(logs)
+        .then((result) => {
+          _.forEach(logs, (log, i) => {
+            const matchedBlock = _.find(result, (block) => block.hash === log.blockHash)
+            // console.log('TRYING TIME: ', moment(matchedBlock.timestamp*1000).format('DD.MM.YYYY - HH:mm:ss'));
+            if (matchedBlock.timestamp >= startTime) {
+              log['timestamp'] = matchedBlock.timestamp
+              mappedLogs.push(mapLog(log, this.props.tokens))
+            } else {
+              // console.log('GOT OVER THE LIMIT', moment(matchedBlock.timestamp*1000).format('DD.MM.YYYY - HH:mm:ss') );
+              overTheLimit = true
+            }
+          })
+          resolve({mappedLogs, overTheLimit})
         })
-      }
-    }
+      })
+    )
   }
 
-  getLastFetchedBlock = () => {
-    const { network } = this.props
-    if (network.lastFetchedBlock) {
-      return network.lastFetchedBlock
-    } else {
-      return network.blockHeight
-    }
+  getTimestampsForBatch = (logs) => {
+    let batch = []
+    _.forEach(logs, (log, i) => {
+      const currentBlock = this.web3.toDecimal(log.blockNumber)
+      // zeroEx wrapped web3 only allows callback calls; this returns promise
+      batch.push(this.web3Sync.eth.getBlock(currentBlock))
+    })
+    return Promise.all(batch)
+  }
+
+  handleLogFillEvent = (err, log) => {
+    console.log('got new trade! ', log.transactionHash);
+    const currentBlock = this.web3.toDecimal(log.blockNumber)
+    console.log('new trade block decimal: ', currentBlock);
+    this.web3Sync.eth.getBlock(currentBlock)
+    .then((block) => {
+      console.log('got block ', block);
+      log['timestamp'] = block.timestamp
+      const mappedLog = mapLog(log, this.props.tokens)
+      this.props.setLatestTrades(mappedLog)
+    })
   }
 
   render() {
-    // console.log("window web3 provider ", window.web3);
-    // console.log("zeroEx ", this.zeroEx);
     return null
   }
+
 }
 
 const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
@@ -161,13 +170,14 @@ export default compose(
   }, (dispatch) => {
     return bindActionCreators({
       setBlockHeight,
-      setContractAddress,
+      // setContractAddress,
+      setLatestTrades,
       addLog,
       setLogs,
       setNetwork,
       setTimestampOnTrade,
       setTokens,
-      setZrxContractAddress,
+      // setZrxContractAddress,
     }, dispatch)
   })
 )(Blockchain)

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { graphql, compose } from 'react-apollo'
@@ -11,18 +12,24 @@ import {
   TableColumn,
 } from 'react-md';
 
+import { mapTokenList } from 'src/components/blockchain/helper'
+
 import TokenAmount from 'src/components/common/TokenAmount'
 import TooltipLink from 'src/components/common/TooltipLink'
 
 import ETH from 'src/const/eth'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
+import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 class TradesTable extends Component {
+  // static propTypes = {
+  //
+  // }
 
   renderRelayer = (trade) => {
-    const { networkId, relayers } = this.props
+    const { relayers } = this.props
 
-    const relayer = _.find(relayers, (relay) => relay.address === trade.args.feeRecipient)
+    const relayer = _.find(relayers, (relayer) => relayer.address === trade.args.feeRecipient)
     if (relayer) {
       return relayer.url
         ? <a href={relayer.url} target='_blank'>{relayer.name}</a>
@@ -41,7 +48,7 @@ class TradesTable extends Component {
           showSymbol
           highlight={walletIsMaker}
           amount={trade.args.filledMakerTokenAmount}
-          tokenAddress={trade.args.makerToken}
+          token={this.props.tokens[trade.args.makerToken]}
         />
         <FontIcon style={{
           verticalAlign: 'text-top',
@@ -52,7 +59,7 @@ class TradesTable extends Component {
           showSymbol
           highlight={walletIsTaker}
           amount={trade.args.filledTakerTokenAmount}
-          tokenAddress={trade.args.takerToken}
+          token={this.props.tokens[trade.args.takerToken]}
         />
       </div>
     )
@@ -80,68 +87,73 @@ class TradesTable extends Component {
     )
   }
 
-  renderTrades = (logs, walletAccount) => {
+  renderTrades = (trades, walletAccount) => {
+    const {tokens} = this.props
     let tableRows = []
+    const zrx = _.find(tokens, (token) => {
+      return token.symbol === 'ZRX'
+    })
 
-    for (let key in logs) {
-      if (logs.hasOwnProperty(key)) {
-        const trade = logs[key]
-        let cssRow = ''
+    _.forEach(trades, (trade, key) => {
+      let cssRow = ''
+      const walletIsMaker = trade.args.maker === walletAccount
+      const walletIsTaker = trade.args.taker === walletAccount
+      const totalFee = trade.args.paidMakerFee.add(trade.args.paidTakerFee)
 
-        const walletIsMaker = trade.args.maker === walletAccount
-        const walletIsTaker = trade.args.taker === walletAccount
-
-        const totalFee = trade.args.paidMakerFee.add(trade.args.paidTakerFee)
-
-        if (walletIsMaker || walletIsTaker) {
-          cssRow = 'bg-my-highlight'
-        }
-
-        tableRows.push(
-          <TableRow key={key} className={cssRow}>
-            <TableColumn>
-              { trade.timestamp ? moment(trade.timestamp*1000).format('MM/DD/YYYY - HH:mm:ss') : key }
-            </TableColumn>
-            <TableColumn>
-              { this.renderTrade(trade, walletIsMaker, walletIsTaker) }
-            </TableColumn>
-            <TableColumn>
-              { trade.price }
-            </TableColumn>
-            <TableColumn>
-              { this.renderRelayer(trade) }
-            </TableColumn>
-            <TableColumn>
-              <TokenAmount
-                showSymbol
-                amount={trade.args.paidMakerFee}
-                tokenAddress={this.props.zrxContractAddress}
-              />
-            </TableColumn>
-            <TableColumn>
-              <TokenAmount
-                showSymbol
-                amount={trade.args.paidTakerFee}
-                tokenAddress={this.props.zrxContractAddress}
-              />
-            </TableColumn>
-            <TableColumn>
-              <TokenAmount
-                showSymbol
-                amount={totalFee}
-                tokenAddress={this.props.zrxContractAddress}
-              />
-            </TableColumn>
-          </TableRow>
-        )
+      if (walletIsMaker || walletIsTaker) {
+        cssRow = 'bg-my-highlight'
       }
-    }
-    // TODO: Fix this, and sort properly
-    return tableRows.reverse()
+
+      tableRows.push(
+        <TableRow key={key} className={cssRow}>
+          <TableColumn>
+            { trade.timestamp ? moment(trade.timestamp*1000).format('MM/DD/YYYY - HH:mm:ss') : trade.transactionHash }
+          </TableColumn>
+          <TableColumn>
+            { this.renderTrade(trade, walletIsMaker, walletIsTaker) }
+          </TableColumn>
+          <TableColumn>
+            { trade.price }
+          </TableColumn>
+          <TableColumn>
+            { this.renderRelayer(trade) }
+          </TableColumn>
+          <TableColumn>
+            <TokenAmount
+              showSymbol
+              amount={trade.args.paidMakerFee}
+              token={zrx}
+            />
+          </TableColumn>
+          <TableColumn>
+            <TokenAmount
+              showSymbol
+              amount={trade.args.paidTakerFee}
+              token={zrx}
+            />
+          </TableColumn>
+          <TableColumn>
+            <TokenAmount
+              showSymbol
+              amount={totalFee}
+              token={zrx}
+            />
+          </TableColumn>
+        </TableRow>
+      )
+    })
+    return tableRows
+  }
+
+  sort = (trades) => {
+    if (!trades) { return null }
+    // TODO: do actual sorting by timestamp
+    return trades
   }
 
   render() {
-    const { logs, tokens, networkId, walletAccount } = this.props
+    const { latestTrades, walletAccount } = this.props
+    const sortedTrades = this.sort(latestTrades)
     return(
       <DataTable plain className="TradesTable">
         <TableHeader>
@@ -156,7 +168,7 @@ class TradesTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          { logs && this.renderTrades(logs, walletAccount) }
+          { latestTrades && this.renderTrades(sortedTrades, walletAccount) }
         </TableBody>
       </DataTable>
     )
@@ -169,14 +181,19 @@ const relayListQuery = graphql(RELAY_LIST, {
   }),
 })
 
+const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
+  props: ({ data: {allTokens} }) => ({
+    tokens: mapTokenList(allTokens)
+  }),
+})
+
 export default compose(
   relayListQuery,
+  tokenListQuery,
   connect((state) => {
     return {
       networkId: state.network.id,
-      logs: state.network.logs,
-      tokens: state.network.tokens,
-      zrxContractAddress: state.network.zrxContractAddress,
+      latestTrades: state.network.latestTrades,
       walletAccount: state.wallet.activeAccount,
     }
   })
