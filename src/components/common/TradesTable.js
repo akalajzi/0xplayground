@@ -23,7 +23,8 @@ import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 class TradesTable extends Component {
   // static propTypes = {
-  //
+  //   relayers:
+  //   tokens:
   // }
 
   renderRelayer = (trade) => {

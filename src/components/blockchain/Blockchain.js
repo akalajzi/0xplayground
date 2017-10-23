@@ -137,12 +137,18 @@ class Blockchain extends Component {
   }
 
   handleLogFillEvent = (err, log) => {
-    console.log('got new trade! ', log.transactionHash);
+    if (_.find(this.props.network.latestTrades, trade => trade.transactionHash === log.transactionHash )) {
+      // skip transactions we already handled, if they somehow get here
+      console.log('Transaction ', log.transactionHash, ' already received.')
+      return null
+    }
     const currentBlock = this.web3.toDecimal(log.blockNumber)
-    console.log('new trade block decimal: ', currentBlock);
     this.web3Sync.eth.getBlock(currentBlock)
     .then((block) => {
-      console.log('got block ', block);
+      if (!block) {
+        console.error('Block search after LogFill returned empty.')
+        return
+      }
       log['timestamp'] = block.timestamp
       const mappedLog = mapLog(log, this.props.tokens)
       this.props.setLatestTrades(mappedLog)

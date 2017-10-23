@@ -28,7 +28,8 @@ export default function reducer(state, action) {
         logs: newLogs,
       }
     case 'network/SET_LATEST_TRADES':
-      newTrades = _.concat(state.latestTrades, action.trades)
+      // newTrades = _.concat(state.latestTrades, action.trades)
+      newTrades = _.unionBy(state.latestTrades, action.trades, 'transactionHash')
       return {
         ...state,
         latestTrades: newTrades,
