@@ -23,6 +23,8 @@ import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 import TradesTable from 'src/components/common/TradesTable'
+import DailyTokenVolumeCard from './DailyTokenVolumeCard'
+import DailyFeesCard from './DailyFeesCard'
 import Loader from 'src/components/common/Loader'
 
 class Last24HoursStats extends Component {
@@ -76,59 +78,6 @@ class Last24HoursStats extends Component {
     }
   }
 
-  renderFees = (collectedFees) => {
-    const { relayers } = this.props
-    const zrxDecimals = 18
-
-    let rows = [
-      <TableRow key='totalfees'>
-        <TableColumn>Total Fees</TableColumn>
-        <TableColumn>{collectedFees.total} ZRX</TableColumn>
-        <TableColumn>$123.45</TableColumn>
-        <TableColumn></TableColumn>
-      </TableRow>
-    ]
-
-    relayers.map((relayer, key) => {
-      const rFee = this.bigNumberToNumber(collectedFees.feeRecipients[relayer.address], zrxDecimals)
-      rows.push(
-        <TableRow key={key}>
-          <TableColumn>{relayer.name}</TableColumn>
-          <TableColumn>{rFee} ZRX</TableColumn>
-          <TableColumn>$123.45</TableColumn>
-          <TableColumn>{rFee/collectedFees.total*100}%</TableColumn>
-        </TableRow>
-      )
-    })
-    return rows
-  }
-
-  renderTokenVolumes = (tokenVolume) => {
-    const { tokens } = this.props
-    let rows = [
-      <TableRow key='tvtotal'>
-        <TableColumn>Total Volume</TableColumn>
-        <TableColumn></TableColumn>
-        <TableColumn>123.45$</TableColumn>
-        <TableColumn></TableColumn>
-      </TableRow>
-    ]
-
-    for (let address in tokenVolume) {
-      if (tokenVolume.hasOwnProperty(address)) {
-        rows.push(
-          <TableRow key={'tv' + address}>
-            <TableColumn>{tokens[address].name}</TableColumn>
-            <TableColumn>{tokenVolume[address]}</TableColumn>
-            <TableColumn>$123.45</TableColumn>
-            <TableColumn></TableColumn>
-          </TableRow>
-        )
-      }
-    }
-    return rows
-  }
-
   render() {
     const { relayers, tokens, latestTrades } = this.props
     console.log('this.props.latestTrades', latestTrades);
@@ -146,22 +95,16 @@ class Last24HoursStats extends Component {
         <CardText>
           <Grid>
             <Cell>
-              <Paper zDepth={0}>
-                <DataTable plain className="FeesTable">
-                  <TableBody>
-                    { collectedFees && this.renderFees(collectedFees) }
-                  </TableBody>
-                </DataTable>
-              </Paper>
+              <DailyTokenVolumeCard
+                collectedFees={collectedFees}
+                tokens={tokens}
+              />
             </Cell>
             <Cell>
-              <Paper zDepth={0}>
-                <DataTable plain className="VolumeTable">
-                  <TableBody>
-                    { collectedFees.tokenVolume && this.renderTokenVolumes(collectedFees.tokenVolume) }
-                  </TableBody>
-                </DataTable>
-              </Paper>
+              <DailyFeesCard
+                collectedFees={collectedFees}
+                relayers={relayers}
+              />
             </Cell>
           </Grid>
         </CardText>
