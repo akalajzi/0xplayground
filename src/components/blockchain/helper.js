@@ -5,8 +5,6 @@ import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
 import { ZeroEx } from '0x.js'
 import _ from 'lodash'
 
-import api from 'src/const/api'
-
 export function connectZeroEx(network) {
   const providerEngine = new ProviderEngine()
   providerEngine.addProvider(new FilterSubprovider())
@@ -116,21 +114,4 @@ function calculatePrice(maker, taker, inverted = false) {
       ? taker.div(maker)
       : maker.div(taker)
   }
-}
-
-export function getFiatValue(tokenSymbol, amountDecimal, fiatSymbol, timestamp) {
-  // https://min-api.cryptocompare.com/data/pricehistorical?fsym=ZRX&tsyms=USD&ts=1508490121&extraParams=your_app_name
-  fetch(api.pricehistorical, {
-    method: 'GET',
-    query: {
-      fsym: tokenSymbol.toUpperCase(),
-      tsyms: fiatSymbol.toUpperCase(),
-      ts: timestamp,
-    }
-  }).then((response) => {
-    const value = response[tokenSymbol][fiatSymbol] * amountDecimal
-    return value
-  }).catch((error) => {
-    return null
-  })
 }

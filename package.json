@@ -78,6 +78,7 @@
     "0x.js": "^0.21.4",
     "apollo-local-query": "^0.3.0",
     "apollo-server-koa": "^1.1.2",
+    "axios": "^0.17.0",
     "bignumber.js": "^4.1.0",
     "boxen": "^1.2.1",
     "chalk": "^2.1.0",

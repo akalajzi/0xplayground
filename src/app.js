@@ -25,6 +25,8 @@ import networkReducer from 'src/reducers/network'
 import { initialState as networkInitialState } from 'src/reducers/network'
 import walletReducer from 'src/reducers/wallet'
 import { initialState as walletInitialState } from 'src/reducers/wallet'
+import marketReducer from 'src/reducers/market'
+import { initialState as marketInitialState } from 'src/reducers/market'
 
 // Main component -- i.e. the 'root' React component in our app
 import Main from 'src/components/main';
@@ -44,6 +46,7 @@ import './styles.global.scss';
 // automatically immutable by default
 config.addReducer('network', networkReducer, networkInitialState)
 config.addReducer('wallet', walletReducer, walletInitialState)
+config.addReducer('market', marketReducer, marketInitialState)
 
 /* GRAPHQL */
 

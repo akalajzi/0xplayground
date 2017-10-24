@@ -5,5 +5,4 @@ export default {
     file: "https://api.graph.cool/file/v1/cj8ywmjcb097l01892xm06flv",
     subscriptions: "wss://subscriptions.graph.cool/v1/cj8ywmjcb097l01892xm06flv",
   },
-  priceHistorical: 'https://min-api.cryptocompare.com/data/pricehistorical',
 }

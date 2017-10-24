@@ -9,6 +9,8 @@ import { connectZeroEx, mapTokenList, mapLog } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
+import { getFiatValue } from 'src/util/marketApi'
+import { setMarketValues, setError as setMarketError } from 'src/reducers/market'
 
 import {
   setBlockHeight,
@@ -33,12 +35,18 @@ class Blockchain extends Component {
 
     this.state = {
       lastFetchedBlock: null,
+      mvInterval: null,
     }
   }
 
   componentDidMount() {
     this.fetchNetworkId(this.web3)
     this.fetchBlockHeight()
+    this.pollForMarketValue()
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.mvInterval)
   }
 
   componentDidUpdate(prevProps) {
@@ -155,6 +163,23 @@ class Blockchain extends Component {
     })
   }
 
+  pollForMarketValue = () => {
+    const mvInterval = setInterval(() => {
+      this.fetchMarketValue()
+    }, 10000)
+    this.setState({ mvInterval })
+  }
+
+  fetchMarketValue = () => {
+    getFiatValue(this.props.market.currency, ['ZRX', 'ETH', 'BTC'])
+    .then((res) => {
+      this.props.setMarketValues(res.data)
+    })
+    .catch((error) => {
+      this.props.setMarketError(error)
+    })
+  }
+
   render() {
     return null
   }
@@ -171,7 +196,8 @@ export default compose(
   tokenListQuery,
   connect((state) => {
     return {
-      network: state.network
+      network: state.network,
+      market: state.market,
     }
   }, (dispatch) => {
     return bindActionCreators({
@@ -184,6 +210,8 @@ export default compose(
       setTimestampOnTrade,
       setTokens,
       // setZrxContractAddress,
+      setMarketValues,
+      setMarketError,
     }, dispatch)
   })
 )(Blockchain)
