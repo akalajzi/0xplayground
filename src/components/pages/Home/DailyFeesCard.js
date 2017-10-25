@@ -45,14 +45,15 @@ export default class DailyFeesCard extends Component {
   }
 
   renderFees = (collectedFees) => {
-    const { relayers } = this.props
+    const { relayers, zrxPrice, fiat } = this.props
     const zrxDecimals = 18
+    const totalFeesFiat = zrxPrice * collectedFees.total
 
     let rows = [
       <TableRow key='totalfees'>
         <TableColumn>Total Fees</TableColumn>
         <TableColumn>{collectedFees.total} ZRX</TableColumn>
-        <TableColumn>$123.45</TableColumn>
+        <TableColumn>{fiat.symbol} {totalFeesFiat.toFixed(fiat.decimal_digits)}</TableColumn>
         <TableColumn></TableColumn>
       </TableRow>
     ]
@@ -63,7 +64,7 @@ export default class DailyFeesCard extends Component {
         <TableRow key={key}>
           <TableColumn>{relayer.name}</TableColumn>
           <TableColumn>{rFee} ZRX</TableColumn>
-          <TableColumn>$123.45</TableColumn>
+          <TableColumn>{fiat.symbol} {(rFee * zrxPrice).toFixed(fiat.decimal_digits)}</TableColumn>
           <TableColumn>{rFee/collectedFees.total*100}%</TableColumn>
         </TableRow>
       )

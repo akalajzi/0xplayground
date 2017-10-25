@@ -46,24 +46,38 @@ export default class DailyTokenVolumeCard extends Component {
   }
 
   renderTokenVolumes = (tokenVolume) => {
-    const { tokens } = this.props
+    const { tokens, tokenPrices, fiat } = this.props
+
+    let fiatVolume = 0.0
+    _.forEach(tokenVolume, (volume, address) => {
+      if (tokenPrices && tokenPrices[address]) {
+        fiatVolume += volume * tokenPrices[address]
+      }
+    })
+
+
     let rows = [
       <TableRow key='tvtotal'>
         <TableColumn>Total Volume</TableColumn>
         <TableColumn></TableColumn>
-        <TableColumn>123.45$</TableColumn>
-        <TableColumn></TableColumn>
+        <TableColumn>{
+          tokenPrices
+          ? `${fiat.symbol} ${fiatVolume.toFixed(fiat.decimal_digits)}`
+          : '...'
+        }</TableColumn>
       </TableRow>
     ]
 
     for (let address in tokenVolume) {
       if (tokenVolume.hasOwnProperty(address)) {
+        const fiatVolume = tokenPrices
+          ? `${fiat.symbol} ${(tokenVolume[address] * tokenPrices[address]).toFixed(fiat.decimal_digits)}`
+          : '...'
         rows.push(
           <TableRow key={'tv' + address}>
             <TableColumn>{tokens[address].name}</TableColumn>
             <TableColumn>{tokenVolume[address]}</TableColumn>
-            <TableColumn>$123.45</TableColumn>
-            <TableColumn></TableColumn>
+            <TableColumn>{fiatVolume}</TableColumn>
           </TableRow>
         )
       }

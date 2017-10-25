@@ -5,6 +5,7 @@ export const initialState = {
   ethPrice: null,
   btcPrice: null,
   cryptoMarketcap: null,
+  tokenPrices: null,  // tokens that were traded in the last 24 hours
 }
 
 export default function reducer(state, action) {
