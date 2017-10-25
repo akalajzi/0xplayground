@@ -109,7 +109,13 @@ class Last24HoursStats extends Component {
     const tokenSymbols = tokenAddresses.map((address) => tokens[address].symbol)
     getFiatValue(market.currency, tokenSymbols)
     .then((res) => {
-      const result = res.data
+      const result = {}
+      result[market.currency] = {}
+
+      _.forEach(res, (chunk) => {
+        _.assign(result[market.currency], chunk.data[market.currency])
+      })
+
       // place ETH price in WETH place
       result[market.currency]['WETH'] = 1 / market.ethPrice
       let tokenPrices = {}
