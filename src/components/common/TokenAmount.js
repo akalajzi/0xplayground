@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react'
 import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
 
 import TokenLink from 'src/components/common/TokenLink'
 
@@ -9,7 +8,7 @@ export default class TokenAmount extends PureComponent {
   static propTypes = {
     highlight: PropTypes.bool || null,
     showSymbol: PropTypes.bool,
-    amount: PropTypes.string,
+    // amount: PropTypes.object,
     // token: PropTypes.object || null,
   }
 
@@ -17,7 +16,7 @@ export default class TokenAmount extends PureComponent {
     const { token, showSymbol, amount, highlight } = this.props
     const decimals = token ? token.decimals : 1
     const cAmount = parseInt(amount) !== 0
-      ? new BigNumber(new BigNumber(amount).div(10**decimals)).toDigits(6).toNumber()
+      ? new BigNumber(amount).div(10**decimals).toDigits(6).toNumber()
       : 0
 
     const cssStyle = highlight

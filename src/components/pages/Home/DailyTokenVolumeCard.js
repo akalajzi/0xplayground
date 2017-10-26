@@ -96,39 +96,40 @@ export default class DailyTokenVolumeCard extends Component {
 
     return(
       <Card>
-        <CardTitle title="24h Token Volume" subtitle="12312$" />
+        <CardTitle title="24h Token Volume"/>
         <CardText>
-          <Paper zDepth={0}>
-            <ResponsiveContainer width="100%" height={150}>
-              <PieChart>
-                <Pie
-                  data={tokenVolumeForChart}
-                  dataKey='value'
-                  cx='50%'
-                  cy='99%'
-                  startAngle={180}
-                  endAngle={0}
-                  innerRadius={0}
-                  outerRadius={120}
-                  fill='#8884d8'
-                  paddingAngle={0}
-                >
-                  {
-                    tokenVolumeForChart.map((entry, index) => {
-                      return <PieCell key={index} fill={COLORS[index % COLORS.length]} />
-                    })
-                  }
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </Paper>
-        </CardText>
-        <CardText>
-          <DataTable plain className="VolumeTable">
-            <TableBody>
-              { collectedFees.tokenVolume && this.renderTokenVolumes(collectedFees.tokenVolume) }
-            </TableBody>
-          </DataTable>
+          <Grid>
+            <Cell size={8}>
+              <DataTable plain className="VolumeTable NarrowRows">
+                <TableBody>
+                  { collectedFees.tokenVolume && this.renderTokenVolumes(collectedFees.tokenVolume) }
+                </TableBody>
+              </DataTable>
+            </Cell>
+
+            <Cell size={4}>
+              <Paper zDepth={0}>
+                <ResponsiveContainer width="100%" height={180}>
+                  <PieChart>
+                    <Pie
+                      data={tokenVolumeForChart}
+                      dataKey='value'
+                      innerRadius={0}
+                      outerRadius={80}
+                      fill='#8884d8'
+                      paddingAngle={0}
+                    >
+                      {
+                        tokenVolumeForChart.map((entry, index) => {
+                          return <PieCell key={index} fill={COLORS[index % COLORS.length]} />
+                        })
+                      }
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Cell>
+          </Grid>
         </CardText>
       </Card>
     )

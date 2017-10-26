@@ -74,8 +74,6 @@ class Last24HoursStats extends Component {
     const { latestTrades, relayers, tokens } = this.props
     const zrxDecimals = 18
 
-    console.log('latest trades ', latestTrades);
-
     let sum = new BigNumber(0)
     let feeRecipients = {}
     let tokenVolume = {}
@@ -86,14 +84,13 @@ class Last24HoursStats extends Component {
     // loop through trades
     _.forEach(latestTrades, (trade) => {
       // total fees
-      console.log('fee example ', trade.args.paidMakerFee);
       const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
       sum = sum.add(totalFee)
       // recipient
       if (feeRecipients[trade.args.feeRecipient]) {
         feeRecipients[trade.args.feeRecipient] = feeRecipients[trade.args.feeRecipient].add(totalFee)
       } else {
-        console.log('Unknown fee recipient')
+        console.log('Unknown fee recipient', trade.args.feeRecipient)
       }
 
       // token volume groupings
@@ -144,18 +141,17 @@ class Last24HoursStats extends Component {
     if (!latestTrades) {
       return <Loader />
     }
-    console.log('this.state.tokenPrices', tokenPrices);
-
+    // console.log('this.state.tokenPrices', tokenPrices);
     // const collectedFees = this.calculateCollectedFees()
-    console.log('relayers ', relayers);
-    console.log('collectedFees ', collectedFees);
+    // console.log('relayers ', relayers);
+    // console.log('collectedFees ', collectedFees);
 
     return(
       <Card>
         <CardTitle title="Last 24 hours" />
         <CardText>
           <Grid>
-            <Cell>
+            <Cell size={6}>
               <DailyTokenVolumeCard
                 collectedFees={collectedFees}
                 fiat={CURRENCIES[market.currency]}
@@ -163,7 +159,7 @@ class Last24HoursStats extends Component {
                 tokens={tokens}
               />
             </Cell>
-            <Cell>
+            <Cell size={6}>
               <DailyFeesCard
                 collectedFees={collectedFees}
                 zrxPrice={market.zrxPrice}

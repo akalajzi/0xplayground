@@ -68,7 +68,6 @@ export function setContractAddress(address) {
 }
 
 export function addLog(data) {
-  console.log('add log data: ', data);
   return null
   return {
     type: 'network/ADD_LOG', data
@@ -88,7 +87,6 @@ export function setLatestTrades(trades) {
 }
 
 export function setNetwork(id) {
-  console.log('setting network!');
   return { type: 'network/SET_NETWORK', id }
 }
 

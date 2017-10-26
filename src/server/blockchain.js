@@ -162,7 +162,7 @@ export default class Blockchain {
         return
       }
       log['timestamp'] = block.timestamp
-      const mappedLog = mapLog(log, this.props.tokens)
+      const mappedLog = mapLog(log, this.tokens)
       this.setLatestTrades(mappedLog)
     })
   }
@@ -212,7 +212,9 @@ export default class Blockchain {
   getLatestTrades = () => {
     const query = `
       query Trades {
-        allTradeses {
+        allTradeses(
+          orderBy: timestamp_DESC
+        ) {
           id
           address
           timestamp
