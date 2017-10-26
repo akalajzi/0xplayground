@@ -40,11 +40,11 @@ const navItems = [
     to: '/tokens',
     icon: 'copyright',
   },
-  {
-    label: 'History',
-    to: "/history",
-    icon: 'timeline',
-  }
+  // {
+  //   label: 'History',
+  //   to: "/history",
+  //   icon: 'timeline',
+  // }
 ]
 
 const styles = {
@@ -78,7 +78,7 @@ export default class Main extends Component {
               <Route exact path={navItems[0].to} component={Home} />
               <Route exact path={navItems[1].to} component={Relayers} />
               <Route exact path={navItems[2].to} component={Tokens} />
-              <Route exact path={navItems[3].to} component={History} />
+              {/* <Route exact path={navItems[3].to} component={History} /> */}
               <Route component={NotFoundPage} />
             </Switch>
           </NavigationDrawer>
