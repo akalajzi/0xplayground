@@ -113,12 +113,12 @@ export default new WebpackConfig().extend({
     new webpack.NoEmitOnErrorsPlugin(),
 
     // Minimize
-    new webpack.optimize.UglifyJsPlugin({
-      output: {
-        comments: false,
-      },
-      exclude: [/\.min\.js$/gi], // skip pre-minified libs
-    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   output: {
+    //     comments: false,
+    //   },
+    //   exclude: [/\.min\.js$/gi], // skip pre-minified libs
+    // }),
 
     // A plugin for a more aggressive chunk merging strategy
     new webpack.optimize.AggressiveMergingPlugin(),
