@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import BigNumber from 'bignumber.js'
+import _ from 'lodash'
 
 import {
   Card,

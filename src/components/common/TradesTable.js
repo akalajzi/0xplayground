@@ -12,6 +12,7 @@ import {
   TableRow,
   TableColumn,
 } from 'react-md'
+import _ from 'lodash'
 
 // import { mapTokenList } from 'src/components/blockchain/helper'
 

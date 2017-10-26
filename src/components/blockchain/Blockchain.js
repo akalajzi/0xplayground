@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { graphql, compose } from 'react-apollo'
 import Web3 from 'web3'
 import moment from 'moment'
+import _ from 'lodash'
 
 import { connectZeroEx, mapTokenList, mapLog } from './helper'
 import INFURA from 'src/const/infura'
