@@ -20,6 +20,7 @@ import config from 'kit/config';
 import api from 'src/const/api'
 
 /* App */
+import Blockchain from 'src/server/blockchain'
 
 import networkReducer from 'src/reducers/network'
 import { initialState as networkInitialState } from 'src/reducers/network'
@@ -174,11 +175,14 @@ if (SERVER) {
   // you can pass a func to `config.getKoaApp()` that will be fed the `app`
   // instance directly.
   config.getKoaApp(app => {
-    // First, we'll add a new `engine` key to the app.context`
-    // prototype (that per-request `ctx` extends) that can be
-    // used in the middleware below, to set a `Powered-By` header.
     // eslint-disable-next-line no-param-reassign
-    app.context.engine = 'ReactQL';
+    app.context.engine = 'Shrimp Engine';
+
+    const blockchain = new Blockchain()
+    blockchain.initialFetch()
+
+    // app.context.blockchain = new Blockchain()
+    // app.context.blockchain.initialFetch()
 
     // We'll also add a generic error handler, that prints out to the console.
     // Note: This is a 'lower-level' than `config.setErrorHandler()` because

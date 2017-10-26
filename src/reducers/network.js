@@ -88,6 +88,7 @@ export function setLatestTrades(trades) {
 }
 
 export function setNetwork(id) {
+  console.log('setting network!');
   return { type: 'network/SET_NETWORK', id }
 }
 

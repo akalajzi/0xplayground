@@ -57,47 +57,6 @@ export function mapLog(log, tokens) {
   }
 }
 
-// OBSOLETE
-export function mapLogs(tradeLogs, tokens, web3) {
-  let data = {}
-  const logs = tradeLogs.reverse()
-  for (let i=0; i < logs.length; i++) {
-
-    const trade = logs[i]
-    const makerToken = tokens[trade.args.makerToken]
-    const takerToken = tokens[trade.args.takerToken]
-    const blockNumber = web3.toDecimal(trade.blockNumber)
-
-    const filledMakerTokenAmountNormalized = normalizeTokenAmount(makerToken, trade.args.filledMakerTokenAmount)
-    const filledTakerTokenAmountNormalized = normalizeTokenAmount(takerToken, trade.args.filledTakerTokenAmount)
-
-    const price = calculatePrice(trade.args.filledMakerTokenAmount, trade.args.filledTakerTokenAmount)
-      .toDigits(6)
-      .toNumber()
-    const invertedPrice = calculatePrice(trade.args.filledMakerTokenAmount, trade.args.filledTakerTokenAmount, true)
-      .toDigits(6)
-      .toNumber()
-
-    data[_.trimStart(trade.transactionHash, '0x')] = {
-      address: trade.address,
-      blockNumber: trade.blockNumber,
-      blockNumberDecimal: blockNumber,
-      transactionHash: trade.transactionHash,
-      transactionIndex: trade.transactionIndex,
-      blockHash: trade.blockHash,
-      removed: trade.removed,
-      event: trade.event,
-      filledMakerTokenAmountNormalized,
-      filledTakerTokenAmountNormalized,
-      price,
-      invertedPrice,
-      args: trade.args,
-    }
-  }
-
-  return data
-}
-
 function normalizeTokenAmount(token, tokenAmount) {
   // TODO: fallback to 1 decimal as default
   const decimals = token ? token.decimals : 1

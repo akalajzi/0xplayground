@@ -83,6 +83,7 @@
     "boxen": "^1.2.1",
     "chalk": "^2.1.0",
     "graphql": "^0.11.3",
+    "graphql-request": "^1.4.0",
     "immutability-helper": "^2.4.0",
     "ip": "^1.1.5",
     "isomorphic-fetch": "^2.2.1",

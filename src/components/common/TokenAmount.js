@@ -9,7 +9,7 @@ export default class TokenAmount extends PureComponent {
   static propTypes = {
     highlight: PropTypes.bool || null,
     showSymbol: PropTypes.bool,
-    amount: PropTypes.object,
+    amount: PropTypes.string,
     // token: PropTypes.object || null,
   }
 
@@ -17,7 +17,7 @@ export default class TokenAmount extends PureComponent {
     const { token, showSymbol, amount, highlight } = this.props
     const decimals = token ? token.decimals : 1
     const cAmount = parseInt(amount) !== 0
-      ? new BigNumber(amount.div(10**decimals)).toDigits(6).toNumber()
+      ? new BigNumber(new BigNumber(amount).div(10**decimals)).toDigits(6).toNumber()
       : 0
 
     const cssStyle = highlight

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { graphql, compose } from 'react-apollo'
+import BigNumber from 'bignumber.js'
 import {
   FontIcon,
   DataTable,
@@ -12,14 +13,14 @@ import {
   TableColumn,
 } from 'react-md'
 
-import { mapTokenList } from 'src/components/blockchain/helper'
+// import { mapTokenList } from 'src/components/blockchain/helper'
 
 import TokenAmount from 'src/components/common/TokenAmount'
 import TooltipLink from 'src/components/common/TooltipLink'
 
 import ETH from 'src/const/eth'
-import { RELAY_LIST } from 'src/graphql/relay.graphql'
-import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
+// import { RELAY_LIST } from 'src/graphql/relay.graphql'
+// import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 class TradesTable extends Component {
   // static propTypes = {
@@ -99,7 +100,7 @@ class TradesTable extends Component {
       let cssRow = ''
       const walletIsMaker = trade.args.maker === walletAccount
       const walletIsTaker = trade.args.taker === walletAccount
-      const totalFee = trade.args.paidMakerFee.add(trade.args.paidTakerFee)
+      const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
 
       if (walletIsMaker || walletIsTaker) {
         cssRow = 'bg-my-highlight'
@@ -176,25 +177,25 @@ class TradesTable extends Component {
   }
 }
 
-const relayListQuery = graphql(RELAY_LIST, {
-  props: ({ data: {allRelays} }) => ({
-    relayers: allRelays
-  }),
-})
-
-const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
-  props: ({ data: {allTokens} }) => ({
-    tokens: mapTokenList(allTokens)
-  }),
-})
+// const relayListQuery = graphql(RELAY_LIST, {
+//   props: ({ data: {allRelays} }) => ({
+//     relayers: allRelays
+//   }),
+// })
+//
+// const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
+//   props: ({ data: {allTokens} }) => ({
+//     tokens: mapTokenList(allTokens)
+//   }),
+// })
 
 export default compose(
-  relayListQuery,
-  tokenListQuery,
+  // relayListQuery,
+  // tokenListQuery,
   connect((state) => {
     return {
       networkId: state.network.id,
-      latestTrades: state.network.latestTrades,
+      // latestTrades: state.network.latestTrades,
       walletAccount: state.wallet.activeAccount,
     }
   })

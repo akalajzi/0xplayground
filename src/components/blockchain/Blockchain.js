@@ -9,6 +9,7 @@ import { connectZeroEx, mapTokenList, mapLog } from './helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
+import { TRADES_LIST } from 'src/graphql/trades.graphql'
 import { getFiatValue } from 'src/util/marketApi'
 import { setMarketValues, setError as setMarketError } from 'src/reducers/market'
 
@@ -49,14 +50,14 @@ class Blockchain extends Component {
     clearInterval(this.state.mvInterval)
   }
 
-  componentDidUpdate(prevProps) {
-    // in case we mounted before blockheight was fetched
-    if (!prevProps.network.blockHeight && this.props.network.blockHeight) {
-      if (this.props.fetchPastTrades) {
-        this.fetch24hTrades()
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   // in case we mounted before blockheight was fetched
+  //   if (!prevProps.network.blockHeight && this.props.network.blockHeight) {
+  //     if (this.props.fetchPastTrades) {
+  //       this.fetch24hTrades()
+  //     }
+  //   }
+  // }
 
   fetchNetworkId = (web3) => {
     if (web3.version) {
@@ -192,8 +193,15 @@ const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
   }),
 })
 
+// const latestTradesQuery = graphql(TRADES_LIST, {
+//   props: ({ data: { allTradeses }}) => ({
+//     latestTrades: allTradeses,
+//   })
+// })
+
 export default compose(
   tokenListQuery,
+  // tradesListQuery,
   connect((state) => {
     return {
       network: state.network,

@@ -21,6 +21,8 @@ import {
 import { mapTokenList } from 'src/components/blockchain/helper'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
+import { TRADES_LIST } from 'src/graphql/trades.graphql'
+
 import { getFiatValue } from 'src/util/marketApi'
 
 import TradesTable from 'src/components/common/TradesTable'
@@ -42,7 +44,7 @@ class Last24HoursStats extends Component {
 
   componentDidUpdate(prevProps) {
     // if (!prevProps.latestTrades.length && this.props.latestTrades.length) {
-    if (this.props.latestTrades.length && !this.state.collectedFees) {
+    if (this.props.latestTrades && !this.state.collectedFees) {
       const collectedFees = this.calculateCollectedFees()
       this.setState({ collectedFees })
     }
@@ -72,6 +74,8 @@ class Last24HoursStats extends Component {
     const { latestTrades, relayers, tokens } = this.props
     const zrxDecimals = 18
 
+    console.log('latest trades ', latestTrades);
+
     let sum = new BigNumber(0)
     let feeRecipients = {}
     let tokenVolume = {}
@@ -82,16 +86,22 @@ class Last24HoursStats extends Component {
     // loop through trades
     _.forEach(latestTrades, (trade) => {
       // total fees
-      const totalFee = trade.args.paidMakerFee.add(trade.args.paidTakerFee)
+      console.log('fee example ', trade.args.paidMakerFee);
+      const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
       sum = sum.add(totalFee)
       // recipient
-      feeRecipients[trade.args.feeRecipient] = feeRecipients[trade.args.feeRecipient].add(totalFee)
+      if (feeRecipients[trade.args.feeRecipient]) {
+        feeRecipients[trade.args.feeRecipient] = feeRecipients[trade.args.feeRecipient].add(totalFee)
+      } else {
+        console.log('Unknown fee recipient')
+      }
+
       // token volume groupings
       if (tokens[trade.args.makerToken]) {
-        tokenVolume[trade.args.makerToken] = tokenVolume[trade.args.makerToken].add(trade.args.filledMakerTokenAmount)
+        tokenVolume[trade.args.makerToken] = tokenVolume[trade.args.makerToken].add(new BigNumber(trade.args.filledMakerTokenAmount))
       }
       if (tokens[trade.args.takerToken]) {
-        tokenVolume[trade.args.takerToken] = tokenVolume[trade.args.takerToken].add(trade.args.filledTakerTokenAmount)
+        tokenVolume[trade.args.takerToken] = tokenVolume[trade.args.takerToken].add(new BigNumber(trade.args.filledTakerTokenAmount))
       }
     })
     const reducedTokenVolume = this.cleanTokensWithNoOrdersFilled(tokenVolume)
@@ -131,7 +141,7 @@ class Last24HoursStats extends Component {
     const { relayers, tokens, latestTrades, market } = this.props
     const { collectedFees, tokenPrices } = this.state
 
-    if (!latestTrades.length) {
+    if (!latestTrades) {
       return <Loader />
     }
     console.log('this.state.tokenPrices', tokenPrices);
@@ -163,7 +173,11 @@ class Last24HoursStats extends Component {
             </Cell>
           </Grid>
         </CardText>
-        <TradesTable />
+        <TradesTable
+          relayers={relayers}
+          tokens={tokens}
+          latestTrades={latestTrades}
+        />
       </Card>
     )
   }
@@ -181,12 +195,19 @@ const relayListQuery = graphql(RELAY_LIST, {
   }),
 })
 
+const latestTradesQuery = graphql(TRADES_LIST, {
+  props: ({ data: { allTradeses }}) => ({
+    latestTrades: allTradeses,
+  })
+})
+
 export default compose(
   relayListQuery,
   tokenListQuery,
+  latestTradesQuery,
   connect((state) => {
     return {
-      latestTrades: state.network.latestTrades,
+      // latestTrades: state.network.latestTrades,
       market: state.market,
     }
   })
