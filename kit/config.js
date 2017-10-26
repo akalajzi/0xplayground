@@ -1,5 +1,7 @@
 // Simple class to act as a singleton for app-wide configuration.
 
+// We'll start with a common config that can be extended separately by the
+// server/client, to provide environment-specific functionality
 class Common {
   constructor() {
     // Store reducers in a `Map`, for easy key retrieval
@@ -84,11 +86,22 @@ if (SERVER) {
       // Create a set for routes -- to retrieve based on insertion order
       this.routes = new Set();
 
+      // Custom middleware
+      this.beforeMiddleware = new Set();
+      this.middleware = new Set();
+
       // Koa application function. But default, this is null
       this.koaAppFunc = null;
 
       // Flag for setting whether plain HTTP should be disabled
       this.enableHTTP = true;
+
+      // Flag for enabling the `Response-Time` Koa middleware timer
+      this.enableTiming = true;
+
+      // Flag for enabling Koa Helmet HTTP hardening. True, by default.
+      this.enableKoaHelmet = true;
+      this.koaHelmetOptions = null;
 
       // Force SSL. Rewrites all non-SSL queries to SSL.  False, by default.
       this.enableForceSSL = false;
@@ -96,9 +109,6 @@ if (SERVER) {
       // Options for enabling SSL. By default, this is null. If SSL is enabled
       // in userland, this would instead hold an object of options
       this.sslOptions = null;
-
-      // Custom middleware -- again, based on insertion order
-      this.middleware = new Set();
 
       // GraphQL schema (if we're using an internal server)
       this.graphQLSchema = null;
@@ -108,9 +118,9 @@ if (SERVER) {
       // default to the string value
       this.graphiQL = false;
 
-      // Enable body parsing by default.  Leave `koa-bodyparser` opts as default
+      // Enable body parsing by default.
       this.enableBodyParser = true;
-      this.bodyParserOptions = {};
+      this.bodyParserOptions = null;
 
       // CORS options for `koa-cors`
       this.corsOptions = {};
@@ -147,6 +157,11 @@ if (SERVER) {
       this.enableHTTP = false;
     }
 
+    // Disable timing the request. This will remove the `Response-Time` header
+    disableTiming() {
+      this.enableTiming = false;
+    }
+
     // Disable the optional `koa-bodyparser`, to prevent POST data being sent to
     // each request.  By default, body parsing is enabled.
     disableBodyParser() {
@@ -155,6 +170,15 @@ if (SERVER) {
 
     setBodyParserOptions(opt = {}) {
       this.bodyParserOptions = opt;
+    }
+
+    // Disable Koa Helmet option, to prevent HTTP hardening by default
+    disableKoaHelmet() {
+      this.enableKoaHelmet = false;
+    }
+
+    setKoaHelmetOptions(opt = {}) {
+      this.koaHelmetOptions = opt;
     }
 
     // 404 handler for the server.  By default, `kit/entry/server.js` will
@@ -177,7 +201,12 @@ if (SERVER) {
       this.errorHandler = func;
     }
 
-    // Add custom middleware.  This should be an async func, for use with Koa
+    // Add custom middleware.  This should be an async func, for use with Koa.
+    // There are two entry points - 'before' and 'after'
+    addBeforeMiddleware(middlewareFunc) {
+      this.beforeMiddleware.add(middlewareFunc);
+    }
+
     addMiddleware(middlewareFunc) {
       this.middleware.add(middlewareFunc);
     }
