@@ -60,7 +60,9 @@ export default class Main extends Component {
           meta={[{
             name: 'description',
             content: 'Navigating the blockchain',
-          }]} />
+          }]}>
+          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Roboto:400,500,700" />
+        </Helmet>
         <Blockchain />
         <NavigationDrawer
           autoclose
@@ -74,7 +76,7 @@ export default class Main extends Component {
           contentStyle={styles.content}
           contentClassName="md-grid"
           >
-            <Switch key={location.pathname}>
+            <Switch>
               <Route exact path={navItems[0].to} component={Home} />
               <Route exact path={navItems[1].to} component={Relayers} />
               <Route exact path={navItems[2].to} component={Tokens} />
