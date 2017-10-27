@@ -180,9 +180,9 @@ if (SERVER) {
 
     const blockchain = new Blockchain()
     blockchain.initialFetch()
+    // FOR FETCHING SINCE THE DAWN OF ZRX
+    // blockchain.historyFetch()
 
-    // app.context.blockchain = new Blockchain()
-    // app.context.blockchain.initialFetch()
 
     // We'll also add a generic error handler, that prints out to the console.
     // Note: This is a 'lower-level' than `config.setErrorHandler()` because

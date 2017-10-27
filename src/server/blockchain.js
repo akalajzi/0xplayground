@@ -23,7 +23,10 @@ export default class Blockchain {
     // use web3 from ZeroEx
     this.web3 = this.zeroEx._web3Wrapper.web3
     this.web3Sync = new Web3(new Web3.providers.HttpProvider(NETWORK.infura))
-
+    // history fetch
+    // this.historyStartDate = null
+    // this.hStart = null
+    //
     this.marketInterval = null // market polling interval
     this.networkId = null
     this.blockHeight = null
@@ -53,6 +56,9 @@ export default class Blockchain {
       // NETWORK id is 1 pretty much forever
       // this.fetchNetworkId(this.web3)
       this.fetchBlockHeight()
+
+      // subscribe for ongoing trades
+      this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
     })
     .catch((err) => {
       console.error('getBlockchainInfo failed ', err)
@@ -87,8 +93,6 @@ export default class Blockchain {
   fetch24hTrades = (dailylogs = [], i = 1) => { // iterator is just a control factor, remove later
     const now = moment().utc()
     const startTime = now.subtract(24, 'hours').unix()
-    // subscribe for ongoing trades
-    this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
 
     const toBlock = this.lastFetchedBlock || this.blockHeight
     const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
@@ -174,6 +178,10 @@ export default class Blockchain {
     })
   }
 
+  /*******************************************************
+  *    MARKET POLLING
+  *********************************************************/
+
   fetchCCPrices = () => {
     getFiatValue("USD", ["ZRX", "ETH"])
     .then((result) => {
@@ -197,6 +205,57 @@ export default class Blockchain {
   stopPollingForMarketPrices = () => {
     clearInterval(this.marketInterval)
   }
+
+  /*******************************************************
+  *    HISTORY FETCHING CHAIN
+  *********************************************************/
+
+  // historyFetch() {
+  //   this.historyStartDate = '20170817'
+  //   this.hStart = moment(this.historyStartDate).unix()
+  //   this.blockHeight = 4441432
+  //
+  //   this.fetchHistoryTrades()
+  // }
+  //
+  // fetchHistoryTrades = (i = 1) => { // iterator is just a control factor, remove later
+  //   const toBlock = this.lastFetchedBlock || this.blockHeight
+  //   const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
+  //   console.log(`Fetch # ${i} from ${fromBlock} to ${toBlock}`);
+  //   this.processLogBatch(fromBlock, toBlock, this.hStart)
+  //   .then(({ mappedLogs, overTheLimit}) => {
+  //
+  //     _.forEach(mappedLogs, (log) => {
+  //       this.sleep(250)
+  //       .then(() => {
+  //         this.setLatestTrades(log)
+  //         .then((res) => {
+  //           console.log('Set trade success! ', log.blockNumber)
+  //         })
+  //         .catch((err) => {
+  //           console.error('setLatestTrades error blockNumber ', log.blockNumber)
+  //         })
+  //       })
+  //     })
+  //
+  //     if (!overTheLimit) {
+  //       this.fetchHistoryTrades(i + 1)
+  //     }
+  //
+  //   })
+  //   .catch((err) => {
+  //     console.error("processLogBatch failed", err)
+  //   })
+  // }
+  //
+  // sleep = (ms) => {
+  //   return new Promise(resolve => setTimeout(resolve, ms));
+  // }
+
+
+  /*******************************************************
+  *    GRAPHQL
+  *********************************************************/
 
   getBlockchainInfo = () => {
     const query = `

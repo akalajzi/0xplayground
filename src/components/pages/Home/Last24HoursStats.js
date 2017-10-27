@@ -131,7 +131,7 @@ class Last24HoursStats extends Component {
       let tokenPrices = {}
       _.forEach(tokenAddresses, (address) => {
         const symbol = tokens[address].symbol
-        tokenPrices[address] = 1 / result[market.currency][symbol]
+        tokenPrices[address] = result[market.currency][symbol] ? 1 / result[market.currency][symbol] : result[market.currency][symbol]
       })
       this.setState({ tokenPrices })
     })
