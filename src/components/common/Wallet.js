@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -6,6 +7,10 @@ import ETH from 'src/const/eth'
 import { setActiveAccount, setNetwork } from 'src/reducers/wallet'
 
 class Wallet extends Component {
+  static propTypes = {
+    silent: PropTypes.bool,
+  }
+
   constructor(props) {
     super(props)
 
@@ -71,6 +76,9 @@ class Wallet extends Component {
 
   render() {
     const { networkId, activeAccount } = this.props.wallet
+
+    if (this.props.silent) { return null }
+
     if (!this.state.web3) {
       return <div className="Wallet">Web3 not found. Get MetaMask!</div>
     } else if (!activeAccount) {

@@ -63,7 +63,7 @@ export default class Main extends Component {
           }]}>
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Roboto:400,500,700" />
         </Helmet>
-        <Blockchain />
+        <Blockchain fetchPastTrades />
         <NavigationDrawer
           autoclose
           toolbarTitle={<Title />}

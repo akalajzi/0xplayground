@@ -13,9 +13,7 @@ class Tokens extends Component {
 
     return (
       <div className="control">
-        <Grid>
-          <Wallet />
-        </Grid>
+        <Wallet silent />
         <Grid>
           <Cell align='stretch' size={12}>
             <TokenList amMe={amMe} />

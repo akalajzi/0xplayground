@@ -58,7 +58,7 @@ export default class DailyTokenVolumeCard extends Component {
 
 
     let rows = [
-      <TableRow key='tvtotal'>
+      <TableRow key='tvtotal' className='TitleRow'>
         <TableColumn>Total Volume</TableColumn>
         <TableColumn></TableColumn>
         <TableColumn>{

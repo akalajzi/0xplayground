@@ -1,18 +1,13 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-
-import { Grid, Cell, Paper } from 'react-md'
+import { Grid, Cell } from 'react-md'
 
 import Wallet from 'src/components/common/Wallet'
-import Blockchain from 'src/components/blockchain/Blockchain'
 import Last24HoursStats from './Last24HoursStats'
 
-class Home extends Component {
+export default class Home extends Component {
   render() {
     return(
       <div className="home">
-        <Blockchain fetchPastTrades />
         <Grid>
           <Wallet />
         </Grid>
@@ -25,13 +20,3 @@ class Home extends Component {
     )
   }
 }
-
-export default connect((state) => {
-  return {
-    network: state.network
-  }
-}, (dispatch) => {
-  return bindActionCreators({
-    //,
-  }, dispatch)
-})(Home)

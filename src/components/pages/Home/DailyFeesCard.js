@@ -54,7 +54,7 @@ export default class DailyFeesCard extends Component {
     const totalFeesFiat = zrxPrice * collectedFees.total
 
     let rows = [
-      <TableRow key='totalfees'>
+      <TableRow key='totalfees' className='TitleRow'>
         <TableColumn>Total Fees</TableColumn>
         <TableColumn>{collectedFees.total} ZRX</TableColumn>
         <TableColumn>
