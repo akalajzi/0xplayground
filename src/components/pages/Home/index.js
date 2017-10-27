@@ -40,6 +40,7 @@ class Home extends Component {
 }
 
 const latestTradesQuery = graphql(TRADES_LIST, {
+  options: { pollInterval: 60000 }, // 1 minute refresh
   props: ({ data: { allTradeses }}) => ({
     latestTrades: allTradeses,
   })
