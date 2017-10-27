@@ -22,7 +22,6 @@ import {
 import { mapTokenList } from 'src/components/blockchain/helper'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
-// import { TRADES_LIST } from 'src/graphql/trades.graphql'
 
 import { getFiatValue } from 'src/util/marketApi'
 
@@ -128,7 +127,7 @@ class Last24HoursStats extends Component {
       })
 
       // place ETH price in WETH place
-      result[market.currency]['WETH'] = 1 / market.ethPrice
+      result[market.currency]['WETH'] = result[market.currency]['ETH']
       let tokenPrices = {}
       _.forEach(tokenAddresses, (address) => {
         const symbol = tokens[address].symbol

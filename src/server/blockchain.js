@@ -150,6 +150,7 @@ export default class Blockchain {
   }
 
   handleLogFillEvent = (err, log) => {
+    console.log('New trade received');
     if (_.find(this.latestTrades, trade => trade.transactionHash === log.transactionHash )) {
       // skip transactions we already handled, if they somehow get here
       return null

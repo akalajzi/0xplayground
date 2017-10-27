@@ -21,7 +21,7 @@ export function fetchPrices(fromSymbol, toSymbols = [], timestamp = null) {
   // https://min-api.cryptocompare.com/data/pricehistorical?fsym=ZRX&tsyms=USD&ts=1508490121&extraParams=your_app_name
   const tsyms = toSymbols.map((sym) => {
     if (sym.toUpperCase() === 'WETH') {
-      return
+      return "ETH"
     } else {
       return sym.toUpperCase()
     }
