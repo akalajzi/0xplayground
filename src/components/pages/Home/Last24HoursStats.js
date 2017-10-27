@@ -22,7 +22,7 @@ import {
 import { mapTokenList } from 'src/components/blockchain/helper'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
-import { TRADES_LIST } from 'src/graphql/trades.graphql'
+// import { TRADES_LIST } from 'src/graphql/trades.graphql'
 
 import { getFiatValue } from 'src/util/marketApi'
 
@@ -44,7 +44,6 @@ class Last24HoursStats extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    // if (!prevProps.latestTrades.length && this.props.latestTrades.length) {
     if (this.props.latestTrades && !this.state.collectedFees) {
       const collectedFees = this.calculateCollectedFees()
       this.setState({ collectedFees })
@@ -192,16 +191,16 @@ const relayListQuery = graphql(RELAY_LIST, {
   }),
 })
 
-const latestTradesQuery = graphql(TRADES_LIST, {
-  props: ({ data: { allTradeses }}) => ({
-    latestTrades: allTradeses,
-  })
-})
+// const latestTradesQuery = graphql(TRADES_LIST, {
+//   props: ({ data: { allTradeses }}) => ({
+//     latestTrades: allTradeses,
+//   })
+// })
 
 export default compose(
   relayListQuery,
   tokenListQuery,
-  latestTradesQuery,
+  // latestTradesQuery,
   connect((state) => {
     return {
       market: state.market,
