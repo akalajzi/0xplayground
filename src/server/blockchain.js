@@ -1,12 +1,14 @@
 import Web3 from 'web3'
 import moment from 'moment'
 import _ from 'lodash'
+import axios from 'axios'
 
 import { connectZeroEx, mapTokenList, mapLog } from 'src/components/blockchain/helper'
 import INFURA from 'src/const/infura'
 import ETH from 'src/const/eth'
 import API from 'src/const/api'
 import { getFiatValue } from 'src/util/marketApi'
+
 
 const GraphQLClient = require('graphql-request').GraphQLClient
 
@@ -22,6 +24,7 @@ export default class Blockchain {
     this.web3 = this.zeroEx._web3Wrapper.web3
     this.web3Sync = new Web3(new Web3.providers.HttpProvider(NETWORK.infura))
 
+    this.marketInterval = null // market polling interval
     this.networkId = null
     this.blockHeight = null
     this.tokens = null
@@ -38,12 +41,16 @@ export default class Blockchain {
     // console.log('Blockchain initial fetch starting!');
     this.getTokens().then((res) => { this.tokens = mapTokenList(res.allTokens) })
     this.getLatestTrades().then((res) => { this.latestTrades = res.allTrades })
+    //
     this.getBlockchainInfo()
     .then((res) => {
       this.blockchainInfo = res.allBlockchainInfoes
       this.networkId = _.find(this.blockchainInfo, item => item.name === 'networkId').value
       this.blockHeight = _.find(this.blockchainInfo, item => item.name === 'blockHeight').value
 
+      // store ZRX and ETH to USD market prices in graphql for faster initial load
+      this.startPollingForMarketPrices()
+      // NETWORK id is 1 pretty much forever
       // this.fetchNetworkId(this.web3)
       this.fetchBlockHeight()
     })
@@ -91,7 +98,6 @@ export default class Blockchain {
       if (!overTheLimit) {
         this.fetch24hTrades(collectedLogs, i + 1)
       } else {
-        // console.log('24 HOURS LOGGED: ', collectedLogs)
         _.forEach(collectedLogs, (log) => {
           this.setLatestTrades(log)
           .catch((err) => {
@@ -166,6 +172,30 @@ export default class Blockchain {
       const mappedLog = mapLog(log, this.tokens)
       this.setLatestTrades(mappedLog)
     })
+  }
+
+  fetchCCPrices = () => {
+    getFiatValue("USD", ["ZRX", "ETH"])
+    .then((result) => {
+      const zrxPrice = 1 / result.data['USD']['ZRX']
+      const ethPrice = 1 / result.data['USD']['ETH']
+      this.setInfoItem('zrxPrice', zrxPrice.toString())
+      this.setInfoItem('ethPrice', ethPrice.toString())
+    })
+    .catch((error) => {
+      console.log("Cannot get fiat values", error);
+    })
+  }
+
+  startPollingForMarketPrices = () => {
+    this.fetchCCPrices()
+    this.marketInterval = setInterval(() => {
+      this.fetchCCPrices()
+    }, 3600000)
+  }
+
+  stopPollingForMarketPrices = () => {
+    clearInterval(this.marketInterval)
   }
 
   getBlockchainInfo = () => {

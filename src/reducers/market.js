@@ -14,6 +14,8 @@ export default function reducer(state, action) {
       return {...state, error: action.error }
     case 'market/SET_ZRX':
       return { ...state, zrxPrice: action.price }
+    case 'market/SET_ETH':
+      return { ...state, ethPrice: action.price }
     case 'market/SET_MARKET_VALUES':
       return {
         ...state,
@@ -39,6 +41,10 @@ export function setMarketValues(data) {
 
 export function setZrxPrice(price) {
   return { type: 'market/SET_ZRX', price }
+}
+
+export function setEthPrice(price) {
+  return { type: 'market/SET_ETH', price }
 }
 
 export function setCurrency(currency) {

@@ -190,12 +190,6 @@ const relayListQuery = graphql(RELAY_LIST, {
   }),
 })
 
-// const latestTradesQuery = graphql(TRADES_LIST, {
-//   props: ({ data: { allTradeses }}) => ({
-//     latestTrades: allTradeses,
-//   })
-// })
-
 export default compose(
   relayListQuery,
   tokenListQuery,

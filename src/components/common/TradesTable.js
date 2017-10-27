@@ -16,6 +16,7 @@ import _ from 'lodash'
 
 import TokenAmount from 'src/components/common/TokenAmount'
 import TooltipLink from 'src/components/common/TooltipLink'
+import Loader from 'src/components/common/Loader'
 
 import ETH from 'src/const/eth'
 
@@ -146,7 +147,8 @@ class TradesTable extends Component {
   }
 
   render() {
-    const { latestTrades, walletAccount } = this.props
+    const { latestTrades, walletAccount, tokens } = this.props
+    const readyToRender = latestTrades && tokens
     return(
       <DataTable plain className="TradesTable">
         <TableHeader>
@@ -161,7 +163,10 @@ class TradesTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          { latestTrades && this.renderTrades(latestTrades, walletAccount) }
+          { readyToRender
+            ? this.renderTrades(latestTrades, walletAccount)
+            : <Loader />
+          }
         </TableBody>
       </DataTable>
     )
