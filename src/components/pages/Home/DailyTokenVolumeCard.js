@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import BigNumber from 'bignumber.js'
 import { graphql, compose } from 'react-apollo'
 import _ from 'lodash'
-
 import PropTypes from 'prop-types'
+
 import {
   Card,
   CardTitle,
@@ -25,8 +25,9 @@ import {
   Cell as PieCell,
   ResponsiveContainer,
 } from 'recharts'
+import UI from 'src/const/ui'
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#9148fb'];
+const COLORS = UI.CHART_COLORS
 
 import { mapTokenList } from 'src/components/blockchain/helper'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
@@ -56,6 +57,11 @@ export default class DailyTokenVolumeCard extends Component {
       }
     })
 
+    const volumesCol = Object.keys(tokenVolume).map((address) => {
+      return { address, volume: tokenVolume[address] * tokenPrices[address] }
+    })
+    const volColSorted = _.sortBy(volumesCol, 'volume').reverse()
+
 
     let rows = [
       <TableRow key='tvtotal' className='TitleRow'>
@@ -69,68 +75,67 @@ export default class DailyTokenVolumeCard extends Component {
       </TableRow>
     ]
 
-    for (let address in tokenVolume) {
-      if (tokenVolume.hasOwnProperty(address)) {
-        const fiatVolume = tokenPrices
-          ? `${fiat.symbol} ${(tokenVolume[address] * tokenPrices[address]).toFixed(fiat.decimal_digits)}`
-          : '...'
-        rows.push(
-          <TableRow key={'tv' + address}>
-            <TableColumn>{tokens[address].name}</TableColumn>
-            <TableColumn>{tokenVolume[address]}</TableColumn>
-            <TableColumn>{fiatVolume}</TableColumn>
-          </TableRow>
-        )
-      }
-    }
+    _.forEach(volColSorted, (item) => {
+      const fiatVolume = tokenPrices
+        ? `${fiat.symbol} ${item.volume.toFixed(fiat.decimal_digits)}`
+        : '...'
+      rows.push(
+        <TableRow key={'tv' + item.address}>
+          <TableColumn>{tokens[item.address].name}</TableColumn>
+          <TableColumn>{tokenVolume[item.address]}</TableColumn>
+          <TableColumn>{fiatVolume}</TableColumn>
+        </TableRow>
+      )
+    })
     return rows
   }
 
   render() {
-    const { collectedFees, tokens } = this.props
-
-    if (!collectedFees || !tokens) {
-      return <Loader />
-    }
-
-    const tokenVolumeForChart = this.tokenVolumeForChart(collectedFees.tokenVolume)
+    const { collectedFees, tokens, tokenPrices } = this.props
+    const loading = !collectedFees || !tokens || !tokenPrices
+    const tokenVolumeForChart = collectedFees && this.tokenVolumeForChart(collectedFees.tokenVolume)
 
     return(
       <Card>
         <CardTitle title="24h Token Volume"/>
         <CardText>
-          <Grid>
-            <Cell size={8}>
-              <DataTable plain className="VolumeTable NarrowRows">
-                <TableBody>
-                  { collectedFees.tokenVolume && this.renderTokenVolumes(collectedFees.tokenVolume) }
-                </TableBody>
-              </DataTable>
-            </Cell>
+          {
+            loading
+            ? <Loader />
+            : <Grid>
+              <Cell size={8}>
+                <DataTable plain className="VolumeTable NarrowRows">
+                  <TableBody>
+                    { collectedFees.tokenVolume && this.renderTokenVolumes(collectedFees.tokenVolume) }
+                  </TableBody>
+                </DataTable>
+              </Cell>
 
-            <Cell size={4}>
-              <Paper zDepth={0}>
-                <ResponsiveContainer width="100%" height={180}>
-                  <PieChart>
-                    <Pie
-                      data={tokenVolumeForChart}
-                      dataKey='value'
-                      innerRadius={0}
-                      outerRadius={80}
-                      fill='#8884d8'
-                      paddingAngle={0}
-                    >
-                      {
-                        tokenVolumeForChart.map((entry, index) => {
-                          return <PieCell key={index} fill={COLORS[index % COLORS.length]} />
-                        })
-                      }
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </Paper>
-            </Cell>
-          </Grid>
+              <Cell size={4}>
+                <Paper zDepth={0}>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <PieChart>
+                      <Pie
+                        data={tokenVolumeForChart}
+                        dataKey='value'
+                        innerRadius={0}
+                        outerRadius={80}
+                        fill='#8884d8'
+                        paddingAngle={0}
+                      >
+                        {
+                          tokenVolumeForChart.map((entry, index) => {
+                            return <PieCell key={index} fill={COLORS[index % COLORS.length]} />
+                          })
+                        }
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </Paper>
+              </Cell>
+            </Grid>
+          }
+
         </CardText>
       </Card>
     )

@@ -22,8 +22,9 @@ import {
   Cell as PieCell,
   ResponsiveContainer,
 } from 'recharts'
+import UI from 'src/const/ui'
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#9148fb'];
+const COLORS = UI.CHART_COLORS
 
 
 import Loader from 'src/components/common/Loader'
@@ -53,6 +54,11 @@ export default class DailyFeesCard extends Component {
     const zrxDecimals = 18
     const totalFeesFiat = zrxPrice * collectedFees.total
 
+    const feesCol = relayers.map((relayer, key) => {
+      return { address: relayer.address, volume: collectedFees.feeRecipients[relayer.address] }
+    })
+    const feesColSorted = _.sortBy(feesCol, 'volume').reverse()
+
     let rows = [
       <TableRow key='totalfees' className='TitleRow'>
         <TableColumn>Total Fees</TableColumn>
@@ -68,10 +74,12 @@ export default class DailyFeesCard extends Component {
       </TableRow>
     ]
 
-    relayers.map((relayer, key) => {
-      const rFee = this.bigNumberToNumber(collectedFees.feeRecipients[relayer.address], zrxDecimals)
+    _.forEach(feesColSorted, (item) => {
+      const rFee = this.bigNumberToNumber(item.volume, zrxDecimals)
+      const relayer = _.find(relayers, (relayer) => { return relayer.address === item.address})
+
       rows.push(
-        <TableRow key={key}>
+        <TableRow key={item.address}>
           <TableColumn>{relayer.name}</TableColumn>
           <TableColumn>{rFee} ZRX</TableColumn>
           <TableColumn>
