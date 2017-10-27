@@ -14,19 +14,16 @@ import {
 } from 'react-md'
 import _ from 'lodash'
 
-// import { mapTokenList } from 'src/components/blockchain/helper'
-
 import TokenAmount from 'src/components/common/TokenAmount'
 import TooltipLink from 'src/components/common/TooltipLink'
 
 import ETH from 'src/const/eth'
-// import { RELAY_LIST } from 'src/graphql/relay.graphql'
-// import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 class TradesTable extends Component {
   // static propTypes = {
   //   relayers:
   //   tokens:
+  //   latestTrades:
   // }
 
   renderRelayer = (trade) => {
@@ -148,15 +145,8 @@ class TradesTable extends Component {
     return tableRows
   }
 
-  sort = (trades) => {
-    if (!trades) { return null }
-    // TODO: do actual sorting by timestamp
-    return trades
-  }
-
   render() {
     const { latestTrades, walletAccount } = this.props
-    const sortedTrades = this.sort(latestTrades)
     return(
       <DataTable plain className="TradesTable">
         <TableHeader>
@@ -171,32 +161,17 @@ class TradesTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          { latestTrades && this.renderTrades(sortedTrades, walletAccount) }
+          { latestTrades && this.renderTrades(latestTrades, walletAccount) }
         </TableBody>
       </DataTable>
     )
   }
 }
 
-// const relayListQuery = graphql(RELAY_LIST, {
-//   props: ({ data: {allRelays} }) => ({
-//     relayers: allRelays
-//   }),
-// })
-//
-// const tokenListQuery = graphql(TOKEN_LIST_QUERY, {
-//   props: ({ data: {allTokens} }) => ({
-//     tokens: mapTokenList(allTokens)
-//   }),
-// })
-
 export default compose(
-  // relayListQuery,
-  // tokenListQuery,
   connect((state) => {
     return {
       networkId: state.network.id,
-      // latestTrades: state.network.latestTrades,
       walletAccount: state.wallet.activeAccount,
     }
   })

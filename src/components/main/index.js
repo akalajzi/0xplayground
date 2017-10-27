@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
+import Helmet from 'react-helmet';
 import {
   Link,
   Route,
   Switch,
 } from 'react-router-dom';
-
-import Helmet from 'react-helmet';
 import {
   NavigationDrawer,
 } from 'react-md';
 
 import Blockchain from 'src/components/blockchain/Blockchain'
-
 import NavLink from './NavLink'
 import Title from './Title'
 

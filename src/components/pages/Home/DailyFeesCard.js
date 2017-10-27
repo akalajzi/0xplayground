@@ -32,6 +32,8 @@ import Loader from 'src/components/common/Loader'
 export default class DailyFeesCard extends Component {
 
   bigNumberToNumber = (amount, decimals) => {
+    if (!amount) { return 0 }
+
     if (typeof amount === "string") {
       amount = new BigNumber(amount)
     }

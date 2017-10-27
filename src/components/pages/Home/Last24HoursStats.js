@@ -111,6 +111,10 @@ class Last24HoursStats extends Component {
     }
   }
 
+  sortTrades = (trades) => {
+    return _.sortBy(trades, 'timestamp').reverse()
+  }
+
   fetchTokenPrices = (tokenVolume) => {
     const { tokens, market } = this.props
     const tokenAddresses = Object.keys(tokenVolume)
@@ -142,10 +146,6 @@ class Last24HoursStats extends Component {
     if (!latestTrades) {
       return <Loader />
     }
-    // console.log('this.state.tokenPrices', tokenPrices);
-    // const collectedFees = this.calculateCollectedFees()
-    // console.log('relayers ', relayers);
-    // console.log('collectedFees ', collectedFees);
 
     return(
       <Card>
@@ -173,7 +173,7 @@ class Last24HoursStats extends Component {
         <TradesTable
           relayers={relayers}
           tokens={tokens}
-          latestTrades={latestTrades}
+          latestTrades={this.sortTrades(latestTrades)}
         />
       </Card>
     )
@@ -204,7 +204,6 @@ export default compose(
   latestTradesQuery,
   connect((state) => {
     return {
-      // latestTrades: state.network.latestTrades,
       market: state.market,
     }
   })

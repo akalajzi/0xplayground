@@ -42,7 +42,7 @@ class TokenList extends Component {
 
   newTokenSubmit = () => {
     const { newContractAddress, newSymbol, newDecimals, newName } = this.state
-    if (newContractAddress.length && newSymbol.length && newDecimals) {
+    if (newContractAddress.length && newSymbol.length) {
       this.props.createToken({
         name: newName.length ? newName : newSymbol,
         symbol: newSymbol,
