@@ -40,15 +40,11 @@ export default class HistoryGraphs extends Component {
         name: moment(day.timestamp * 1000).format('MM/DD/YYYY'),
         zrxUsdPrice: parseFloat(day.zrxUsdPrice.toFixed(6)),
         ethUsdPrice: parseFloat(day.ethUsdPrice.toFixed(4)),
-        tradeVolume: day.tradeVolumeUsd,
-        feesPaid: day.feesPaidTotal,
-        // tradeVolume: day.tradeVolumeUsd ? day.tradeVolumeUsd.toFixed(2) : null, // data can be incomplete
-        // feesPaid: day.feesPaidTotal ? day.feesPaidTotal.toFixed(2) : null,
+        tradeVolume: day.tradeVolumeUsd ? parseFloat(day.tradeVolumeUsd.toFixed(2)) : null, // data can be incomplete
+        feesPaid: day.feesPaidTotal ? parseFloat(day.feesPaidTotal.toFixed(2)) : null,
       }
     })
-    console.log('data => ', data);
     this.setState({ sevenDaysData: data})
-    // return data
   }
 
   render() {
