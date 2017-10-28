@@ -2,6 +2,7 @@ import Web3 from 'web3'
 import moment from 'moment'
 import _ from 'lodash'
 import axios from 'axios'
+import BigNumber from 'bignumber.js'
 
 import { connectZeroEx, mapTokenList, mapLog } from 'src/components/blockchain/helper'
 import INFURA from 'src/const/infura'
@@ -23,10 +24,20 @@ export default class Blockchain {
     // use web3 from ZeroEx
     this.web3 = this.zeroEx._web3Wrapper.web3
     this.web3Sync = new Web3(new Web3.providers.HttpProvider(NETWORK.infura))
-    // history fetch
+
+    // history trades fetch
     // this.historyStartDate = null
     // this.hStart = null
+
+    // history calculations
+    this.offset = 86400 // 1 day in seconds
+    this.startTimestamp = 1502928001 // 17.08.2017.
+    this.now = moment().utc().unix()
+    this.historyDone = false
+    this.hBucketStart = this.startTimestamp
+
     //
+    this.allTrades = null
     this.marketInterval = null // market polling interval
     this.networkId = null
     this.blockHeight = null
@@ -43,7 +54,16 @@ export default class Blockchain {
   initialFetch() {
     // console.log('Blockchain initial fetch starting!');
     this.getTokens().then((res) => { this.tokens = mapTokenList(res.allTokens) })
-    this.getLatestTrades().then((res) => { this.latestTrades = res.allTrades })
+    this.getLatestTrades().then((res) => {
+      this.latestTrades = res.allTradeses // not a typo :)
+      // history calculations
+      // this.allTrades = res.allTradeses
+      // if (this.allTrades) {
+      //   this.calculateHistory()
+      // } else {
+      //   console.log('No trades fetched!');
+      // }
+    })
     //
     this.getBlockchainInfo()
     .then((res) => {
@@ -204,6 +224,160 @@ export default class Blockchain {
 
   stopPollingForMarketPrices = () => {
     clearInterval(this.marketInterval)
+  }
+
+  /*******************************************************
+  *    HISTORY CALCULATIONS
+  *********************************************************/
+
+  calculateHistory = () => {
+    this.fetchHistoryForBucket(this.hBucketStart, this.hBucketStart + this.offset)
+  }
+
+  fetchHistoryForBucket = (bucketStart, bucketEnd) => {
+    bucketStart = parseInt(bucketStart)
+    bucketEnd = parseInt(bucketEnd)
+    if (bucketStart >= this.now) {
+      console.log('Finished fetching history!')
+      return
+    }
+    console.log('Doing history for ' + moment(bucketStart * 1000).format('DD.MM.YYYY.'));
+    let history = {}
+    history['timestamp'] = bucketStart
+
+    const bucket = _.filter(this.allTrades, (trade) => {
+      return trade.timestamp >= bucketStart && trade.timestamp < bucketEnd
+    })
+
+    if (bucket.length === 0) {
+      if (typeof bucketStart !== 'number') {
+        console.log('Invalid timestamp ', bucketStart);
+        return
+      }
+      getFiatValue('USD', ['ZRX', 'ETH'], bucketStart)
+      .then((result) => {
+        // console.log(result);
+        history = {
+          timestamp: bucketStart,
+          startBlockNumber: null,
+          endBlockNumber: null,
+          zrxUsdPrice: 1 / result.data['USD']['ZRX'],
+          ethUsdPrice: 1 / result.data['USD']['ETH'],
+          feesPaidTotal: 0,
+          tradeVolumeUsd: 0,
+        }
+        this.setHistory(history)
+        this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
+      })
+      .catch((error) => {
+        console.log('Error fetching token prices. ', error.data);
+        return
+        this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
+      })
+
+    } else {
+      const sortedBucket = _.sortBy(bucket, 'timestmap')
+      history['startBlockNumber'] = _.first(sortedBucket).blockNumber
+      history['endBlockNumber'] = _.last(sortedBucket).blockNumber
+
+      // get zrx fees
+      let feesPaidTotal = new BigNumber(0)
+      _.forEach(sortedBucket, (trade) => {
+        const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
+        feesPaidTotal = feesPaidTotal.add(totalFee)
+      })
+      history['feesPaidTotal'] = this.bigNumberToNumber(feesPaidTotal, 18) // ZRX big number to ZRX decimals
+
+      // get all the traded tokens
+      let tokenVolume = {}
+      this.getTokens()
+      .then((res) => {
+        this.tokens = mapTokenList(res.allTokens)
+        // initial
+        _.forEach(this.tokens, (token) => { tokenVolume[token.address] = new BigNumber(0) })
+        // group by token
+        _.forEach(sortedBucket, (trade) => {
+          if (this.tokens[trade.args.makerToken]) {
+            tokenVolume[trade.args.makerToken] = tokenVolume[trade.args.makerToken].add(new BigNumber(trade.args.filledMakerTokenAmount))
+          }
+          if (this.tokens[trade.args.takerToken]) {
+            tokenVolume[trade.args.takerToken] = tokenVolume[trade.args.takerToken].add(new BigNumber(trade.args.filledTakerTokenAmount))
+          }
+        })
+        // remove those without trade
+        const reducedTokenVolume = this.cleanTokensWithNoOrdersFilled(tokenVolume)
+
+        // get market data
+        const tokens = this.tokens
+        const tokenAddresses = Object.keys(reducedTokenVolume)
+        const tokenSymbols = tokenAddresses.map((address) => tokens[address].symbol)
+        const loadedTokenSymbols = _.union(tokenSymbols, ['ZRX', 'ETH'])
+        console.log('asking symbols: ', loadedTokenSymbols, ' on timestamp ', bucketStart * 1000);
+        getFiatValue('USD', loadedTokenSymbols, bucketStart) // get price at bucketStart timestamp
+        .then((res) => {
+          if (res.data) {
+            console.log(res.data['USD']);
+          }
+          let result = {}
+          result['USD'] = {}
+
+          // TODO: this is good, fix in normal operation
+          if (_.isArray(res)) {
+            _.forEach(res, (chunk) => {
+              _.assign(result['USD'], chunk.data['USD'])
+            })
+          } else {
+            _.assign(result['USD'], res.data['USD'])
+          }
+
+          // place ETH price in WETH place
+          result['USD']['WETH'] = result['USD']['ETH']
+          history['zrxUsdPrice'] = 1 / result['USD']['ZRX']
+          history['ethUsdPrice'] = 1 / result['USD']['ETH']
+
+
+          let tokenPrices = {}
+          _.forEach(tokenAddresses, (address) => {
+            const symbol = tokens[address].symbol
+            tokenPrices[address] = result['USD'][symbol] ? 1 / result['USD'][symbol] : result['USD'][symbol]
+          })
+
+          // marry token prices to volumes
+          let tradeVolumeUsd = new BigNumber(0)
+          _.forEach(tokenAddresses, (address) => { // array of actually used token addresses
+            let tokenSum = reducedTokenVolume[address] * tokenPrices[address]
+            tokenSum = tokenSum.toFixed(2)
+            tradeVolumeUsd = tradeVolumeUsd.add(new BigNumber(tokenSum))
+          })
+          history['tradeVolumeUsd'] = tradeVolumeUsd.toNumber()
+
+          // now go push it to gql
+          this.setHistory(history)
+          this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
+
+        })
+        .catch((error) => {
+          console.log('Error getting token prices', error);
+          return
+          this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
+
+        })
+      })
+    }
+  }
+
+  cleanTokensWithNoOrdersFilled = (tokenVolume) => {
+    let result = {}
+    _.forEach(this.tokens, (token) => {
+      if (!tokenVolume[token.address].isZero()) {
+        result[token.address] = this.bigNumberToNumber(tokenVolume[token.address], token.decimals)
+      }
+    })
+    return result
+  }
+
+  bigNumberToNumber = (amount, decimals) => {
+    return amount.div(10**decimals).toDigits(6).toNumber()
   }
 
   /*******************************************************
@@ -375,15 +549,30 @@ export default class Blockchain {
     return this.graphqlClient.request(query, trade)
   }
 
-  // startPolling() {
-  //   this.pollInterval = setInterval(() => {
-  //     console.log('polling...')
-  //     this.counter += 1
-  //   }, 2000)
-  // }
-  //
-  // stopPolling() {
-  //   clearInterval(this.pollInterval)
-  // }
+  setHistory = (history) => {
+    console.log('Setting history!');
+    const query = `mutation createHistory(
+      $timestamp: Int!,
+      $startBlockNumber: String,
+      $endBlockNumber: String,
+      $zrxUsdPrice: Float,
+      $ethUsdPrice: Float,
+      $tradeVolumeUsd: Float,
+      $feesPaidTotal: Float,
+    ) {
+      createHistory(
+        timestamp: $timestamp,
+        startBlockNumber: $startBlockNumber,
+        endBlockNumber: $endBlockNumber,
+        zrxUsdPrice: $zrxUsdPrice,
+        ethUsdPrice: $ethUsdPrice,
+        tradeVolumeUsd: $tradeVolumeUsd,
+        feesPaidTotal: $feesPaidTotal,
+      ) {
+        id
+      }
+    }`
+    return this.graphqlClient.request(query, history)
+  }
 
 }
