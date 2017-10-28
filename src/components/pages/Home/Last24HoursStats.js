@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import BigNumber from 'bignumber.js'
 import { graphql, compose } from 'react-apollo'
 import _ from 'lodash'
-
 import PropTypes from 'prop-types'
 import {
   Card,
@@ -33,6 +32,10 @@ import Loader from 'src/components/common/Loader'
 import CURRENCIES from 'src/const/currencies'
 
 class Last24HoursStats extends Component {
+  static propTypes = {
+    latestTrades: PropTypes.array,
+  }
+
   constructor(props) {
     super(props)
 
@@ -122,9 +125,13 @@ class Last24HoursStats extends Component {
       const result = {}
       result[market.currency] = {}
 
-      _.forEach(res, (chunk) => {
-        _.assign(result[market.currency], chunk.data[market.currency])
-      })
+      if (_.isArray(res)) {
+        _.forEach(res, (chunk) => {
+          _.assign(result[market.currency], chunk.data[market.currency])
+        })
+      } else {
+        _.assign(result[market.currency], res.data[market.currency])
+      }
 
       // place ETH price in WETH place
       result[market.currency]['WETH'] = result[market.currency]['ETH']

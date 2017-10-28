@@ -5,8 +5,10 @@ import moment from 'moment'
 import { Grid, Cell } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
+import { HISTORY_LIST } from 'src/graphql/history.graphql'
 import Wallet from 'src/components/common/Wallet'
 import Last24HoursStats from './Last24HoursStats'
+import HistoryGraphs from './HistoryGraphs'
 
 class Home extends Component {
   reduceTo24Hours = (trades) => {
@@ -19,7 +21,7 @@ class Home extends Component {
   }
 
   render() {
-    const { latestTrades } = this.props
+    const { latestTrades, history } = this.props
     const reducedTrades = latestTrades ? this.reduceTo24Hours(latestTrades) : null
 
     return(
@@ -29,9 +31,15 @@ class Home extends Component {
         </Grid>
         <Grid>
           <Cell align='stretch' size={12}>
-            <Last24HoursStats
-              latestTrades={reducedTrades}
-            />
+            {
+              history && <HistoryGraphs history={history} />
+            }
+
+          </Cell>
+        </Grid>
+        <Grid>
+          <Cell align='stretch' size={12}>
+            <Last24HoursStats latestTrades={reducedTrades} />
           </Cell>
         </Grid>
       </div>
@@ -46,6 +54,13 @@ const latestTradesQuery = graphql(TRADES_LIST, {
   })
 })
 
+const historyQuery = graphql(HISTORY_LIST, {
+  props: ({ data: { allHistories }}) => ({
+    history: allHistories,
+  })
+})
+
 export default compose(
   latestTradesQuery,
+  historyQuery,
 )(Home)

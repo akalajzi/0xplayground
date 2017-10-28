@@ -321,7 +321,6 @@ export default class Blockchain {
           let result = {}
           result['USD'] = {}
 
-          // TODO: this is good, fix in normal operation
           if (_.isArray(res)) {
             _.forEach(res, (chunk) => {
               _.assign(result['USD'], chunk.data['USD'])

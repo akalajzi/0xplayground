@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import HISTORY_FRAGMENT = gql`
+const HISTORY_FRAGMENT = gql`
   fragment HistoryFragment on History {
     id
     timestamp
@@ -8,6 +8,8 @@ import HISTORY_FRAGMENT = gql`
     endBlockNumber
     zrxUsdPrice
     ethUsdPrice
+    tradeVolumeUsd
+    feesPaidTotal
   }
 `
 
@@ -22,17 +24,22 @@ const HISTORY_LIST = gql`
 
 const CREATE_HISTORY_MUTATION = gql`
   mutation createHistory(
-    $timestamp: DateTime!,
-    $startBlockNumber: Int!,
-    $endBlockNumber: Int!,
+    $timestamp: Int!,
+    $startBlockNumber: String,
+    $endBlockNumber: String,
     $zrxUsdPrice: Float,
-    $ethUsdPrice: Float) {
+    $ethUsdPrice: Float,
+    $tradeVolumeUsd: Float,
+    $feesPaidTotal: Float,
+  ) {
       createHistory(
         timestamp: $timestamp,
         startBlockNumber: $startBlockNumber,
         endBlockNumber: $endBlockNumber,
         zrxUsdPrice: $zrxUsdPrice,
         ethUsdPrice: $ethUsdPrice,
+        tradeVolumeUsd: $tradeVolumeUsd,
+        feesPaidTotal: $feesPaidTotal,
       ) {
         ...HistoryFragment
       }
@@ -41,5 +48,6 @@ const CREATE_HISTORY_MUTATION = gql`
 `
 
 export {
-  CREATE_HISTORY_MUTATION
+  HISTORY_LIST,
+  CREATE_HISTORY_MUTATION,
 }
