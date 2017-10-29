@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import moment from 'moment'
@@ -14,11 +14,11 @@ import {
 } from 'react-md'
 import _ from 'lodash'
 
-import { TokenAmount, TooltipLink, Loader } from 'src/components/common'
+import { TokenAmount, TooltipLink } from 'src/components/common'
 
 import ETH from 'src/const/eth'
 
-class TradesTable extends Component {
+class TradesTable extends PureComponent {
   // static propTypes = {
   //   relayers:
   //   tokens:
@@ -161,10 +161,7 @@ class TradesTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          { readyToRender
-            ? this.renderTrades(latestTrades, walletAccount)
-            : <Loader />
-          }
+          { readyToRender && this.renderTrades(latestTrades, walletAccount) }
         </TableBody>
       </DataTable>
     )

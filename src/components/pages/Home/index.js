@@ -6,7 +6,7 @@ import { Grid, Cell, Paper } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
 import { HISTORY_LIST } from 'src/graphql/history.graphql'
-import { Wallet } from 'src/components/common'
+import { Wallet, Loader } from 'src/components/common'
 import Last24HoursStats from './Last24HoursStats'
 import HistoryGraphs from './HistoryGraphs'
 
@@ -29,10 +29,14 @@ class Home extends Component {
         <Grid>
           <Wallet />
         </Grid>
-        <Paper style={{background: '#ffffff'}}>
-          { history && <HistoryGraphs history={history} /> }
-          <Last24HoursStats latestTrades={reducedTrades} />
-        </Paper>
+        {
+          reducedTrades
+          ? <Paper style={{background: '#ffffff'}}>
+            { history && <HistoryGraphs history={history} /> }
+            <Last24HoursStats latestTrades={reducedTrades} />
+          </Paper>
+          : <Loader />
+        }
       </div>
     )
   }

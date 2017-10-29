@@ -20,6 +20,7 @@ import {
   Pie,
   Cell as PieCell,
   ResponsiveContainer,
+  Tooltip,
 } from 'recharts'
 import UI from 'src/const/ui'
 
@@ -105,6 +106,7 @@ export default class DailyTokenVolumeCard extends Component {
           <Paper zDepth={0}>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
+                <Tooltip />
                 <Pie
                   data={tokenVolumeForChart}
                   dataKey='value'
