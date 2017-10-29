@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 import _ from 'lodash'
 import moment from 'moment'
-import { Grid, Cell } from 'react-md'
+import { Grid, Cell, Paper } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
 import { HISTORY_LIST } from 'src/graphql/history.graphql'
@@ -29,19 +29,10 @@ class Home extends Component {
         <Grid>
           <Wallet />
         </Grid>
-        <Grid>
-          <Cell align='stretch' size={12}>
-            {
-              history && <HistoryGraphs history={history} />
-            }
-
-          </Cell>
-        </Grid>
-        <Grid>
-          <Cell align='stretch' size={12}>
-            <Last24HoursStats latestTrades={reducedTrades} />
-          </Cell>
-        </Grid>
+        <Paper style={{background: '#ffffff'}}>
+          { history && <HistoryGraphs history={history} /> }
+          <Last24HoursStats latestTrades={reducedTrades} />
+        </Paper>
       </div>
     )
   }

@@ -108,42 +108,37 @@ export default class DailyFeesCard extends Component {
     const feeRecipientsForChart = this.feeRecipientsForChart(collectedFees.feeRecipients)
 
     return(
-      <Card>
-        <CardTitle title="24h Fees Collected" />
-        <CardText>
-          <Grid>
-            <Cell size={8}>
-              <DataTable plain className="FeesTable NarrowRows">
-                <TableBody>
-                  { collectedFees && this.renderFees(collectedFees) }
-                </TableBody>
-              </DataTable>
-            </Cell>
-            <Cell size={4}>
-              <Paper zDepth={0}>
-                <ResponsiveContainer width="100%" height={180}>
-                  <PieChart>
-                    <Pie
-                      data={feeRecipientsForChart}
-                      dataKey='value'
-                      innerRadius={0}
-                      outerRadius={80}
-                      fill='#8884d8'
-                      paddingAngle={0}
-                    >
-                      {
-                        feeRecipientsForChart.map((entry, index) => {
-                          return <PieCell key={index} fill={COLORS[index % COLORS.length]} />
-                        })
-                      }
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </Paper>
-            </Cell>
-          </Grid>
-        </CardText>
-      </Card>
+      <Grid>
+        <Cell size={8}>
+          <DataTable plain className="FeesTable NarrowRows">
+            <TableBody>
+              { collectedFees && this.renderFees(collectedFees) }
+            </TableBody>
+          </DataTable>
+        </Cell>
+        <Cell size={4}>
+          <Paper zDepth={0}>
+            <ResponsiveContainer width="100%" height={180}>
+              <PieChart>
+                <Pie
+                  data={feeRecipientsForChart}
+                  dataKey='value'
+                  innerRadius={0}
+                  outerRadius={80}
+                  fill='#8884d8'
+                  paddingAngle={0}
+                >
+                  {
+                    feeRecipientsForChart.map((entry, index) => {
+                      return <PieCell key={index} fill={COLORS[index % COLORS.length]} />
+                    })
+                  }
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Cell>
+      </Grid>
     )
   }
 }

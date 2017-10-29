@@ -153,34 +153,34 @@ class Last24HoursStats extends Component {
     }
 
     return(
-      <Card>
-        <CardTitle title="Last 24 hours" />
-        <CardText>
-          <Grid>
-            <Cell size={6}>
-              <DailyTokenVolumeCard
-                collectedFees={collectedFees}
-                fiat={CURRENCIES[market.currency]}
-                tokenPrices={tokenPrices}
-                tokens={tokens}
-              />
-            </Cell>
-            <Cell size={6}>
-              <DailyFeesCard
-                collectedFees={collectedFees}
-                zrxPrice={market.zrxPrice}
-                fiat={CURRENCIES[market.currency]}
-                relayers={relayers}
-              />
-            </Cell>
-          </Grid>
-        </CardText>
-        <TradesTable
-          relayers={relayers}
-          tokens={tokens}
-          latestTrades={this.sortTrades(latestTrades)}
-        />
-      </Card>
+        <Grid>
+          <Cell size={6}>
+            <h2 style={{ padding: '24px 0 0 16px'}}>24h Token Volume</h2>
+            <DailyTokenVolumeCard
+              collectedFees={collectedFees}
+              fiat={CURRENCIES[market.currency]}
+              tokenPrices={tokenPrices}
+              tokens={tokens}
+            />
+          </Cell>
+          <Cell size={6}>
+            <h2 style={{ padding: '24px 0 0 16px'}}>24h Fees Collected</h2>
+            <DailyFeesCard
+              collectedFees={collectedFees}
+              zrxPrice={market.zrxPrice}
+              fiat={CURRENCIES[market.currency]}
+              relayers={relayers}
+            />
+          </Cell>
+          <Cell size={12} align='stretch'>
+            <h2 style={{ padding: '24px 0 0 16px'}}>Trades done in the last 24 hours</h2>
+            <TradesTable
+              relayers={relayers}
+              tokens={tokens}
+              latestTrades={this.sortTrades(latestTrades)}
+            />
+          </Cell>
+        </Grid>
     )
   }
 }

@@ -103,48 +103,52 @@ export default class HistoryGraphs extends Component {
     }
 
     return (
-      <Paper>
-        <Grid>
-          <Cell size={3}>
-            <span style={spanTitle}>ZRX price</span>
-            <PriceChange float='right' change={zrxChange} />
-            <span style={spanPrice}>
-              { zrxPrice && `$ ${zrxPrice}`}
-            </span>
-            <span style={spanDescription}>* History chart of daily closing values</span>
-            { sevenDaysData
-              ? <TinyChart data={sevenDaysData} dataKey='zrxUsdPrice' unit='$' strokeColor={CHART_COLORS[0]} strokeWidth={2} />
-              : <Loader />
-            }
-          </Cell>
-          <Cell size={3}>
-            <span style={spanTitle}>ETH price</span>
-            <PriceChange float='right' change={ethChange} />
-            <span style={spanPrice}>{ ethPrice && `$ ${ethPrice}`}</span>
-            <span style={spanDescription}>* History chart of daily closing values</span>
-            { sevenDaysData
-              ? <TinyChart data={sevenDaysData} dataKey='ethUsdPrice' unit='$' strokeColor={CHART_COLORS[1]} strokeWidth={2} />
-              : <Loader />
-            }
-          </Cell>
-          <Cell size={3}>
-            <span style={spanTitle}>Trade volume over 0x protocol</span>
-            <span style={spanDescription}>* Daily volume in USD based on traded tokens value at the time</span>
-            { sevenDaysData
-              ? <TinyChart data={sevenDaysData} dataKey='tradeVolume' unit='$' strokeColor={CHART_COLORS[2]} strokeWidth={2} />
-              : <Loader />
-            }
-          </Cell>
-          <Cell size={3}>
-            <span style={spanTitle}>Fees Paid (ZRX)</span>
-            <span style={spanDescription}>Total collected fees in ZRX by relayers</span>
-            { sevenDaysData
-              ? <TinyChart data={sevenDaysData} dataKey='feesPaid' unit='ZRX' strokeColor={CHART_COLORS[3]} strokeWidth={2} />
-              : <Loader />
-            }
-          </Cell>
-        </Grid>
-      </Paper>
+      <Grid>
+        <Cell align='stretch' size={12}>
+          {/* <Paper> */}
+            <Grid>
+              <Cell size={3}>
+                <span style={spanTitle}>ZRX price</span>
+                <PriceChange float='right' change={zrxChange} />
+                <span style={spanPrice}>
+                  { zrxPrice && `$ ${zrxPrice}`}
+                </span>
+                <span style={spanDescription}>* History chart of daily closing values</span>
+                { sevenDaysData
+                  ? <TinyChart data={sevenDaysData} dataKey='zrxUsdPrice' unit='$' strokeColor={CHART_COLORS[0]} strokeWidth={2} />
+                  : <Loader />
+                }
+              </Cell>
+              <Cell size={3}>
+                <span style={spanTitle}>ETH price</span>
+                <PriceChange float='right' change={ethChange} />
+                <span style={spanPrice}>{ ethPrice && `$ ${ethPrice}`}</span>
+                <span style={spanDescription}>* History chart of daily closing values</span>
+                { sevenDaysData
+                  ? <TinyChart data={sevenDaysData} dataKey='ethUsdPrice' unit='$' strokeColor={CHART_COLORS[1]} strokeWidth={2} />
+                  : <Loader />
+                }
+              </Cell>
+              <Cell size={3}>
+                <span style={spanTitle}>Trade volume over 0x protocol</span>
+                <span style={spanDescription}>* Daily volume in USD based on traded tokens value at the time</span>
+                { sevenDaysData
+                  ? <TinyChart data={sevenDaysData} dataKey='tradeVolume' unit='$' strokeColor={CHART_COLORS[2]} strokeWidth={2} />
+                  : <Loader />
+                }
+              </Cell>
+              <Cell size={3}>
+                <span style={spanTitle}>Fees Paid (ZRX)</span>
+                <span style={spanDescription}>Total collected fees in ZRX by relayers</span>
+                { sevenDaysData
+                  ? <TinyChart data={sevenDaysData} dataKey='feesPaid' unit='ZRX' strokeColor={CHART_COLORS[3]} strokeWidth={2} />
+                  : <Loader />
+                }
+              </Cell>
+            </Grid>
+      {/* </Paper> */}
+        </Cell>
+      </Grid>
     )
   }
 }
