@@ -1,6 +1,12 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts'
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Tooltip,
+  YAxis,
+} from 'recharts'
 
 export default class TinyChart extends PureComponent {
   static propTypes = {
@@ -17,6 +23,11 @@ export default class TinyChart extends PureComponent {
       <ResponsiveContainer width="100%" height={100}>
         <LineChart data={data}>
           <Tooltip />
+          <YAxis
+            type="number"
+            hide={true} 
+            domain={['dataMin', 'dataMax']}
+          />
           <Line
             type='monotone'
             dataKey={dataKey}

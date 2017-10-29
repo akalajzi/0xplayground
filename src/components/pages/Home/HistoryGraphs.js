@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import _ from 'lodash'
 
-import { Grid, Cell, Card, Paper } from 'react-md'
+import { Grid, Cell, Card, Paper, FontIcon, Tooltipped } from 'react-md'
+
+import { fetchCurrentZrxPrice, fetchCurrentEthPrice } from 'src/util/marketApi'
 
 import Loader from 'src/components/common/Loader'
 import TinyChart from 'src/components/common/TinyChart'
@@ -18,15 +20,49 @@ export default class HistoryGraphs extends Component {
   constructor(props) {
     super(props)
 
+    this.priceInterval = null
     this.state = {
       sevenDaysData: null,
+      zrxPrice: null,
+      zrxChange: null,
+      ethPrice: null,
+      ethChange: null,
     }
+  }
+
+  componentDidMount() {
+    this.fetchZrxEthPrices()
+    this.priceInterval = setInterval(() => {
+      this.fetchZrxEthPrices()
+    }, 30000)
+
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.priceInterval)
   }
 
   componentWillReceiveProps(nextProps) {
     if (!this.state.sevenDaysData && nextProps.history || this.props.history !== nextProps.history) {
       this.prepareDataForCharts(nextProps.history)
     }
+  }
+
+  fetchZrxEthPrices = () => {
+    fetchCurrentZrxPrice()
+    .then((res) => {
+      this.setState({
+        zrxPrice: res.data[0]['price_usd'],
+        zrxChange: res.data[0]['percent_change_1h'],
+      })
+    })
+    fetchCurrentEthPrice()
+    .then((res) => {
+      this.setState({
+        ethPrice: res.data[0]['price_usd'],
+        ethChange: res.data[0]['percent_change_1h'],
+      })
+    })
   }
 
   prepareDataForCharts = (history) => {
@@ -49,11 +85,15 @@ export default class HistoryGraphs extends Component {
 
   render() {
     const { history } = this.props
-    const { sevenDaysData } = this.state
+    const { sevenDaysData, zrxPrice, zrxChange, ethPrice, ethChange } = this.state
 
     const spanTitle = {
       fontSize: '18px',
-      display: 'block',
+      display: 'inline-block',
+    }
+    const spanPrice = {
+      float: 'right',
+      fontSize: '18px',
     }
     const spanDescription = {
       fontSize: '12px',
@@ -67,6 +107,10 @@ export default class HistoryGraphs extends Component {
         <Grid>
           <Cell size={3}>
             <span style={spanTitle}>ZRX price</span>
+            <PriceChange float='right' change={zrxChange} />
+            <span style={spanPrice}>
+              { zrxPrice && `$ ${zrxPrice}`}
+            </span>
             <span style={spanDescription}>* History chart of daily closing values</span>
             { sevenDaysData
               ? <TinyChart data={sevenDaysData} dataKey='zrxUsdPrice' strokeColor={CHART_COLORS[0]} strokeWidth={2} />
@@ -75,6 +119,8 @@ export default class HistoryGraphs extends Component {
           </Cell>
           <Cell size={3}>
             <span style={spanTitle}>ETH price</span>
+            <PriceChange float='right' change={ethChange} />
+            <span style={spanPrice}>{ ethPrice && `$ ${ethPrice}`}</span>
             <span style={spanDescription}>* History chart of daily closing values</span>
             { sevenDaysData
               ? <TinyChart data={sevenDaysData} dataKey='ethUsdPrice' strokeColor={CHART_COLORS[1]} strokeWidth={2} />
@@ -101,4 +147,29 @@ export default class HistoryGraphs extends Component {
       </Paper>
     )
   }
+}
+
+const PriceChange = ({change, float}) => {
+  let icon = null
+  let priceChange = null
+  if (change > 0) {
+    icon = <FontIcon style={{fontSize: '16px', color: 'green', padding: '4px 0 0 4px'}} inherit>trending_up</FontIcon>
+    priceChange = <span style={{fontSize: '12px', color: 'green', verticalAlign: 'text-bottom'}}>{`${change}%`}</span>
+  } else if (change < 0) {
+    icon = <FontIcon style={{fontSize: '16px', color: 'red', padding: '4px 0 0 4px'}} inherit>trending_down</FontIcon>
+    priceChange = <span style={{fontSize: '12px', color: 'red', verticalAlign: 'text-bottom'}}>{`${change}%`}</span>
+  } else {
+    icon = <FontIcon style={{fontSize: '16px', color: 'grey', padding: '4px 0 0 4px'}} inherit>trending_flat</FontIcon>
+    priceChange = <span style={{fontSize: '12px', color: 'grey', verticalAlign: 'text-bottom'}}>{`${change}%`}</span>
+  }
+
+  return (
+    <div style={{ float: float }}>
+      <Tooltipped
+        label="1 hour change"
+        position="top"
+      ><div style={{position: 'relative'}}>{icon} {priceChange}</div>
+      </Tooltipped>
+    </div>
+  )
 }
