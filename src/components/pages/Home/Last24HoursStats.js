@@ -25,6 +25,8 @@ import CURRENCIES from 'src/const/currencies'
 class Last24HoursStats extends Component {
   static propTypes = {
     latestTrades: PropTypes.array,
+    tokens: PropTypes.object,
+    relayers: PropTypes.array,
   }
 
   constructor(props) {
@@ -37,7 +39,7 @@ class Last24HoursStats extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.latestTrades && !this.state.collectedFees) {
+    if (this.props.latestTrades && this.props.tokens && !this.state.collectedFees) {
       const collectedFees = this.calculateCollectedFees()
       this.setState({ collectedFees })
     }

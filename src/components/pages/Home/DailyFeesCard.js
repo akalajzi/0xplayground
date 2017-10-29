@@ -41,7 +41,7 @@ export default class DailyFeesCard extends Component {
     let result = []
       _.forEach(feeRecipients, (amount, address) => {
         result.push({
-          name: this.props.relayers[address],
+          name: _.find(this.props.relayers, relayer => relayer.address === address).name,
           value: this.bigNumberToNumber(amount, 18)
         })
       })
@@ -117,7 +117,7 @@ export default class DailyFeesCard extends Component {
           <Paper zDepth={0}>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />}/>
                 <Pie
                   data={feeRecipientsForChart}
                   dataKey='value'
@@ -139,4 +139,28 @@ export default class DailyFeesCard extends Component {
       </Grid>
     )
   }
+}
+const CustomTooltip = (props) => {
+  const {type, payload, label, active} = props
+
+  if (active) {
+    return (
+      <div className='recharts-default-tooltip' style={{
+        background: '#ffffff',
+        padding: '10px',
+        border: '1px solid #c3c3c3',
+      }}>
+        { payload[0]
+          ? <div>
+            <p className='recharts-tooltip-label'>{payload[0].name}</p>
+            <span className='recharts-tooltip-item-value' style={{color: payload[0].fill}}>
+              {`${payload[0].value} ZRX`}
+            </span>
+          </div>
+          : 'Missing data'
+        }
+      </div>
+    )
+  }
+  return null
 }

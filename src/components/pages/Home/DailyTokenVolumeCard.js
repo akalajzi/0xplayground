@@ -35,10 +35,11 @@ import DailyFeesCard from './DailyFeesCard'
 
 export default class DailyTokenVolumeCard extends Component {
 
-  tokenVolumeForChart = (tokenVolume) => {
+  tokenVolumeForChart = (tokenVolume, tokenPrices) => {
     let result = []
     _.forEach(tokenVolume, (tv, address) => {
-      result.push({ name: this.props.tokens[address], value: tv })
+      const price = tokenPrices ? parseFloat((tv * tokenPrices[address]).toFixed(2)) : 0
+      result.push({ name: this.props.tokens[address].symbol, value: price })
     })
     return result
   }
@@ -89,7 +90,7 @@ export default class DailyTokenVolumeCard extends Component {
   render() {
     const { collectedFees, tokens, tokenPrices } = this.props
     const loading = !collectedFees || !tokens || !tokenPrices
-    const tokenVolumeForChart = collectedFees && this.tokenVolumeForChart(collectedFees.tokenVolume)
+    const tokenVolumeForChart = collectedFees && this.tokenVolumeForChart(collectedFees.tokenVolume, tokenPrices)
 
     if (loading) { return <Loader /> }
     return(
@@ -106,7 +107,7 @@ export default class DailyTokenVolumeCard extends Component {
           <Paper zDepth={0}>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />}/>
                 <Pie
                   data={tokenVolumeForChart}
                   dataKey='value'
@@ -128,4 +129,28 @@ export default class DailyTokenVolumeCard extends Component {
       </Grid>
     )
   }
+}
+
+const CustomTooltip = (props) => {
+  const {type, payload, label, active} = props
+  if (active) {
+    return (
+      <div className='recharts-default-tooltip' style={{
+        background: '#ffffff',
+        padding: '10px',
+        border: '1px solid #c3c3c3',
+      }}>
+        { payload[0]
+          ? <div>
+            <p className='recharts-tooltip-label'>{payload[0].name}</p>
+            <span className='recharts-tooltip-item-value' style={{color: payload[0].fill}}>
+              {`$ ${payload[0].value}`}
+            </span>
+          </div>
+          : 'Missing data'
+        }
+      </div>
+    )
+  }
+  return null
 }
