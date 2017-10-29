@@ -5,16 +5,15 @@ import { bindActionCreators } from 'redux'
 import { Grid, Cell } from 'react-md'
 
 import Blockchain from 'src/components/blockchain/Blockchain'
-import TradesTable from 'src/components/common/TradesTable'
+import { CellTitle, TradesTable } from 'src/components/common'
 
 class History extends Component {
   render() {
     return (
       <div className="history">
-        <h1>History</h1>
         <Grid>
           <Cell align='stretch' size={12}>
-            <Blockchain fetchPastTrades />
+            <CellTitle title='Token History' />
             <TradesTable />
           </Cell>
         </Grid>

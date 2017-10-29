@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
 
-import TokenLink from 'src/components/common/TokenLink'
+import { TokenLink } from 'src/components/common'
 
 export default class TokenAmount extends PureComponent {
   static propTypes = {

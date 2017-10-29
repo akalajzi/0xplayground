@@ -3,13 +3,9 @@ import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 
 import {
-  Card,
-  CardTitle,
-  CardText,
   DataTable,
   Grid,
   Cell,
-  TableHeader,
   TableBody,
   TableRow,
   TableColumn,
@@ -27,7 +23,7 @@ import UI from 'src/const/ui'
 const COLORS = UI.CHART_COLORS
 
 
-import Loader from 'src/components/common/Loader'
+import {Loader} from 'src/components/common'
 
 export default class DailyFeesCard extends Component {
 

@@ -6,7 +6,7 @@ import { Grid, Cell, Paper } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
 import { HISTORY_LIST } from 'src/graphql/history.graphql'
-import Wallet from 'src/components/common/Wallet'
+import { Wallet } from 'src/components/common'
 import Last24HoursStats from './Last24HoursStats'
 import HistoryGraphs from './HistoryGraphs'
 

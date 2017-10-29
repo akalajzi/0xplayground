@@ -6,13 +6,9 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 
 import {
-  Card,
-  CardTitle,
-  CardText,
   DataTable,
   Grid,
   Cell,
-  TableHeader,
   TableBody,
   TableRow,
   TableColumn,
@@ -33,9 +29,8 @@ import { mapTokenList } from 'src/components/blockchain/helper'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
-import TradesTable from 'src/components/common/TradesTable'
+import { TradesTable, Loader } from 'src/components/common'
 import DailyFeesCard from './DailyFeesCard'
-import Loader from 'src/components/common/Loader'
 
 export default class DailyTokenVolumeCard extends Component {
 

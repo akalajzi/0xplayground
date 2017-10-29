@@ -5,16 +5,8 @@ import { graphql, compose } from 'react-apollo'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import {
-  Card,
-  CardTitle,
-  CardText,
-  DataTable,
   Grid,
   Cell,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableColumn,
   Paper,
 } from 'react-md'
 
@@ -24,10 +16,9 @@ import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
 import { getFiatValue } from 'src/util/marketApi'
 
-import TradesTable from 'src/components/common/TradesTable'
+import { TradesTable, CellTitle, Loader } from 'src/components/common'
 import DailyTokenVolumeCard from './DailyTokenVolumeCard'
 import DailyFeesCard from './DailyFeesCard'
-import Loader from 'src/components/common/Loader'
 
 import CURRENCIES from 'src/const/currencies'
 
@@ -155,7 +146,7 @@ class Last24HoursStats extends Component {
     return(
         <Grid>
           <Cell size={6}>
-            <h2 style={{ padding: '24px 0 0 16px'}}>24h Token Volume</h2>
+            <CellTitle title='24h Token Volume' />
             <DailyTokenVolumeCard
               collectedFees={collectedFees}
               fiat={CURRENCIES[market.currency]}
@@ -164,7 +155,7 @@ class Last24HoursStats extends Component {
             />
           </Cell>
           <Cell size={6}>
-            <h2 style={{ padding: '24px 0 0 16px'}}>24h Fees Collected</h2>
+            <CellTitle title='24h Fees Collected' />
             <DailyFeesCard
               collectedFees={collectedFees}
               zrxPrice={market.zrxPrice}
@@ -173,7 +164,7 @@ class Last24HoursStats extends Component {
             />
           </Cell>
           <Cell size={12} align='stretch'>
-            <h2 style={{ padding: '24px 0 0 16px'}}>Trades done in the last 24 hours</h2>
+            <CellTitle title='Trades done in the last 24 hours' />
             <TradesTable
               relayers={relayers}
               tokens={tokens}

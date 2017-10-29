@@ -3,12 +3,11 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import _ from 'lodash'
 
-import { Grid, Cell, Card, Paper, FontIcon, Tooltipped } from 'react-md'
+import { Grid, Cell, Paper, FontIcon, Tooltipped } from 'react-md'
 
 import { fetchCurrentZrxPrice, fetchCurrentEthPrice } from 'src/util/marketApi'
 
-import Loader from 'src/components/common/Loader'
-import TinyChart from 'src/components/common/TinyChart'
+import { TinyChart, Loader } from 'src/components/common'
 import UI from 'src/const/ui'
 const CHART_COLORS = UI.CHART_COLORS
 
@@ -109,7 +108,7 @@ export default class HistoryGraphs extends Component {
             <Grid>
               <Cell size={3}>
                 <span style={spanTitle}>ZRX price</span>
-                <PriceChange float='right' change={zrxChange} />
+                { zrxChange && <PriceChange float='right' change={zrxChange} />}
                 <span style={spanPrice}>
                   { zrxPrice && `$ ${zrxPrice}`}
                 </span>
@@ -121,7 +120,7 @@ export default class HistoryGraphs extends Component {
               </Cell>
               <Cell size={3}>
                 <span style={spanTitle}>ETH price</span>
-                <PriceChange float='right' change={ethChange} />
+                { ethChange && <PriceChange float='right' change={ethChange} /> }
                 <span style={spanPrice}>{ ethPrice && `$ ${ethPrice}`}</span>
                 <span style={spanDescription}>* History chart of daily closing values</span>
                 { sevenDaysData

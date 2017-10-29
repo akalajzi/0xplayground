@@ -14,9 +14,7 @@ import {
 } from 'react-md'
 import _ from 'lodash'
 
-import TokenAmount from 'src/components/common/TokenAmount'
-import TooltipLink from 'src/components/common/TooltipLink'
-import Loader from 'src/components/common/Loader'
+import { TokenAmount, TooltipLink, Loader } from 'src/components/common'
 
 import ETH from 'src/const/eth'
 
