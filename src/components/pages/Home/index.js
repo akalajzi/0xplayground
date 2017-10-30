@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import { graphql, compose } from 'react-apollo'
 import _ from 'lodash'
 import moment from 'moment'
-import { Grid, Cell, Paper } from 'react-md'
+import { Button, Grid, Cell, Paper } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
 import { HISTORY_LIST, HISTORY_LIST_LIMITED } from 'src/graphql/history.graphql'
@@ -31,9 +32,12 @@ class Home extends Component {
         </Grid>
         {
           reducedTrades
-          ? <Paper style={{background: '#ffffff'}}>
+          ? <Paper style={{background: '#ffffff', paddingBottom: '20px'}}>
             { history && <HistoryGraphs history={history} /> }
             <Last24HoursStats latestTrades={reducedTrades} />
+            <Grid>
+              <Link style={{ margin: '0 auto'}} to="/history"><Button secondary flat>See more trades</Button></Link>
+            </Grid>
           </Paper>
           : <Loader />
         }

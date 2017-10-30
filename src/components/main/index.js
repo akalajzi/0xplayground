@@ -54,7 +54,7 @@ export default class Main extends Component {
     return (
       <div>
         <Helmet
-          title="0xrelay.network"
+          title="0x.remote.hr"
           meta={[{
             name: 'description',
             content: 'Navigating the blockchain',
