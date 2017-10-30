@@ -26,8 +26,8 @@ export default class Blockchain {
     this.web3Sync = new Web3(new Web3.providers.HttpProvider(NETWORK.infura))
 
     // history trades fetch
-    // this.historyStartDate = null
-    // this.hStart = null
+    this.historyStartDate = null
+    this.hStart = null
 
     // history calculations
     this.offset = 86400 // 1 day in seconds
@@ -82,6 +82,20 @@ export default class Blockchain {
     })
     .catch((err) => {
       console.error('getBlockchainInfo failed ', err)
+    })
+  }
+
+  getTradesForDate = (date) => {
+    //
+  }
+
+  calculateHistorySinceDate = (date) => {
+    this.getLatestTrades().then((res) => {
+      this.allTrades = res.allTradeses // not a typo :)
+
+      const start = moment.utc(date, 'YYYYMMDD').startOf('day').unix()
+      const end = moment.utc(date, 'YYYYMMDD').endOf('day').unix()
+      this.fetchHistoryForBucket(start + 1, end, true)
     })
   }
 
@@ -219,7 +233,7 @@ export default class Blockchain {
     this.fetchCCPrices()
     this.marketInterval = setInterval(() => {
       this.fetchCCPrices()
-    }, 3600000)
+    }, 3600000) // every hour
   }
 
   stopPollingForMarketPrices = () => {
@@ -234,7 +248,7 @@ export default class Blockchain {
     this.fetchHistoryForBucket(this.hBucketStart, this.hBucketStart + this.offset)
   }
 
-  fetchHistoryForBucket = (bucketStart, bucketEnd) => {
+  fetchHistoryForBucket = (bucketStart, bucketEnd, singleDay = false) => {
     bucketStart = parseInt(bucketStart)
     bucketEnd = parseInt(bucketEnd)
     if (bucketStart >= this.now) {
@@ -266,11 +280,22 @@ export default class Blockchain {
           feesPaidTotal: 0,
           tradeVolumeUsd: 0,
         }
-        this.setHistory(history)
+        this.getHistoryIdByTimestamp(history['timestamp'])
+        .then((result) => {
+          if (result.allHistories.length === 0) {
+            this.setHistory(history)
+          } else {
+            history['id'] = result.allHistories[0].id
+            this.updateHistory(history)
+          }
+        }).catch((error) => {
+          console.log('error getting history ', error);
+        })
+        if (singleDay) { return }
         this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
       })
       .catch((error) => {
-        console.log('Error fetching token prices. ', error.data);
+        console.log('Error fetching token prices. ', error);
         return
         this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
       })
@@ -344,14 +369,23 @@ export default class Blockchain {
           // marry token prices to volumes
           let tradeVolumeUsd = new BigNumber(0)
           _.forEach(tokenAddresses, (address) => { // array of actually used token addresses
-            let tokenSum = reducedTokenVolume[address] * tokenPrices[address]
-            tokenSum = tokenSum.toFixed(2)
+            let tokenSum = tokenPrices[address] ? reducedTokenVolume[address] * tokenPrices[address] : 0
+            tokenSum = parseFloat(tokenSum.toFixed(2))
             tradeVolumeUsd = tradeVolumeUsd.add(new BigNumber(tokenSum))
           })
           history['tradeVolumeUsd'] = tradeVolumeUsd.toNumber()
 
           // now go push it to gql
-          this.setHistory(history)
+          this.getHistoryIdByTimestamp(history.timestamp)
+          .then((result) => {
+            if (result.allHistories.length === 0) {
+              this.setHistory(history)
+            } else {
+              history['id'] = result.allHistories[0].id
+              this.updateHistory(history)
+            }
+          })
+          if (singleDay) { return }
           this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
 
         })
@@ -383,47 +417,47 @@ export default class Blockchain {
   *    HISTORY FETCHING CHAIN
   *********************************************************/
 
-  // historyFetch() {
-  //   this.historyStartDate = '20170817'
-  //   this.hStart = moment(this.historyStartDate).unix()
-  //   this.blockHeight = 4441432
-  //
-  //   this.fetchHistoryTrades()
-  // }
-  //
-  // fetchHistoryTrades = (i = 1) => { // iterator is just a control factor, remove later
-  //   const toBlock = this.lastFetchedBlock || this.blockHeight
-  //   const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
-  //   console.log(`Fetch # ${i} from ${fromBlock} to ${toBlock}`);
-  //   this.processLogBatch(fromBlock, toBlock, this.hStart)
-  //   .then(({ mappedLogs, overTheLimit}) => {
-  //
-  //     _.forEach(mappedLogs, (log) => {
-  //       this.sleep(250)
-  //       .then(() => {
-  //         this.setLatestTrades(log)
-  //         .then((res) => {
-  //           console.log('Set trade success! ', log.blockNumber)
-  //         })
-  //         .catch((err) => {
-  //           console.error('setLatestTrades error blockNumber ', log.blockNumber)
-  //         })
-  //       })
-  //     })
-  //
-  //     if (!overTheLimit) {
-  //       this.fetchHistoryTrades(i + 1)
-  //     }
-  //
-  //   })
-  //   .catch((err) => {
-  //     console.error("processLogBatch failed", err)
-  //   })
-  // }
-  //
-  // sleep = (ms) => {
-  //   return new Promise(resolve => setTimeout(resolve, ms));
-  // }
+  historyFetch() {
+    this.historyStartDate = '20170817'
+    this.hStart = moment(this.historyStartDate).unix()
+    this.blockHeight = 4441432
+
+    this.fetchHistoryTrades()
+  }
+
+  fetchHistoryTrades = (i = 1) => { // iterator is just a control factor, remove later
+    const toBlock = this.lastFetchedBlock || this.blockHeight
+    const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
+    console.log(`Fetch # ${i} from ${fromBlock} to ${toBlock}`);
+    this.processLogBatch(fromBlock, toBlock, this.hStart)
+    .then(({ mappedLogs, overTheLimit}) => {
+
+      _.forEach(mappedLogs, (log) => {
+        this.sleep(250)
+        .then(() => {
+          this.setLatestTrades(log)
+          .then((res) => {
+            console.log('Set trade success! ', log.blockNumber)
+          })
+          .catch((err) => {
+            console.error('setLatestTrades error blockNumber ', log.blockNumber)
+          })
+        })
+      })
+
+      if (!overTheLimit) {
+        this.fetchHistoryTrades(i + 1)
+      }
+
+    })
+    .catch((err) => {
+      console.error("processLogBatch failed", err)
+    })
+  }
+
+  sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 
   /*******************************************************
@@ -573,5 +607,47 @@ export default class Blockchain {
     }`
     return this.graphqlClient.request(query, history)
   }
+
+  getHistoryIdByTimestamp = (timestamp) => {
+    const query = `
+      query getHistoryIdByTimestamp($timestamp: Int!) {
+        allHistories( filter: { timestamp: $timestamp }) {
+          id
+        }
+      }
+    `
+    return this.graphqlClient.request(query, { timestamp: timestamp })
+  }
+
+  updateHistory = (history) => {
+    console.log('Updating History! ', history);
+    const query = `
+      mutation updateHistory(
+        $id: ID!,
+        $timestamp: Int!,
+        $startBlockNumber: String,
+        $endBlockNumber: String,
+        $zrxUsdPrice: Float,
+        $ethUsdPrice: Float,
+        $tradeVolumeUsd: Float,
+        $feesPaidTotal: Float,
+      ) {
+        updateHistory(
+          id: $id,
+          timestamp: $timestamp,
+          startBlockNumber: $startBlockNumber,
+          endBlockNumber: $endBlockNumber,
+          zrxUsdPrice: $zrxUsdPrice,
+          ethUsdPrice: $ethUsdPrice,
+          tradeVolumeUsd: $tradeVolumeUsd,
+          feesPaidTotal: $feesPaidTotal,
+        ) {
+          id
+        }
+      }
+      `
+    return this.graphqlClient.request(query, history)
+  }
+
 
 }

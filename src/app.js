@@ -121,8 +121,31 @@ if (SERVER) {
     ctx.body = `Hello from your ReactQL route. Redux dump: ${stateDump}`;
   });
 
+  // test route
   config.addPostRoute('/token', async ctx => {
     ctx.body = JSON.stringify(ctx.request.body);
+  })
+
+  /****
+   * POST /calculateday
+   * request data
+   * {
+   *   walletAddress: '0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af',
+   *   date: 'YYYYMMDD',
+   * }
+   ****/
+  const CONTROLLING_WALLET = '0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af'
+  const ULTIMATE_RESPONSE = '4'
+
+  config.addPostRoute('/calculateday', async ctx => {
+    const { date, walletAddress } = ctx.request.body
+    if (walletAddress && walletAddress === CONTROLLING_WALLET && date) {
+      // ctx.blockchain.getTradesForDate(date)
+      ctx.blockchain.calculateHistorySinceDate(date)
+      ctx.body = JSON.stringify({date: ctx.request.body.date, states: 'ok'})
+    } else {
+      ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
+    }
   })
 
   /* CUSTOM 404 HANDLER */
@@ -178,8 +201,8 @@ if (SERVER) {
     // eslint-disable-next-line no-param-reassign
     app.context.engine = 'Shrimp Engine';
 
-    const blockchain = new Blockchain()
-    blockchain.initialFetch()
+    app.context.blockchain = new Blockchain()
+    app.context.blockchain.initialFetch()
     // FOR FETCHING SINCE THE DAWN OF ZRX
     // blockchain.historyFetch()
 
