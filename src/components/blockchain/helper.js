@@ -46,6 +46,8 @@ export function mapLog(log, tokens) {
     blockNumber: log.blockNumber,
     transactionHash: log.transactionHash,
     transactionIndex: log.transactionIndex,
+    gasUsed: log.gasUsed || null,
+    gasPrice: log.gasPrice || null,
     blockHash: log.blockHash,
     removed: log.removed,
     event: log.event,

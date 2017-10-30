@@ -8,6 +8,8 @@ const TRADES_FRAGMENT = gql`
     blockNumber
     transactionHash
     transactionIndex
+    gasUsed
+    gasPrice
     blockHash
     event
     removed

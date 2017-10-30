@@ -126,7 +126,8 @@ export default class Blockchain {
 
   fetch24hTrades = (dailylogs = [], i = 1) => { // iterator is just a control factor, remove later
     const now = moment().utc()
-    const startTime = now.subtract(24, 'hours').unix()
+    // going for 12 hours now, since at least one backend is always on
+    const startTime = now.subtract(12, 'hours').unix()
 
     const toBlock = this.lastFetchedBlock || this.blockHeight
     const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
@@ -193,6 +194,14 @@ export default class Blockchain {
     return Promise.all(batch)
   }
 
+  getGasUsedAndPriceForTransaction = (transaction) => {
+    const transactionHash = transaction.transactionHash
+    return Promise.all([
+      this.web3Sync.eth.getTransactionReceipt(transactionHash),
+      this.web3Sync.eth.getTransaction(transactionHash)
+    ])
+  }
+
   handleLogFillEvent = (err, log) => {
     console.log('New trade received');
     if (_.find(this.latestTrades, trade => trade.transactionHash === log.transactionHash )) {
@@ -207,8 +216,35 @@ export default class Blockchain {
         return
       }
       log['timestamp'] = block.timestamp
-      const mappedLog = mapLog(log, this.tokens)
-      this.setLatestTrades(mappedLog)
+      this.getGasUsedAndPriceForTransaction(log)
+      .then((res) => {
+        log['gasUsed'] = res[0].gasUsed
+        log['gasPrice'] = new BigNumber(res[1].gasPrice).div(10**9).toNumber()
+        const mappedLog = mapLog(log, this.tokens)
+        this.setLatestTrades(mappedLog)
+      })
+    })
+  }
+
+  updateGasUsed = () => {
+    console.log('Start updating gas used!');
+    this.getLatestTrades().then((res) => {
+      this.allTrades = res.allTradeses // not a typo :)
+
+      _.forEach(this.allTrades, (trade) => {
+        this.sleep(300).then(() => {
+          console.log('Getting gas used and price...');
+          this.getGasUsedAndPriceForTransaction(trade).then((res) => {
+            trade['gasUsed'] = res[0].gasUsed
+            trade['gasPrice'] = new BigNumber(res[1].gasPrice).div(10**9).toNumber()
+            this.updateTrade(trade).then((res) => {
+              console.log('Updated');
+            }).catch((error) => {
+              console.log('Error updating trade', error);
+            })
+          })
+        })
+      })
     })
   }
 
@@ -539,6 +575,8 @@ export default class Blockchain {
       $blockNumber: String,
       $transactionHash: String!,
       $transactionIndex: String,
+      $gasUsed: Int,
+      $gasPrice: Float,
       $blockHash: String,
       $event: String,
       $removed: Boolean,
@@ -562,6 +600,8 @@ export default class Blockchain {
         timestamp: $timestamp,
         transactionHash: $transactionHash,
         transactionIndex: $transactionIndex,
+        gasUsed: $gasUsed,
+        gasPrice: $gasPrice,
       ) {
         id
         address
@@ -569,6 +609,8 @@ export default class Blockchain {
         blockNumber
         transactionHash
         transactionIndex
+        gasUsed
+        gasPrice
         blockHash
         event
         removed
@@ -577,6 +619,50 @@ export default class Blockchain {
         price
         invertedPrice
         args
+      }
+    }`
+    return this.graphqlClient.request(query, trade)
+  }
+
+  updateTrade = (trade) => {
+    console.log('Updating trade with gas used: ', trade.gasPrice);
+    const query = `mutation updateTrades(
+      $id: ID!,
+      $address: String,
+      $timestamp: Int,
+      $blockNumber: String,
+      $transactionHash: String!,
+      $transactionIndex: String,
+      $gasUsed: Int,
+      $gasPrice: Float,
+      $blockHash: String,
+      $event: String,
+      $removed: Boolean,
+      $filledMakerTokenAmountNormalized: Float,
+      $filledTakerTokenAmountNormalized: Float,
+      $price: Float,
+      $invertedPrice: Float,
+      $args: Json,
+    ) {
+      updateTrades(
+        id: $id,
+        address: $address,
+        args: $args,
+        blockHash: $blockHash,
+        blockNumber: $blockNumber,
+        event: $event,
+        filledMakerTokenAmountNormalized: $filledMakerTokenAmountNormalized,
+        filledTakerTokenAmountNormalized: $filledTakerTokenAmountNormalized,
+        invertedPrice: $invertedPrice,
+        price: $price,
+        removed: $removed,
+        timestamp: $timestamp,
+        transactionHash: $transactionHash,
+        transactionIndex: $transactionIndex,
+        gasUsed: $gasUsed,
+        gasPrice: $gasPrice,
+      ) {
+        id
       }
     }`
     return this.graphqlClient.request(query, trade)

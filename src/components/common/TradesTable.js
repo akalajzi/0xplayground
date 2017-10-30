@@ -87,7 +87,7 @@ class TradesTable extends PureComponent {
   }
 
   renderTrades = (trades, walletAccount) => {
-    const {tokens} = this.props
+    const {tokens, market} = this.props
     let tableRows = []
     const zrx = _.find(tokens, (token) => {
       return token.symbol === 'ZRX'
@@ -98,6 +98,9 @@ class TradesTable extends PureComponent {
       const walletIsMaker = trade.args.maker === walletAccount
       const walletIsTaker = trade.args.taker === walletAccount
       const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
+      const zrxDollarCost = totalFee.div(10**18).toDigits(6).toNumber() * market.zrxPrice
+      const gasDollarCost = (new BigNumber(trade.gasUsed).div(10**9).toNumber()) * trade.gasPrice * market.ethPrice
+      const totalDollarCost = (zrxDollarCost + gasDollarCost).toFixed(2)
 
       if (walletIsMaker || walletIsTaker) {
         cssRow = 'bg-my-highlight'
@@ -138,6 +141,12 @@ class TradesTable extends PureComponent {
               token={zrx}
             />
           </TableColumn>
+          <TableColumn>
+            {trade.gasUsed}
+          </TableColumn>
+          <TableColumn>
+            $ { totalDollarCost }
+          </TableColumn>
         </TableRow>
       )
     })
@@ -158,6 +167,8 @@ class TradesTable extends PureComponent {
             <TableColumn>Maker Fee</TableColumn>
             <TableColumn>Taker Fee</TableColumn>
             <TableColumn>Total Fee</TableColumn>
+            <TableColumn>Gas Used</TableColumn>
+            <TableColumn>Fee + Gas</TableColumn>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -173,6 +184,7 @@ export default compose(
     return {
       networkId: state.network.id,
       walletAccount: state.wallet.activeAccount,
+      market: state.market,
     }
   })
 )(TradesTable)

@@ -142,7 +142,26 @@ if (SERVER) {
     if (walletAddress && walletAddress === CONTROLLING_WALLET && date) {
       // ctx.blockchain.getTradesForDate(date)
       ctx.blockchain.calculateHistorySinceDate(date)
-      ctx.body = JSON.stringify({date: ctx.request.body.date, states: 'ok'})
+      ctx.body = JSON.stringify({date: ctx.request.body.date, status: 'ok'})
+    } else {
+      ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
+    }
+  })
+
+  /****
+   * POST /updateTrades
+   * Manual suplementing of trade records in gql
+   *
+   * request data
+   * {
+   *   walletAddress: '0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af',
+   * }
+   ****/
+  config.addPostRoute('/updatetrades', async ctx => {
+    const { walletAddress } = ctx.request.body
+    if (walletAddress && walletAddress === CONTROLLING_WALLET) {
+      ctx.blockchain.updateGasUsed()
+      ctx.body = JSON.stringify({status: 'ok'})
     } else {
       ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
     }
