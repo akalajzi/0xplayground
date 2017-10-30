@@ -5,7 +5,7 @@ import moment from 'moment'
 import { Grid, Cell, Paper } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
-import { HISTORY_LIST } from 'src/graphql/history.graphql'
+import { HISTORY_LIST, HISTORY_LIST_LIMITED } from 'src/graphql/history.graphql'
 import { Wallet, Loader } from 'src/components/common'
 import Last24HoursStats from './Last24HoursStats'
 import HistoryGraphs from './HistoryGraphs'
@@ -49,7 +49,7 @@ const latestTradesQuery = graphql(TRADES_LIST, {
   })
 })
 
-const historyQuery = graphql(HISTORY_LIST, {
+const historyQuery = graphql(HISTORY_LIST_LIMITED, {
   props: ({ data: { allHistories }}) => ({
     history: allHistories,
   })

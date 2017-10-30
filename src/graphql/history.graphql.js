@@ -22,6 +22,15 @@ const HISTORY_LIST = gql`
   ${HISTORY_FRAGMENT}
 `
 
+const HISTORY_LIST_LIMITED = gql`
+  query History {
+    allHistories (first: 32, orderBy: timestamp_DESC) {
+      ...HistoryFragment
+    }
+  }
+  ${HISTORY_FRAGMENT}
+`
+
 const CREATE_HISTORY_MUTATION = gql`
   mutation createHistory(
     $timestamp: Int!,
@@ -49,5 +58,6 @@ const CREATE_HISTORY_MUTATION = gql`
 
 export {
   HISTORY_LIST,
+  HISTORY_LIST_LIMITED,
   CREATE_HISTORY_MUTATION,
 }

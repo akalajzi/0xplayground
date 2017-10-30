@@ -21,7 +21,7 @@ const TRADES_FRAGMENT = gql`
 
 const TRADES_LIST = gql`
   query Trades {
-    allTradeses {
+    allTradeses (first: 100, orderBy: timestamp_DESC) {
       ...TradesFragment
     }
   }
