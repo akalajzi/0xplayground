@@ -99,7 +99,8 @@ class TradesTable extends PureComponent {
       const walletIsTaker = trade.args.taker === walletAccount
       const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
       const zrxDollarCost = totalFee.div(10**18).toDigits(6).toNumber() * market.zrxPrice
-      const gasDollarCost = (new BigNumber(trade.gasUsed).div(10**9).toNumber()) * trade.gasPrice * market.ethPrice
+      const gasUsed = trade.gasUsed || 0
+      const gasDollarCost = (new BigNumber(gasUsed).div(10**9).toNumber()) * trade.gasPrice * market.ethPrice
       const totalDollarCost = (zrxDollarCost + gasDollarCost).toFixed(2)
 
       if (walletIsMaker || walletIsTaker) {
