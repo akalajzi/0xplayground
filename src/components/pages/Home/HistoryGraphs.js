@@ -104,7 +104,7 @@ export default class HistoryGraphs extends Component {
       <Grid>
         <Cell align='stretch' size={12}>
           <Grid>
-            <Cell size={3}>
+            <Cell size={3} tabletSize={6} phoneSize={12}>
               <span style={spanTitle}>ZRX price</span>
               { zrxChange && <PriceChange float='right' change={zrxChange} />}
               <span style={spanPrice}>
@@ -116,7 +116,7 @@ export default class HistoryGraphs extends Component {
                 : <Loader />
               }
             </Cell>
-            <Cell size={3}>
+            <Cell size={3} tabletSize={6} phoneSize={12}>
               <span style={spanTitle}>ETH price</span>
               { ethChange && <PriceChange float='right' change={ethChange} /> }
               <span style={spanPrice}>{ ethPrice && `$ ${ethPrice}`}</span>
@@ -126,7 +126,7 @@ export default class HistoryGraphs extends Component {
                 : <Loader />
               }
             </Cell>
-            <Cell size={3}>
+            <Cell size={3} tabletSize={6} phoneSize={12}>
               <span style={spanTitle}>Trade volume over 0x protocol</span>
               <span style={spanDescription}>* Daily volume in USD based on traded tokens value at the time</span>
               { sevenDaysData
@@ -134,7 +134,7 @@ export default class HistoryGraphs extends Component {
                 : <Loader />
               }
             </Cell>
-            <Cell size={3}>
+            <Cell size={3} tabletSize={6} phoneSize={12}>
               <span style={spanTitle}>Fees Paid (ZRX)</span>
               <span style={spanDescription}>Total collected fees in ZRX by relayers</span>
               { sevenDaysData
