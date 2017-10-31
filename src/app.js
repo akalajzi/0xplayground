@@ -208,7 +208,7 @@ if (SERVER) {
     // working
     // eslint-disable-next-line no-console
     console.log('Error: ', e.message);
-    ctx.body = 'Some kind of error. Check your source code.';
+    ctx.body = 'Hmph, I fucked up somewhere. Sit tight, Vitalik is on its way to fix it.';
   });
 
   /* CUSTOM KOA APP INSTANTIATION */
