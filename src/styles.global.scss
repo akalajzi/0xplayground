@@ -9,6 +9,9 @@ $md-secondary-color: $md-red-800;
 
 @include react-md-everything;
 
+@import './components/common/Common.scss';
+@import './components/pages/Scribble/Scribble.scss';
+
 body {
   margin: 0;
 }

@@ -1,0 +1,15 @@
+.FlyingMessage {
+  display: inline-block;
+  float: right;
+  font-size: 12px;
+  text-align: right;
+
+  a {
+    color: $md-secondary-color;
+    text-decoration: none;
+  }
+}
+
+.Wallet {
+  display: inline-block;
+}

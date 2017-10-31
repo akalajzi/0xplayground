@@ -1,0 +1,60 @@
+.Scribble {
+  .NoWalletConnected {
+    display: inline-block;
+    float: left;
+    padding-left: 10px;
+    font-size: 12px;
+    color: $md-secondary-color;
+  }
+
+  .sendBtn {
+    float: right;
+    margin: -5px -10px 20px 0;
+  }
+}
+
+.ScribbleMessage {
+  .SMAuthor {
+    font-size: 12px;
+    color: grey;
+    padding-bottom: 8px;
+
+    .SMCreatedAt {
+      padding-right: 20px;
+    }
+
+    span.owner {
+      color: $md-teal-500;
+      font-weight: 700;
+    }
+
+    span.active {
+      color: $md-secondary-color;
+    }
+
+    i.md-icon.material-icons {
+      font-size: 18px;
+      vertical-align: text-bottom;
+      padding-right: 4px;
+    }
+  }
+
+  .SMText {
+    .msg-time {
+      float: left;
+      display: inline-block;
+      max-width: 200px;
+      font-size: 10px;
+      color: grey;
+      margin-right: 20px;
+
+      span {
+        display: block;
+      }
+    }
+
+    .owner {
+      color: $md-teal-500;
+    }
+  }
+}

@@ -18,6 +18,7 @@ import Relayers from 'src/components/pages/Relayers'
 import Tokens from 'src/components/pages/Tokens'
 import History from 'src/components/pages/History'
 import NotFoundPage from 'src/components/pages/NotFoundPage'
+import Scribble from 'src/components/pages/Scribble'
 
 // ----------------------
 
@@ -42,6 +43,11 @@ const navItems = [
     label: 'History',
     to: "/history",
     icon: 'timeline',
+  },
+  {
+    label: 'Scribble',
+    to: '/scribble',
+    icon: 'forum',
   }
 ]
 
@@ -79,6 +85,7 @@ export default class Main extends Component {
               <Route exact path={navItems[1].to} component={Relayers} />
               <Route exact path={navItems[2].to} component={Tokens} />
               <Route exact path={navItems[3].to} component={History} />
+              <Route exact path={navItems[4].to} component={Scribble} />
               <Route component={NotFoundPage} />
             </Switch>
           </NavigationDrawer>

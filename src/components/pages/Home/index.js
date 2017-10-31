@@ -7,7 +7,7 @@ import { Button, Grid, Cell, Paper } from 'react-md'
 
 import { TRADES_LIST } from 'src/graphql/trades.graphql'
 import { HISTORY_LIST, HISTORY_LIST_LIMITED } from 'src/graphql/history.graphql'
-import { Wallet, Loader } from 'src/components/common'
+import { Wallet, Loader, FlyingMessage, WhitePaper } from 'src/components/common'
 import Last24HoursStats from './Last24HoursStats'
 import HistoryGraphs from './HistoryGraphs'
 
@@ -28,17 +28,25 @@ class Home extends Component {
     return(
       <div className="home">
         <Grid>
-          <Wallet />
+          <Cell size={12} align='stretch'>
+            <Wallet />
+            <FlyingMessage>
+              <div>
+                Have a suggestion?<br />
+                <Link to='/scribble'>Tell me about it!</Link>
+              </div>
+            </FlyingMessage>
+          </Cell>
         </Grid>
         {
           reducedTrades
-          ? <Paper style={{background: '#ffffff', paddingBottom: '20px'}}>
+          ? <WhitePaper>
             { history && <HistoryGraphs history={history} /> }
             <Last24HoursStats latestTrades={reducedTrades} />
             <Grid>
               <Link style={{ margin: '0 auto'}} to="/history"><Button secondary flat>See more trades</Button></Link>
             </Grid>
-          </Paper>
+          </WhitePaper>
           : <Loader />
         }
       </div>

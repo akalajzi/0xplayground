@@ -14,7 +14,7 @@ class Title extends PureComponent {
         <div className={css.logo}>
           <img src='/shrimp-white-40.png' />
         </div>
-        <div className={css.title}>0xrelay.network</div>
+        <div className={css.title}>0x.remote.hr</div>
         {
           networkName
           ? <div className={css.connection}><span>Connected to</span> {networkName.toUpperCase()}</div>
