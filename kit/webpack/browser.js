@@ -84,10 +84,18 @@ export default new WebpackConfig().extend('[root]/base.js').merge({
     // Separate our third-party/vendor modules into a separate chunk, so that
     // we can load them independently of our app-specific code changes
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
+      name: 'web3',
       minChunks: module => (
         // this assumes your vendor imports exist in the node_modules directory
-        module.context && module.context.indexOf('node_modules') !== -1
+        module.context && module.context.indexOf('node_modules') !== -1 && module.context.indexOf('web3') !== -1
+      ),
+    }),
+
+    new webpack.optimize.CommonsChunkPlugin({
+      async: 'vendor',
+      minChunks: module => (
+        // this assumes your vendor imports exist in the node_modules directory
+        module.context && module.context.indexOf('node_modules') !== -1 && module.context.indexOf('web3') === -1
       ),
     }),
   ],

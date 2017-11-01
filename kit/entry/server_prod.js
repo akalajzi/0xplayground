@@ -34,6 +34,7 @@ const [manifest, chunkManifest] = ['manifest', 'chunk-manifest']
 const css = manifest['browser.css'];
 const scripts = [
   'manifest.js',
+  'web3.js',
   'vendor.js',
   'browser.js'].map(key => manifest[key]);
 
