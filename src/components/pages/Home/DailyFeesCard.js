@@ -76,6 +76,7 @@ export default class DailyFeesCard extends Component {
     _.forEach(feesColSorted, (item) => {
       const rFee = this.bigNumberToNumber(item.volume, zrxDecimals)
       const relayer = _.find(relayers, (relayer) => { return relayer.address === item.address})
+      const rFeePercentage = (rFee / collectedFees.total * 100).toFixed(2)
 
       rows.push(
         <TableRow key={item.address}>
@@ -88,7 +89,7 @@ export default class DailyFeesCard extends Component {
               : '...'
             }
           </TableColumn>
-          <TableColumn>{rFee/collectedFees.total*100}%</TableColumn>
+          <TableColumn>{rFeePercentage}%</TableColumn>
         </TableRow>
       )
     })

@@ -1,4 +1,4 @@
-this.logInDebugimport Web3 from 'web3'
+import Web3 from 'web3'
 import moment from 'moment'
 import _ from 'lodash'
 import axios from 'axios'
