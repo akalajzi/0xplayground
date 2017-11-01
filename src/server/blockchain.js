@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+this.logInDebugimport Web3 from 'web3'
 import moment from 'moment'
 import _ from 'lodash'
 import axios from 'axios'
@@ -51,8 +51,14 @@ export default class Blockchain {
     })
   }
 
+  logInDebug = (one, two = '', three = '', four = '', five = '') => {
+    if (process.env.DEBUG) {
+      console.log(one, two, three, four, five);
+    }
+  }
+
   initialFetch() {
-    // console.log('Blockchain initial fetch starting!');
+    // this.logInDebug('Blockchain initial fetch starting!');
     this.getTokens().then((res) => { this.tokens = mapTokenList(res.allTokens) })
     this.getLatestTrades().then((res) => {
       this.latestTrades = res.allTradeses // not a typo :)
@@ -61,7 +67,7 @@ export default class Blockchain {
       // if (this.allTrades) {
       //   this.calculateHistory()
       // } else {
-      //   console.log('No trades fetched!');
+      //   this.logInDebug('No trades fetched!');
       // }
     })
     //
@@ -81,7 +87,7 @@ export default class Blockchain {
       this.zeroEx.exchange.subscribeAsync("LogFill", {}, this.handleLogFillEvent.bind(this, null))
     })
     .catch((err) => {
-      console.error('getBlockchainInfo failed ', err)
+      this.logInDebug('getBlockchainInfo failed ', err)
     })
   }
 
@@ -103,7 +109,7 @@ export default class Blockchain {
     if (web3.version) {
       web3.version.getNetwork((err, res) => {
         if (err) {
-          console.error('Error fetching network version ', err);
+          this.logInDebug('Error fetching network version ', err);
         } else {
           this.networkId = res
           this.setInfoItem('networkId', res)
@@ -115,7 +121,7 @@ export default class Blockchain {
   fetchBlockHeight = () => {
     this.web3.eth.getBlockNumber((err, res) => {
       if (err) {
-        console.log('Error getting block number ', err);
+        this.logInDebug('Error getting block number ', err);
       } else {
         this.blockHeight = res
         this.setInfoItem('blockHeight', res)
@@ -140,13 +146,13 @@ export default class Blockchain {
         _.forEach(collectedLogs, (log) => {
           this.setLatestTrades(log)
           .catch((err) => {
-            console.error('setLatestTrades catch.')
+            this.logInDebug('setLatestTrades catch.')
           })
         })
       }
     })
     .catch((err) => {
-      console.error("processLogBatch failed", err)
+      this.logInDebug("processLogBatch failed", err)
     })
   }
 
@@ -178,7 +184,7 @@ export default class Blockchain {
           resolve({mappedLogs, overTheLimit})
         })
         .catch((err) => {
-          console.error('getTimestampsForBatch failed. ', err)
+          this.logInDebug('getTimestampsForBatch failed. ', err)
         })
       })
     )
@@ -203,7 +209,7 @@ export default class Blockchain {
   }
 
   handleLogFillEvent = (err, log) => {
-    console.log('New trade received');
+    this.logInDebug('New trade received');
     if (_.find(this.latestTrades, trade => trade.transactionHash === log.transactionHash )) {
       // skip transactions we already handled, if they somehow get here
       return null
@@ -212,7 +218,7 @@ export default class Blockchain {
     this.web3Sync.eth.getBlock(currentBlock)
     .then((block) => {
       if (!block) {
-        console.error('Block search after LogFill returned empty.')
+        this.logInDebug('Block search after LogFill returned empty.')
         return
       }
       log['timestamp'] = block.timestamp
@@ -227,20 +233,20 @@ export default class Blockchain {
   }
 
   updateGasUsed = () => {
-    console.log('Start updating gas used!');
+    this.logInDebug('Start updating gas used!');
     this.getLatestTrades().then((res) => {
       this.allTrades = res.allTradeses // not a typo :)
 
       _.forEach(this.allTrades, (trade) => {
         this.sleep(300).then(() => {
-          console.log('Getting gas used and price...');
+          this.logInDebug('Getting gas used and price...');
           this.getGasUsedAndPriceForTransaction(trade).then((res) => {
             trade['gasUsed'] = res[0].gasUsed
             trade['gasPrice'] = new BigNumber(res[1].gasPrice).div(10**9).toNumber()
             this.updateTrade(trade).then((res) => {
-              console.log('Updated');
+              this.logInDebug('Updated');
             }).catch((error) => {
-              console.log('Error updating trade', error);
+              this.logInDebug('Error updating trade', error);
             })
           })
         })
@@ -261,7 +267,7 @@ export default class Blockchain {
       this.setInfoItem('ethPrice', ethPrice.toString())
     })
     .catch((error) => {
-      console.log("Cannot get fiat values", error);
+      this.logInDebug("Cannot get fiat values", error);
     })
   }
 
@@ -288,10 +294,10 @@ export default class Blockchain {
     bucketStart = parseInt(bucketStart)
     bucketEnd = parseInt(bucketEnd)
     if (bucketStart >= this.now) {
-      console.log('Finished fetching history!')
+      this.logInDebug('Finished fetching history!')
       return
     }
-    console.log('Doing history for ' + moment(bucketStart * 1000).format('DD.MM.YYYY.'));
+    this.logInDebug('Doing history for ' + moment(bucketStart * 1000).format('DD.MM.YYYY.'));
     let history = {}
     history['timestamp'] = bucketStart
 
@@ -301,12 +307,12 @@ export default class Blockchain {
 
     if (bucket.length === 0) {
       if (typeof bucketStart !== 'number') {
-        console.log('Invalid timestamp ', bucketStart);
+        this.logInDebug('Invalid timestamp ', bucketStart);
         return
       }
       getFiatValue('USD', ['ZRX', 'ETH'], bucketStart)
       .then((result) => {
-        // console.log(result);
+        // this.logInDebug(result);
         history = {
           timestamp: bucketStart,
           startBlockNumber: null,
@@ -325,13 +331,13 @@ export default class Blockchain {
             this.updateHistory(history)
           }
         }).catch((error) => {
-          console.log('error getting history ', error);
+          this.logInDebug('error getting history ', error);
         })
         if (singleDay) { return }
         this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
       })
       .catch((error) => {
-        console.log('Error fetching token prices. ', error);
+        this.logInDebug('Error fetching token prices. ', error);
         return
         this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
       })
@@ -373,11 +379,11 @@ export default class Blockchain {
         const tokenAddresses = Object.keys(reducedTokenVolume)
         const tokenSymbols = tokenAddresses.map((address) => tokens[address].symbol)
         const loadedTokenSymbols = _.union(tokenSymbols, ['ZRX', 'ETH'])
-        console.log('asking symbols: ', loadedTokenSymbols, ' on timestamp ', bucketStart * 1000);
+        this.logInDebug('asking symbols: ', loadedTokenSymbols, ' on timestamp ', bucketStart * 1000);
         getFiatValue('USD', loadedTokenSymbols, bucketStart) // get price at bucketStart timestamp
         .then((res) => {
           if (res.data) {
-            console.log(res.data['USD']);
+            this.logInDebug(res.data['USD']);
           }
           let result = {}
           result['USD'] = {}
@@ -426,7 +432,7 @@ export default class Blockchain {
 
         })
         .catch((error) => {
-          console.log('Error getting token prices', error);
+          this.logInDebug('Error getting token prices', error);
           return
           this.fetchHistoryForBucket(bucketEnd, bucketEnd + this.offset)
 
@@ -464,7 +470,7 @@ export default class Blockchain {
   fetchHistoryTrades = (i = 1) => { // iterator is just a control factor, remove later
     const toBlock = this.lastFetchedBlock || this.blockHeight
     const fromBlock = toBlock - ETH.TRADE_BATCH_BLOCKS
-    console.log(`Fetch # ${i} from ${fromBlock} to ${toBlock}`);
+    this.logInDebug(`Fetch # ${i} from ${fromBlock} to ${toBlock}`);
     this.processLogBatch(fromBlock, toBlock, this.hStart)
     .then(({ mappedLogs, overTheLimit}) => {
 
@@ -473,10 +479,10 @@ export default class Blockchain {
         .then(() => {
           this.setLatestTrades(log)
           .then((res) => {
-            console.log('Set trade success! ', log.blockNumber)
+            this.logInDebug('Set trade success! ', log.blockNumber)
           })
           .catch((err) => {
-            console.error('setLatestTrades error blockNumber ', log.blockNumber)
+            this.logInDebug('setLatestTrades error blockNumber ', log.blockNumber)
           })
         })
       })
@@ -487,7 +493,7 @@ export default class Blockchain {
 
     })
     .catch((err) => {
-      console.error("processLogBatch failed", err)
+      this.logInDebug("processLogBatch failed", err)
     })
   }
 
@@ -625,7 +631,7 @@ export default class Blockchain {
   }
 
   updateTrade = (trade) => {
-    console.log('Updating trade with gas used: ', trade.gasPrice);
+    this.logInDebug('Updating trade with gas used: ', trade.gasPrice);
     const query = `mutation updateTrades(
       $id: ID!,
       $address: String,
@@ -669,7 +675,7 @@ export default class Blockchain {
   }
 
   setHistory = (history) => {
-    console.log('Setting history!');
+    this.logInDebug('Setting history!');
     const query = `mutation createHistory(
       $timestamp: Int!,
       $startBlockNumber: String,
@@ -706,7 +712,7 @@ export default class Blockchain {
   }
 
   updateHistory = (history) => {
-    console.log('Updating History! ', history);
+    this.logInDebug('Updating History! ', history);
     const query = `
       mutation updateHistory(
         $id: ID!,

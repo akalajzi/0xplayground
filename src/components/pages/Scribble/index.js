@@ -27,7 +27,6 @@ class Scribble extends Component {
   }
 
   handleMsgSubmit = () => {
-    console.log('this.props', this.props.wallet.activeAccount);
     this.props.createScribbleMessage({
       text: this.state.msg,
       author: this.props.wallet.activeAccount,

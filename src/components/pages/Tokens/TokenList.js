@@ -98,7 +98,7 @@ class TokenList extends Component {
   updateTokensFromProvider = () => {
     const zeroEx = connectZeroEx(INFURA.MAINNET)
     // TODO: see console log
-    console.log('Check for existance before pushing it to gql');
+    // console.log('Check for existance before pushing it to gql');
     zeroEx.tokenRegistry.getTokensAsync()
       .then((tokens) => {
         _.forEach(tokens, (token) => {

@@ -206,8 +206,11 @@ if (SERVER) {
   config.setErrorHandler((e, ctx /* `next` is unused in this example */) => {
     // Mimic the default behaviour with an overriden message, so we know it's
     // working
-    // eslint-disable-next-line no-console
-    console.log('Error: ', e.message);
+
+    if (process.env.DEBUG) {
+      // eslint-disable-next-line no-console
+      console.log('Error: ', e.message);
+    }
     ctx.body = 'Hmph, I fucked up somewhere. Sit tight, Vitalik is on its way to fix it.';
   });
 
@@ -222,6 +225,7 @@ if (SERVER) {
 
     app.context.blockchain = new Blockchain()
     app.context.blockchain.initialFetch()
+
     // FOR FETCHING SINCE THE DAWN OF ZRX
     // blockchain.historyFetch()
 
