@@ -13,6 +13,11 @@
     font-weight: 700;
     padding-left: 10px;
     display: inline-flex;
+
+    a, a:visited {
+      color: #ffffff;
+      text-decoration: none;
+    }
   }
 }
 

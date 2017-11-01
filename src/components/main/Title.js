@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom'
 
 import ETH from 'src/const/eth'
 import css from './Main.scss'
@@ -12,9 +13,9 @@ class Title extends PureComponent {
     return(
       <div className={css.headTitle}>
         <div className={css.logo}>
-          <img src='/shrimp-white-40.png' />
+          <Link to='/'><img src='/shrimp-white-40.png' /></Link>
         </div>
-        <div className={css.title}>0x.remote.hr</div>
+        <div className={css.title}><Link to='/'>0x.remote.hr</Link></div>
         {
           networkName
           ? <div className={css.connection}><span>Connected to</span> {networkName.toUpperCase()}</div>
