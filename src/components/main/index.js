@@ -19,6 +19,7 @@ import Tokens from 'src/components/pages/Tokens'
 import History from 'src/components/pages/History'
 import NotFoundPage from 'src/components/pages/NotFoundPage'
 import Scribble from 'src/components/pages/Scribble'
+import Edit from 'src/components/pages/Edit'
 
 // ----------------------
 
@@ -93,6 +94,7 @@ export default class Main extends Component {
               <Route exact path={navItems[2].to} component={Tokens} />
               <Route exact path={navItems[3].to} component={History} />
               <Route exact path={navItems[4].to} component={Scribble} />
+              <Route exact path='/edit' component={Edit} />
               <Route component={NotFoundPage} />
             </Switch>
           </NavigationDrawer>
