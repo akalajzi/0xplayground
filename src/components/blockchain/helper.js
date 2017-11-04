@@ -33,10 +33,12 @@ export function mapLog(log, tokens) {
   const takerToken = tokens[log.args.takerToken]
   const filledMakerTokenAmountNormalized = normalizeTokenAmount(makerToken, log.args.filledMakerTokenAmount)
   const filledTakerTokenAmountNormalized = normalizeTokenAmount(takerToken, log.args.filledTakerTokenAmount)
-  const price = calculatePrice(log.args.filledMakerTokenAmount, log.args.filledTakerTokenAmount)
+  // const price = calculatePrice(log.args.filledMakerTokenAmount, log.args.filledTakerTokenAmount)
+  const price = calculatePrice(filledMakerTokenAmountNormalized, filledTakerTokenAmountNormalized)
     .toDigits(6)
     .toNumber()
-  const invertedPrice = calculatePrice(log.args.filledMakerTokenAmount, log.args.filledTakerTokenAmount, true)
+  // const invertedPrice = calculatePrice(log.args.filledMakerTokenAmount, log.args.filledTakerTokenAmount, true)
+  const invertedPrice = calculatePrice(filledMakerTokenAmountNormalized, filledTakerTokenAmountNormalized, true)
     .toDigits(6)
     .toNumber()
 
@@ -68,11 +70,13 @@ function normalizeTokenAmount(token, tokenAmount) {
 }
 
 function calculatePrice(maker, taker, inverted = false) {
-  if (maker.eq(taker)) { // equal amounts
+  const bnMaker = new BigNumber(maker)
+  const bnTaker = new BigNumber(taker)
+  if (bnMaker.eq(bnTaker)) { // equal amounts
     return new BigNumber(1)
   } else {
     return inverted
-      ? taker.div(maker)
-      : maker.div(taker)
+      ? bnTaker.div(bnMaker)
+      : bnMaker.div(bnTaker)
   }
 }
