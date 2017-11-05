@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import { graphql, compose } from 'react-apollo'
-import { bindActionCreators } from 'redux'
 
 import { Grid, Cell } from 'react-md'
 

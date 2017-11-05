@@ -20,6 +20,7 @@ import History from 'src/components/pages/History'
 import NotFoundPage from 'src/components/pages/NotFoundPage'
 import Scribble from 'src/components/pages/Scribble'
 import Edit from 'src/components/pages/Edit'
+import MyTrades from 'src/components/pages/MyTrades'
 
 // ----------------------
 
@@ -29,6 +30,12 @@ const navItems = [
     to: '/',
     exact: true,
     icon: 'home',
+  },
+  {
+    label: 'My Trades',
+    to: '/my-trades',
+    exact: true,
+    icon: 'account_balance',
   },
   {
     label: 'Relayers',
@@ -90,10 +97,11 @@ export default class Main extends Component {
           >
             <Switch>
               <Route exact path={navItems[0].to} component={Home} />
-              <Route exact path={navItems[1].to} component={Relayers} />
-              <Route exact path={navItems[2].to} component={Tokens} />
-              <Route exact path={navItems[3].to} component={History} />
-              <Route exact path={navItems[4].to} component={Scribble} />
+              <Route exact path={navItems[1].to} component={MyTrades} />
+              <Route exact path={navItems[2].to} component={Relayers} />
+              <Route exact path={navItems[3].to} component={Tokens} />
+              <Route exact path={navItems[4].to} component={History} />
+              <Route exact path={navItems[5].to} component={Scribble} />
               <Route exact path='/edit' component={Edit} />
               <Route component={NotFoundPage} />
             </Switch>

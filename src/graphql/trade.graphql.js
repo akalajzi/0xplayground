@@ -40,6 +40,25 @@ const TRADE_LIST = gql`
   ${TRADE_FRAGMENT}
 `
 
+const MY_TRADE_LIST = gql`
+  query Trade ($address: String) {
+    allTrades (
+      filter: {
+        OR: [
+          { taker: $address },
+          { maker: $address }
+        ]
+      },
+      first: 100,
+      orderBy: timestamp_DESC
+    ) {
+      ...TradeFragment
+    }
+  }
+  ${TRADE_FRAGMENT}
+`
+
 export {
   TRADE_LIST,
+  MY_TRADE_LIST,
 }
