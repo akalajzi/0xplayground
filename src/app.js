@@ -20,7 +20,7 @@ import config from 'kit/config';
 import api from 'src/const/api'
 
 /* App */
-import Blockchain from 'src/server/blockchain'
+// import Blockchain from 'src/server/blockchain'
 
 import networkReducer from 'src/reducers/network'
 import { initialState as networkInitialState } from 'src/reducers/network'
@@ -134,19 +134,19 @@ if (SERVER) {
    *   date: 'YYYYMMDD',
    * }
    ****/
-  const CONTROLLING_WALLET = '0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af'
-  const ULTIMATE_RESPONSE = '4'
-
-  config.addPostRoute('/calculateday', async ctx => {
-    const { date, walletAddress } = ctx.request.body
-    if (walletAddress && walletAddress === CONTROLLING_WALLET && date) {
-      // ctx.blockchain.getTradesForDate(date)
-      ctx.blockchain.calculateHistorySinceDate(date)
-      ctx.body = JSON.stringify({date: ctx.request.body.date, status: 'ok'})
-    } else {
-      ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
-    }
-  })
+  // const CONTROLLING_WALLET = '0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af'
+  // const ULTIMATE_RESPONSE = '4'
+  //
+  // config.addPostRoute('/calculateday', async ctx => {
+  //   const { date, walletAddress } = ctx.request.body
+  //   if (walletAddress && walletAddress === CONTROLLING_WALLET && date) {
+  //     // ctx.blockchain.getTradesForDate(date)
+  //     ctx.blockchain.calculateHistorySinceDate(date)
+  //     ctx.body = JSON.stringify({date: ctx.request.body.date, status: 'ok'})
+  //   } else {
+  //     ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
+  //   }
+  // })
 
   /****
    * POST /updateTrades
@@ -157,15 +157,15 @@ if (SERVER) {
    *   walletAddress: '0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af',
    * }
    ****/
-  config.addPostRoute('/updatetrades', async ctx => {
-    const { walletAddress } = ctx.request.body
-    if (walletAddress && walletAddress === CONTROLLING_WALLET) {
-      ctx.blockchain.updateGasUsed()
-      ctx.body = JSON.stringify({status: 'ok'})
-    } else {
-      ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
-    }
-  })
+  // config.addPostRoute('/updatetrades', async ctx => {
+  //   const { walletAddress } = ctx.request.body
+  //   if (walletAddress && walletAddress === CONTROLLING_WALLET) {
+  //     ctx.blockchain.updateGasUsed()
+  //     ctx.body = JSON.stringify({status: 'ok'})
+  //   } else {
+  //     ctx.body = JSON.stringify(ULTIMATE_RESPONSE)
+  //   }
+  // })
 
   /* CUSTOM 404 HANDLER */
 
@@ -223,8 +223,8 @@ if (SERVER) {
     // eslint-disable-next-line no-param-reassign
     app.context.engine = 'Shrimp Engine';
 
-    app.context.blockchain = new Blockchain()
-    app.context.blockchain.initialFetch()
+    // app.context.blockchain = new Blockchain()
+    // app.context.blockchain.initialFetch()
 
     // FOR FETCHING SINCE THE DAWN OF ZRX
     // blockchain.historyFetch()
@@ -253,7 +253,7 @@ if (SERVER) {
     // For the fun of it, let's demonstrate that we can fire Redux actions
     // and it'll manipulate the state on the server side!  View the SSR version
     // to see that the counter is now 1 and has been passed down the wire
-    ctx.store.dispatch({ type: 'INCREMENT_COUNTER' });
+    // ctx.store.dispatch({ type: 'INCREMENT_COUNTER' });
 
     // Always return `next()`, otherwise the request won't 'pass' to the next
     // middleware in the stack (likely, the React handler)

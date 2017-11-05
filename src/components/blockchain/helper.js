@@ -13,6 +13,7 @@ export function connectZeroEx(network) {
   return new ZeroEx(providerEngine)
 }
 
+// I should probably rewrite this and just use whatever comes out of gql
 export function mapTokenList(tokens) {
   if (!tokens) { return null }
   let data = {}
@@ -26,39 +27,6 @@ export function mapTokenList(tokens) {
     }
   }
   return data
-}
-
-export function mapLog(log, tokens) {
-  const makerToken = tokens[log.args.makerToken]
-  const takerToken = tokens[log.args.takerToken]
-  const filledMakerTokenAmountNormalized = normalizeTokenAmount(makerToken, log.args.filledMakerTokenAmount)
-  const filledTakerTokenAmountNormalized = normalizeTokenAmount(takerToken, log.args.filledTakerTokenAmount)
-  // const price = calculatePrice(log.args.filledMakerTokenAmount, log.args.filledTakerTokenAmount)
-  const price = calculatePrice(filledMakerTokenAmountNormalized, filledTakerTokenAmountNormalized)
-    .toDigits(6)
-    .toNumber()
-  // const invertedPrice = calculatePrice(log.args.filledMakerTokenAmount, log.args.filledTakerTokenAmount, true)
-  const invertedPrice = calculatePrice(filledMakerTokenAmountNormalized, filledTakerTokenAmountNormalized, true)
-    .toDigits(6)
-    .toNumber()
-
-  return {
-    address: log.address,
-    timestamp: log.timestamp,
-    blockNumber: log.blockNumber,
-    transactionHash: log.transactionHash,
-    transactionIndex: log.transactionIndex,
-    gasUsed: log.gasUsed || null,
-    gasPrice: log.gasPrice || null,
-    blockHash: log.blockHash,
-    removed: log.removed,
-    event: log.event,
-    filledMakerTokenAmountNormalized,
-    filledTakerTokenAmountNormalized,
-    price,
-    invertedPrice,
-    args: log.args,
-  }
 }
 
 function normalizeTokenAmount(token, tokenAmount) {

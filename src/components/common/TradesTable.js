@@ -28,7 +28,7 @@ class TradesTable extends PureComponent {
   renderRelayer = (trade) => {
     const { relayers } = this.props
 
-    const relayer = _.find(relayers, (relayer) => relayer.address === trade.args.feeRecipient)
+    const relayer = _.find(relayers, (relayer) => relayer.address === trade.feeRecipient)
     if (relayer) {
       return relayer.url
         ? <a href={relayer.url} target='_blank'>{relayer.name}</a>
@@ -46,8 +46,8 @@ class TradesTable extends PureComponent {
         <TokenAmount
           showSymbol
           highlight={walletIsMaker}
-          amount={trade.args.filledMakerTokenAmount}
-          token={this.props.tokens[trade.args.makerToken]}
+          amount={trade.filledMakerTokenAmount}
+          token={this.props.tokens[trade.makerToken]}
         />
         <FontIcon style={{
           verticalAlign: 'text-top',
@@ -57,8 +57,8 @@ class TradesTable extends PureComponent {
         <TokenAmount
           showSymbol
           highlight={walletIsTaker}
-          amount={trade.args.filledTakerTokenAmount}
-          token={this.props.tokens[trade.args.takerToken]}
+          amount={trade.filledTakerTokenAmount}
+          token={this.props.tokens[trade.takerToken]}
         />
       </div>
     )
@@ -95,9 +95,9 @@ class TradesTable extends PureComponent {
 
     _.forEach(trades, (trade, key) => {
       let cssRow = ''
-      const walletIsMaker = trade.args.maker === walletAccount
-      const walletIsTaker = trade.args.taker === walletAccount
-      const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
+      const walletIsMaker = trade.maker === walletAccount
+      const walletIsTaker = trade.taker === walletAccount
+      const totalFee = new BigNumber(trade.paidMakerFee).add(new BigNumber(trade.paidTakerFee))
       const zrxDollarCost = totalFee.div(10**18).toDigits(6).toNumber() * market.zrxPrice
       const gasUsed = trade.gasUsed || 0
       const gasDollarCost = (new BigNumber(gasUsed).div(10**9).toNumber()) * trade.gasPrice * market.ethPrice
@@ -124,14 +124,14 @@ class TradesTable extends PureComponent {
           <TableColumn>
             <TokenAmount
               showSymbol
-              amount={trade.args.paidMakerFee}
+              amount={trade.paidMakerFee}
               token={zrx}
             />
           </TableColumn>
           <TableColumn>
             <TokenAmount
               showSymbol
-              amount={trade.args.paidTakerFee}
+              amount={trade.paidTakerFee}
               token={zrx}
             />
           </TableColumn>

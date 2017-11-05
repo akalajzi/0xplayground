@@ -5,7 +5,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { Button, Grid, Cell, Paper } from 'react-md'
 
-import { TRADES_LIST } from 'src/graphql/trades.graphql'
+import { TRADE_LIST } from 'src/graphql/trade.graphql'
 import { HISTORY_LIST, HISTORY_LIST_LIMITED } from 'src/graphql/history.graphql'
 import { Wallet, Loader, FlyingMessage, WhitePaper } from 'src/components/common'
 import Last24HoursStats from './Last24HoursStats'
@@ -54,10 +54,10 @@ class Home extends Component {
   }
 }
 
-const latestTradesQuery = graphql(TRADES_LIST, {
+const latestTradesQuery = graphql(TRADE_LIST, {
   options: { pollInterval: 60000 }, // 1 minute refresh
-  props: ({ data: { allTradeses }}) => ({
-    latestTrades: allTradeses,
+  props: ({ data: { allTrades }}) => ({
+    latestTrades: allTrades,
   })
 })
 

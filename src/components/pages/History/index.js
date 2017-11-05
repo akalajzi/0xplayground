@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import { bindActionCreators } from 'redux'
 
@@ -7,7 +6,7 @@ import { Grid, Cell } from 'react-md'
 
 import { mapTokenList } from 'src/components/blockchain/helper'
 import { CellTitle, TradesTable } from 'src/components/common'
-import { TRADES_LIST } from 'src/graphql/trades.graphql'
+import { TRADE_LIST } from 'src/graphql/trade.graphql'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 
@@ -48,10 +47,10 @@ const relayListQuery = graphql(RELAY_LIST, {
   }),
 })
 
-const latestTradesQuery = graphql(TRADES_LIST, {
+const latestTradesQuery = graphql(TRADE_LIST, {
   options: { pollInterval: 60000 }, // 1 minute refresh
-  props: ({ data: { allTradeses }}) => ({
-    allTrades: allTradeses,
+  props: ({ data: { allTrades }}) => ({
+    allTrades: allTrades,
   })
 })
 
@@ -59,9 +58,4 @@ export default compose(
   relayListQuery,
   tokenListQuery,
   latestTradesQuery,
-  connect((state) => {
-    return {
-      //
-    }
-  })
 )(History)

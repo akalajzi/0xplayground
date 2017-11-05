@@ -79,21 +79,21 @@ class Last24HoursStats extends Component {
     // loop through trades
     _.forEach(latestTrades, (trade) => {
       // total fees
-      const totalFee = new BigNumber(trade.args.paidMakerFee).add(new BigNumber(trade.args.paidTakerFee))
+      const totalFee = new BigNumber(trade.paidMakerFee).add(new BigNumber(trade.paidTakerFee))
       sum = sum.add(totalFee)
       // recipient
-      if (feeRecipients[trade.args.feeRecipient]) {
-        feeRecipients[trade.args.feeRecipient] = feeRecipients[trade.args.feeRecipient].add(totalFee)
+      if (feeRecipients[trade.feeRecipient]) {
+        feeRecipients[trade.feeRecipient] = feeRecipients[trade.feeRecipient].add(totalFee)
       } else {
-        console.log('Unknown fee recipient', trade.args.feeRecipient)
+        console.log('Unknown fee recipient', trade.feeRecipient)
       }
 
       // token volume groupings
-      if (tokens[trade.args.makerToken]) {
-        tokenVolume[trade.args.makerToken] = tokenVolume[trade.args.makerToken].add(new BigNumber(trade.args.filledMakerTokenAmount))
+      if (tokens[trade.makerToken]) {
+        tokenVolume[trade.makerToken] = tokenVolume[trade.makerToken].add(new BigNumber(trade.filledMakerTokenAmount))
       }
-      if (tokens[trade.args.takerToken]) {
-        tokenVolume[trade.args.takerToken] = tokenVolume[trade.args.takerToken].add(new BigNumber(trade.args.filledTakerTokenAmount))
+      if (tokens[trade.takerToken]) {
+        tokenVolume[trade.takerToken] = tokenVolume[trade.takerToken].add(new BigNumber(trade.filledTakerTokenAmount))
       }
     })
     const reducedTokenVolume = this.cleanTokensWithNoOrdersFilled(tokenVolume)
@@ -193,7 +193,6 @@ const relayListQuery = graphql(RELAY_LIST, {
 export default compose(
   relayListQuery,
   tokenListQuery,
-  // latestTradesQuery,
   connect((state) => {
     return {
       market: state.market,
