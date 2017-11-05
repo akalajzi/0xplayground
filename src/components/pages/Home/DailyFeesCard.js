@@ -54,7 +54,8 @@ export default class DailyFeesCard extends Component {
     const totalFeesFiat = zrxPrice * collectedFees.total
 
     const feesCol = relayers.map((relayer, key) => {
-      return { address: relayer.address, volume: collectedFees.feeRecipients[relayer.address] }
+      const volume = this.bigNumberToNumber(collectedFees.feeRecipients[relayer.address], zrxDecimals)
+      return { address: relayer.address, volume }
     })
     const feesColSorted = _.sortBy(feesCol, 'volume').reverse()
 
@@ -74,7 +75,7 @@ export default class DailyFeesCard extends Component {
     ]
 
     _.forEach(feesColSorted, (item) => {
-      const rFee = this.bigNumberToNumber(item.volume, zrxDecimals)
+      const rFee = item.volume
       const relayer = _.find(relayers, (relayer) => { return relayer.address === item.address})
       const rFeePercentage = (rFee / collectedFees.total * 100).toFixed(2)
 
