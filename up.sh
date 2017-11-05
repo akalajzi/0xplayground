@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git checkout separated-web3
+git checkout master
 git pull
 npm run build
 sudo docker-compose down -v
