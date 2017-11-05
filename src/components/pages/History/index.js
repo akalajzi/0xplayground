@@ -22,7 +22,7 @@ class History extends PureComponent {
       <div className="history">
         <Grid>
           <Cell align='stretch' size={12}>
-            <CellTitle title='Token History' />
+            <CellTitle title='Trade History' />
             <TradesTable
               relayers={relayers}
               tokens={tokens}
