@@ -13,7 +13,7 @@ import {
 } from 'react-md'
 
 import { CREATE_SCRIBBLE_MESSAGE, SCRIBBLE_LIST_LIMITED } from 'src/graphql/scribble.graphql'
-import { Wallet, CellTitle,WhitePaper } from 'src/components/common'
+import { CellTitle,WhitePaper } from 'src/components/common'
 import MessageList from './MessageList'
 
 class Scribble extends Component {
@@ -45,9 +45,6 @@ class Scribble extends Component {
 
     return(
       <div className="Scribble">
-        <Grid>
-          <Wallet />
-        </Grid>
         <WhitePaper>
           <CellTitle title='Scribble' />
           <Grid>

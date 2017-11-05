@@ -12,6 +12,7 @@ import {
 import Blockchain from 'src/components/blockchain/Blockchain'
 import NavLink from './NavLink'
 import Title from './Title'
+import { Wallet } from 'src/components/common'
 
 import Home from 'src/components/pages/Home'
 import Relayers from 'src/components/pages/Relayers'
@@ -82,10 +83,11 @@ export default class Main extends Component {
             gtag('config', 'UA-86122143-2')`}
           </script>
         </Helmet>
-        <Blockchain fetchPastTrades />
+        <Blockchain />
         <NavigationDrawer
           autoclose
           toolbarTitle={<Title />}
+          toolbarActions={<Wallet />}
           toolbarThemeType='colored'
           mobileDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
           tabletDrawerType={NavigationDrawer.DrawerTypes.PERSISTENT_MINI}

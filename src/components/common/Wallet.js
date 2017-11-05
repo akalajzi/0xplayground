@@ -86,9 +86,9 @@ class Wallet extends Component {
     }
 
     return(
-      <div className="Wallet">
-        <div>Connected Network: { ETH.NETWORK_NAME[networkId] }</div>
-        <div>Connected Account: { activeAccount }</div>
+      <div className="Wallet md-cell--phone-hidden">
+        <div>Wallet connected to { ETH.NETWORK_NAME[networkId] }</div>
+        <div>{ activeAccount }</div>
       </div>
     )
   }

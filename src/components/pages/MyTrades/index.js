@@ -7,7 +7,6 @@ import { Grid, Cell } from 'react-md'
 import {
   CellTitle,
   TradesTable,
-  Wallet,
   WhitePaper,
 } from 'src/components/common'
 import { RELAY_LIST } from 'src/graphql/relay.graphql'
@@ -21,12 +20,33 @@ class MyTrades extends Component {
 
   render() {
     const { relayers, tokens, trades, wallet } = this.props
-    const amMe = wallet.activeAccount === "0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af"
-    console.log('this.props ', this.props);
+
+    if (!wallet.activeAccount) {
+      return(
+        <div className='mytrades'>
+          <WhitePaper>
+            <CellTitle title='Wallet not reachable' />
+            <Grid>
+              <Cell align='stretch' size={12}>
+                <div>
+                  You need to have Metamask, Parity or Mist connected to your wallet for us to be able to pull your trading history.
+                </div>
+                <div>
+                  0x.remote.hr doesn't collect or save any data directly from your wallet; it is used simply to provide address that we'll scan Ethereum blockchain for.
+                </div>
+                <div>
+                  Alternatively, provide an address you're interested in, in the field bellow, or simply concatenate the url with the address.
+                  <input />
+                </div>
+              </Cell>
+            </Grid>
+          </WhitePaper>
+        </div>
+      )
+    }
 
     return(
-      <div className="mytrades">
-        <Wallet />
+      <div className='mytrades'>
         <WhitePaper>
           <Grid>
             <Cell align='stretch' size={12}>
