@@ -13,13 +13,14 @@ import { RELAY_LIST } from 'src/graphql/relay.graphql'
 import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
 import { mapTokenList } from 'src/components/blockchain/helper'
 
-import MyTradesTable from './MyTradesTable'
+import TradesStatsContainer from './TradesStatsContainer'
 
 
 class MyTrades extends Component {
 
   render() {
     const { relayers, tokens, trades, wallet } = this.props
+    const pageTitle = `Account ${wallet.activeAccount}`
 
     if (!wallet.activeAccount) {
       return(
@@ -50,11 +51,11 @@ class MyTrades extends Component {
         <WhitePaper>
           <Grid>
             <Cell align='stretch' size={12}>
-              <CellTitle title='My Trades' />
-              <MyTradesTable
-                relayers={relayers}
+              <CellTitle title={pageTitle} />
+              <TradesStatsContainer
+                address={wallet.activeAccount}
                 tokens={tokens}
-                wallet={wallet}
+                relayers={relayers}
               />
             </Cell>
           </Grid>

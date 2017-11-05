@@ -1,5 +1,6 @@
 import Loader from './Loader'
 import CellTitle from './CellTitle'
+import CellTitleDescription from './CellTitleDescription'
 import FlyingMessage from './FlyingMessage'
 import TinyChart from './TinyChart'
 import TokenAmount from './TokenAmount'
@@ -12,6 +13,7 @@ import WhitePaper from './WhitePaper'
 export {
   Loader,
   CellTitle,
+  CellTitleDescription,
   FlyingMessage,
   TinyChart,
   TokenAmount,

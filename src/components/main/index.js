@@ -34,7 +34,7 @@ const navItems = [
   },
   {
     label: 'My Trades',
-    to: '/my-trades',
+    to: '/account',
     exact: true,
     icon: 'account_balance',
   },
