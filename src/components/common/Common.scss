@@ -1,8 +1,16 @@
 .FlyingMessage {
   display: inline-block;
-  float: right;
   font-size: 12px;
-  text-align: right;
+
+  &.left {
+    float: left;
+    text-align: left;
+  }
+
+  &.right {
+    float: right;
+    text-align: right;
+  }
 
   a {
     color: $md-secondary-color;
@@ -16,4 +24,12 @@
   text-align: right;
   font-size: 11px;
   padding-top: 14px;
+}
+
+.light-grey {
+  color: $md-grey-500;
+}
+
+.grey {
+  color: $md-grey-600;
 }

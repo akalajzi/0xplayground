@@ -5,8 +5,7 @@ const CellTitleDescription = ({text}) => {
     paddingLeft: '16px',
     marginTop: '-12px',
     fontSize: '12px',
-    color: 'grey',
-  }}>{text}</div>
+  }} className='grey'>{text}</div>
 }
 
 export default CellTitleDescription

@@ -6,13 +6,15 @@ import {
   Switch,
 } from 'react-router-dom';
 import {
+  Cell,
+  Grid,
   NavigationDrawer,
 } from 'react-md';
 
 import Blockchain from 'src/components/blockchain/Blockchain'
 import NavLink from './NavLink'
 import Title from './Title'
-import { Wallet } from 'src/components/common'
+import { Wallet, FlyingMessage } from 'src/components/common'
 
 import Home from 'src/components/pages/Home'
 import Relayers from 'src/components/pages/Relayers'
@@ -97,16 +99,34 @@ export default class Main extends Component {
           contentStyle={styles.content}
           contentClassName="md-grid"
           >
-            <Switch>
-              <Route exact path={navItems[0].to} component={Home} />
-              <Route exact path={navItems[1].to} component={MyTrades} />
-              <Route exact path={navItems[2].to} component={Relayers} />
-              <Route exact path={navItems[3].to} component={Tokens} />
-              <Route exact path={navItems[4].to} component={History} />
-              <Route exact path={navItems[5].to} component={Scribble} />
-              <Route exact path='/edit' component={Edit} />
-              <Route component={NotFoundPage} />
-            </Switch>
+            <div className='main-wrapper'>
+              <Grid>
+                <Cell size={12} align='stretch'>
+                  <FlyingMessage left>
+                    <div className='light-grey'>
+                      Tips welcome in ETH or any ERC20 token<br />
+                      0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af
+                    </div>
+                  </FlyingMessage>
+                  <FlyingMessage right>
+                    <div>
+                      Have a suggestion?<br />
+                      <Link to='/scribble'>Tell me about it!</Link>
+                    </div>
+                  </FlyingMessage>
+                </Cell>
+              </Grid>
+              <Switch>
+                <Route exact path={navItems[0].to} component={Home} />
+                <Route exact path={navItems[1].to} component={MyTrades} />
+                <Route exact path={navItems[2].to} component={Relayers} />
+                <Route exact path={navItems[3].to} component={Tokens} />
+                <Route exact path={navItems[4].to} component={History} />
+                <Route exact path={navItems[5].to} component={Scribble} />
+                <Route exact path='/edit' component={Edit} />
+                <Route component={NotFoundPage} />
+              </Switch>
+            </div>
           </NavigationDrawer>
       </div>
     )
