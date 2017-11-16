@@ -26,6 +26,20 @@
   padding-top: 14px;
 }
 
+.AccountSearchForm {
+
+  .address-input {
+    display: inline-block;
+    margin-right: 20px;
+    max-width: 340px;
+  }
+
+  .address-input-btn {
+    margin-bottom: 22px;
+  }
+}
+
+
 .light-grey {
   color: $md-grey-500;
 }

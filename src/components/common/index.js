@@ -1,4 +1,5 @@
 import Loader from './Loader'
+import AccountSearchForm from './AccountSearchForm'
 import CellTitle from './CellTitle'
 import CellTitleDescription from './CellTitleDescription'
 import FlyingMessage from './FlyingMessage'
@@ -12,6 +13,7 @@ import WhitePaper from './WhitePaper'
 
 export {
   Loader,
+  AccountSearchForm,
   CellTitle,
   CellTitleDescription,
   FlyingMessage,

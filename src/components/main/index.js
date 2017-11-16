@@ -93,7 +93,7 @@ export default class Main extends Component {
           toolbarThemeType='colored'
           mobileDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
           tabletDrawerType={NavigationDrawer.DrawerTypes.PERSISTENT_MINI}
-          desktopDrawerType={NavigationDrawer.DrawerTypes.PERSISTENT}
+          desktopDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY}
           navItems={navItems.map(props => <NavLink {...props} key={props.to} />)}
           contentId="main-content"
           contentStyle={styles.content}

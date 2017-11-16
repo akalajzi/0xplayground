@@ -7,6 +7,7 @@ import _ from 'lodash'
 import { Button, Grid, Cell, TextField } from 'react-md'
 
 import {
+  AccountSearchForm,
   CellTitle,
   TradesTable,
   WhitePaper,
@@ -34,32 +35,11 @@ class MyTrades extends Component {
     wallet: PropTypes.object,
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      addressInput: '',
-      addressInputError: false,
-    }
-  }
-
-  onAddressChange = (value) => {
-    this.setState({ addressInput: value, addressInputError: false })
-  }
-
-  submitAddress = () => {
-    if (validateEthAddress(this.state.addressInput)) {
-      window.location = `/account/${this.state.addressInput}`
-    } else {
-      this.setState({ addressInputError: true })
-    }
-  }
-
   render() {
     const { relayers, tokens, trades, wallet, match } = this.props
 
     const activeAccount = match.params.address || wallet.activeAccount
-    const pageTitle = `Account ${activeAccount}`
+    const pageTitle = `Address ${activeAccount}`
 
     if (!activeAccount) {
       return(
@@ -77,22 +57,7 @@ class MyTrades extends Component {
                 <div>
                   Alternatively, provide an address you're interested in, in the field bellow, or simply concatenate the url with the address.
                 </div>
-                <TextField
-                  id='address-field'
-                  label='Ethereum address'
-                  lineDirection='left'
-                  className='address-input'
-                  onChange={this.onAddressChange}
-                  error={this.state.addressInputError}
-                  errorText='Has to be valid ethereum address'
-                />
-                <Button
-                  raised
-                  secondary
-                  disabled={this.state.addressInputError}
-                  className='address-input-btn'
-                  onClick={this.submitAddress}
-                >Go</Button>
+                <AccountSearchForm />
               </Cell>
             </Grid>
           </WhitePaper>
@@ -104,8 +69,13 @@ class MyTrades extends Component {
       <div className='mytrades'>
         <WhitePaper>
           <Grid>
-            <Cell align='stretch' size={12}>
+            <Cell desktopSize={6}>
               <CellTitle title={pageTitle} />
+            </Cell>
+            <Cell desktopSize={6} phoneHidden tabletHidden>
+              <AccountSearchForm style={{ float: 'right', minWidth: '450px' }}/>
+            </Cell>
+            <Cell align='stretch' size={12}>
               <TradesStatsContainer
                 address={activeAccount}
                 tokens={tokens}
