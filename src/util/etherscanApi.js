@@ -16,6 +16,25 @@ export function createTransactionListPayload(address, startblock = 0, endblock =
   }
 }
 
-export function fetchEtherscan(address, payload) {
-  return axios.get(ETHERSCAN_API, payload)
+export function createTokenBalanceCheckPayload(contractAddress, address) {
+  return {
+    module: 'account',
+    action: 'tokenbalance',
+    contractAddress,
+    address,
+    tag: 'latest',
+    apikey: ETHERSCAN_API_KEY,
+  }
+}
+
+export function createContractPayload(contractAddress) {
+  return {
+    module: 'contract',
+    action: 'getabi',
+    address: contractAddress,
+  }
+}
+
+export function fetchEtherscan(params) {
+  return axios.get(ETHERSCAN_API, { params })
 }

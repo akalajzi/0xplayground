@@ -119,6 +119,7 @@ export default class Main extends Component {
               <Switch>
                 <Route exact path={navItems[0].to} component={Home} />
                 <Route exact path={navItems[1].to} component={MyTrades} />
+                <Route path={`${navItems[1].to}/:address`} component={MyTrades} />
                 <Route exact path={navItems[2].to} component={Relayers} />
                 <Route exact path={navItems[3].to} component={Tokens} />
                 <Route exact path={navItems[4].to} component={History} />

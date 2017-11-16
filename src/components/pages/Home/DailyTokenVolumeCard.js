@@ -1,7 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import BigNumber from 'bignumber.js'
-import { graphql, compose } from 'react-apollo'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 
@@ -26,12 +23,7 @@ import UI from 'src/const/ui'
 
 const COLORS = UI.CHART_COLORS
 
-import { mapTokenList } from 'src/components/blockchain/helper'
-import { RELAY_LIST } from 'src/graphql/relay.graphql'
-import { TOKEN_LIST_QUERY } from 'src/graphql/token.graphql'
-
-import { TradesTable, Loader } from 'src/components/common'
-import DailyFeesCard from './DailyFeesCard'
+import { Loader } from 'src/components/common'
 
 export default class DailyTokenVolumeCard extends Component {
 

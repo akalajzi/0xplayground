@@ -10,6 +10,7 @@ $md-secondary-color: $md-red-800;
 @include react-md-everything;
 
 @import './components/common/Common.scss';
+@import './components/pages/MyTrades/MyTrades.scss';
 @import './components/pages/Scribble/Scribble.scss';
 
 body {
@@ -47,6 +48,11 @@ html {
       text-decoration: none;
     }
   }
+}
+
+.text-description {
+  color: $md-grey-600;
+  font-size: 12px;
 }
 
 /** layout fixers **/

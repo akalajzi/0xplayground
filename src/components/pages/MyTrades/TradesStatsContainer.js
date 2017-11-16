@@ -15,8 +15,13 @@ import { getFiatValue } from 'src/util/marketApi'
 import { TradesTable, CellTitle, CellTitleDescription, Loader } from 'src/components/common'
 import DailyTokenVolumeCard from './../Home/DailyTokenVolumeCard' // TODO: move this
 import DailyFeesCard from './../Home/DailyFeesCard'
+import WalletActivity from './WalletActivity'
 
 import { MY_TRADE_LIST } from 'src/graphql/trade.graphql'
+
+import { connectZeroEx } from 'src/components/blockchain/helper'
+import Web3 from 'web3'
+import INFURA from 'src/const/infura'
 
 
 import CURRENCIES from 'src/const/currencies'
@@ -32,10 +37,18 @@ class TradesStatsContainer extends Component {
   constructor(props) {
     super(props)
 
+    this.zeroEx = connectZeroEx(INFURA.MAINNET)
+    this.web3 = new Web3(new Web3.providers.HttpProvider(INFURA.MAINNET))
+
     this.state = {
       collectedFees: null,
       tokenPrices: null,
+      tokenBalances: null,
     }
+  }
+
+  componentDidMount() {
+    // this.fetchTokenBalances()
   }
 
   componentDidUpdate(prevProps) {
@@ -47,6 +60,7 @@ class TradesStatsContainer extends Component {
     if (this.props.trades !== prevProps.trades) { // happens when changing address
       const collectedFees = this.calculateCollectedFees()
       this.setState({ collectedFees })
+      // this.fetchTokenBalances()
     }
   }
 
@@ -115,6 +129,36 @@ class TradesStatsContainer extends Component {
     return _.sortBy(trades, 'timestamp').reverse()
   }
 
+  fetchTokenBalances = () => {
+    const { tokens, address } = this.props
+    const isAddress = this.web3.utils.isAddress
+    const sortedTokens = _.sortBy(tokens, 'address')
+    const tokenBalances = {}
+
+    let batch = []
+    _.forEach(sortedTokens, (token, iterator) => {
+      if (isAddress(token.address.toLowerCase()) && isAddress(address.toLowerCase())) {
+        batch.push(this.zeroEx.token.getBalanceAsync(token.address.toLowerCase(), address.toLowerCase()))
+      } else {
+        batch.push(null) // just to keep iterator order
+      }
+    })
+
+    Promise.all(batch).then((results) => {
+      _.forEach(sortedTokens, (token, i) => {
+        if (results[i] && !results[i].isZero()) {
+          tokenBalances[token.address] = {
+            address: token.address,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            amount: this.bigNumberToNumber(results[i], token.decimals)
+          }
+        }
+      })
+    })
+    this.setState({ tokenBalances })
+  }
+
   fetchTokenPrices = (tokenVolume) => {
     const { tokens, market } = this.props
     const tokenAddresses = Object.keys(tokenVolume)
@@ -153,34 +197,39 @@ class TradesStatsContainer extends Component {
 
     return(
         <Grid>
-          <Cell size={6}>
-            <CellTitle title='Trading volume' />
-            <CellTitleDescription text='* Includes value of both sides of the trade' />
-            <DailyTokenVolumeCard
-              collectedFees={collectedFees}
-              fiat={CURRENCIES[market.currency]}
-              tokenPrices={tokenPrices}
-              tokens={tokens}
-            />
-          </Cell>
-          <Cell size={6}>
-            <CellTitle title='Fees paid' />
-            <CellTitleDescription text='* Fees you paid to relayers' />
-            <DailyFeesCard
-              collectedFees={collectedFees}
-              zrxPrice={market.zrxPrice}
-              fiat={CURRENCIES[market.currency]}
-              relayers={relayers}
-            />
-          </Cell>
-          <Cell size={12} align='stretch'>
-            <CellTitle title='List of trades' />
-            <TradesTable
-              relayers={relayers}
-              tokens={tokens}
-              latestTrades={trades}
-            />
-          </Cell>
+            {/* <Cell size={6}>
+              <CellTitle title='Wallet balance' />
+              <WalletActivity tokenBalances={this.state.tokenBalances} />
+            </Cell> */}
+            {/* <Cell size={6}>asdf</Cell> */}
+            <Cell size={6}>
+              <CellTitle title='Trading volume' />
+              <CellTitleDescription text='* Includes value of both sides of the trade' />
+              <DailyTokenVolumeCard
+                collectedFees={collectedFees}
+                fiat={CURRENCIES[market.currency]}
+                tokenPrices={tokenPrices}
+                tokens={tokens}
+              />
+            </Cell>
+            <Cell size={6}>
+              <CellTitle title='Fees paid' />
+              <CellTitleDescription text='* Fees you paid to relayers' />
+              <DailyFeesCard
+                collectedFees={collectedFees}
+                zrxPrice={market.zrxPrice}
+                fiat={CURRENCIES[market.currency]}
+                relayers={relayers}
+              />
+            </Cell>
+            <Cell size={12} align='stretch'>
+              <CellTitle title='List of trades' />
+              <TradesTable
+                relayers={relayers}
+                tokens={tokens}
+                latestTrades={trades}
+              />
+            </Cell>
         </Grid>
     )
   }
