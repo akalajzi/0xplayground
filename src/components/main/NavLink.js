@@ -7,11 +7,13 @@ const NavLink = ({ label, to, exact, icon }) => (
     {({ match }) => {
       let leftIcon;
       if (icon) {
-        leftIcon = <FontIcon>{icon}</FontIcon>;
+        leftIcon = <FontIcon inherit>{icon}</FontIcon>;
       }
 
       return (
         <ListItem
+          className='NavLink'
+          activeClassName='md-text--theme-secondary'
           component={RouterLink}
           active={!!match}
           to={to}

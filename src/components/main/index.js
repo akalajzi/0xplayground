@@ -92,8 +92,9 @@ export default class Main extends Component {
           toolbarActions={<Wallet />}
           toolbarThemeType='colored'
           mobileDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
-          tabletDrawerType={NavigationDrawer.DrawerTypes.PERSISTENT_MINI}
-          desktopDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY}
+          tabletDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
+          desktopDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
+          drawerClassName='DrawerList'
           navItems={navItems.map(props => <NavLink {...props} key={props.to} />)}
           contentId="main-content"
           contentStyle={styles.content}

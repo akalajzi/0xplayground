@@ -12,6 +12,12 @@ $md-secondary-color: $md-red-800;
 @import './components/common/Common.scss';
 @import './components/pages/Scribble/Scribble.scss';
 
+/** OVERWRITES **/
+
+
+
+/** END OVERWRITES **/
+
 body {
   margin: 0;
 }
@@ -58,6 +64,12 @@ html {
 .buttons__group {
   .md-btn {
     margin: 1rem;
+  }
+}
+
+.NavLink {
+  a.md-list-tile { // navbar drawer mini
+    padding-left: 24px;
   }
 }
 
