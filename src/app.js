@@ -28,6 +28,8 @@ import walletReducer from 'src/reducers/wallet'
 import { initialState as walletInitialState } from 'src/reducers/wallet'
 import marketReducer from 'src/reducers/market'
 import { initialState as marketInitialState } from 'src/reducers/market'
+import uiReducer from 'src/reducers/ui'
+import { initialState as uiInitialState } from 'src/reducers/ui'
 
 // Main component -- i.e. the 'root' React component in our app
 import Main from 'src/components/main';
@@ -48,6 +50,7 @@ import './styles.global.scss';
 config.addReducer('network', networkReducer, networkInitialState)
 config.addReducer('wallet', walletReducer, walletInitialState)
 config.addReducer('market', marketReducer, marketInitialState)
+config.addReducer('ui', uiReducer, uiInitialState)
 
 /* GRAPHQL */
 

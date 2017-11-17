@@ -13,6 +13,7 @@ import {
 
 import Blockchain from 'src/components/blockchain/Blockchain'
 import NavLink from './NavLink'
+import AddressSearchNavItem from './customNavItems/AddressSearchNavItem'
 import Title from './Title'
 import { Wallet, FlyingMessage } from 'src/components/common'
 
@@ -33,6 +34,9 @@ const navItems = [
     to: '/',
     exact: true,
     icon: 'home',
+  },
+  {
+    component: <AddressSearchNavItem key='address-search-nav-item' />,
   },
   {
     label: 'My Trades',
@@ -68,6 +72,14 @@ const styles = {
 
 export default class Main extends Component {
   render() {
+    const navItemsApplied = navItems.map((props) => {
+      if (props.component) {
+        return props.component
+      } else {
+        return <NavLink {...props} key={props.to} />
+      }
+    })
+
     return (
       <div>
         <Helmet
@@ -95,7 +107,7 @@ export default class Main extends Component {
           tabletDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
           desktopDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
           drawerClassName='DrawerList'
-          navItems={navItems.map(props => <NavLink {...props} key={props.to} />)}
+          navItems={ navItemsApplied }
           contentId="main-content"
           contentStyle={styles.content}
           contentClassName="md-grid"
@@ -119,12 +131,12 @@ export default class Main extends Component {
               </Grid>
               <Switch>
                 <Route exact path={navItems[0].to} component={Home} />
-                <Route exact path={navItems[1].to} component={MyTrades} />
-                <Route path={`${navItems[1].to}/:address`} component={MyTrades} />
-                <Route exact path={navItems[2].to} component={Relayers} />
-                <Route exact path={navItems[3].to} component={Tokens} />
-                <Route exact path={navItems[4].to} component={History} />
-                <Route exact path={navItems[5].to} component={Scribble} />
+                <Route exact path={navItems[2].to} component={MyTrades} />
+                <Route path={`${navItems[2].to}/:address`} component={MyTrades} />
+                <Route exact path={navItems[3].to} component={Relayers} />
+                <Route exact path={navItems[4].to} component={Tokens} />
+                <Route exact path={navItems[5].to} component={History} />
+                <Route exact path={navItems[6].to} component={Scribble} />
                 <Route exact path='/edit' component={Edit} />
                 <Route component={NotFoundPage} />
               </Switch>
