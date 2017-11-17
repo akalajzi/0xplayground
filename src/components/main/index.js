@@ -83,7 +83,7 @@ export default class Main extends Component {
     return (
       <div>
         <Helmet
-          title="0x.remote.hr"
+          title='0x.remote.hr'
           meta={[{
             name: 'description',
             content: 'Navigating the blockchain',
@@ -108,9 +108,9 @@ export default class Main extends Component {
           desktopDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
           drawerClassName='DrawerList'
           navItems={ navItemsApplied }
-          contentId="main-content"
+          contentId='main-content'
           contentStyle={styles.content}
-          contentClassName="md-grid"
+          contentClassName='md-grid'
           >
             <div className='main-wrapper'>
               <Grid>
