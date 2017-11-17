@@ -15,6 +15,7 @@ import Blockchain from 'src/components/blockchain/Blockchain'
 import NavLink from './NavLink'
 import AddressSearchNavItem from './customNavItems/AddressSearchNavItem'
 import Title from './Title'
+import Modals from './Modals'
 import { Wallet, FlyingMessage } from 'src/components/common'
 
 import Home from 'src/components/pages/Home'
@@ -129,6 +130,7 @@ export default class Main extends Component {
                   </FlyingMessage>
                 </Cell>
               </Grid>
+              <Modals />
               <Switch>
                 <Route exact path={navItems[0].to} component={Home} />
                 <Route exact path={navItems[2].to} component={MyTrades} />

@@ -14,7 +14,33 @@ $md-secondary-color: $md-red-800;
 
 /** OVERWRITES **/
 
+.ScanAddressDialog {
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
 
+  .md-background--card {
+    background: transparent;
+    border: 1px solid #fff;
+    box-shadow: none;
+
+    h2.md-title {
+      color: #fff;
+    }
+  }
+
+  input, label {
+    color: #fff;
+  }
+
+  .md-divider {
+    background: rgba(255, 253, 253, 0.38);
+  }
+
+  .md-divider--text-field-active:after {
+    background: #fff;
+  }
+
+}
 
 /** END OVERWRITES **/
 
