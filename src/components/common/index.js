@@ -7,7 +7,8 @@ import TinyChart from './TinyChart'
 import TokenAmount from './TokenAmount'
 import TokenLink from './TokenLink'
 import TooltipLink from './TooltipLink'
-import TradesTable from './TradesTable'
+import Tooltipped from './Tooltipped'
+import TradesTable from './TradesTable/TradesTable'
 import Wallet from './Wallet'
 import WhitePaper from './WhitePaper'
 
@@ -21,6 +22,7 @@ export {
   TokenAmount,
   TokenLink,
   TooltipLink,
+  Tooltipped,
   TradesTable,
   Wallet,
   WhitePaper,

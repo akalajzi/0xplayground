@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { graphql, compose } from 'react-apollo'
@@ -15,15 +14,13 @@ import {
 import _ from 'lodash'
 
 import { TokenAmount, TooltipLink } from 'src/components/common'
+import TradePrice from './TradePrice'
 
 import ETH from 'src/const/eth'
 
+BigNumber.config({ ERRORS: false })
+
 class TradesTable extends PureComponent {
-  // static propTypes = {
-  //   relayers:
-  //   tokens:
-  //   latestTrades:
-  // }
 
   renderRelayer = (trade) => {
     const { relayers } = this.props
@@ -116,7 +113,7 @@ class TradesTable extends PureComponent {
             { this.renderTrade(trade, walletIsMaker, walletIsTaker) }
           </TableColumn>
           <TableColumn>
-            { trade.price }
+            <TradePrice trade={trade} tokens={tokens} />
           </TableColumn>
           <TableColumn>
             { this.renderRelayer(trade) }
