@@ -88,7 +88,8 @@ export default new WebpackConfig().extend('[root]/base.js').merge({
       chunks: ['browser'],
       minChunks: module => (
         // this assumes your vendor imports exist in the node_modules directory
-        module.context && module.context.indexOf('node_modules') !== -1 && module.context.indexOf('web3') !== -1
+        module.context && module.context.indexOf('node_modules') !== -1
+        && (module.context.indexOf('web3') !== -1 || module.context.indexOf('abi-decoder'))
       ),
     }),
     new webpack.optimize.CommonsChunkPlugin({

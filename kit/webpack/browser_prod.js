@@ -117,7 +117,7 @@ export default new WebpackConfig().extend({
       output: {
         comments: false,
       },
-      exclude: [/\.min\.js$/gi, 'web3'], // skip pre-minified libs
+      exclude: [/\.min\.js$/gi, 'web3'], // skip pre-minified libs and web3
     }),
 
     // A plugin for a more aggressive chunk merging strategy
