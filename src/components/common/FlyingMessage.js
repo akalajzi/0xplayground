@@ -2,12 +2,14 @@ import React from 'react'
 import Cell from 'react-md'
 
 const FlyingMessage = (props) => {
-  let positionCss = ''
-  positionCss = props.left ? 'left' : ''
-  positionCss = props.right ? 'right' : ''
+  let cssn = ''
+  cssn = props.left ? 'left ' : ''
+  cssn = props.right ? 'right ' : ''
+
+  cssn += props.className || ''
 
   return(
-    <div className={`FlyingMessage ${positionCss}`}>
+    <div className={`FlyingMessage ${cssn}`}>
       {props.children}
     </div>
   )
