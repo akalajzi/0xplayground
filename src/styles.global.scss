@@ -93,12 +93,6 @@ html {
   }
 }
 
-.NavLink {
-  .md-list-tile { // navbar drawer mini
-    padding-left: 24px;
-  }
-}
-
 .pointer {
   cursor: pointer;
 }
@@ -110,4 +104,20 @@ html {
 
 .bg-my-highlight {
   background-color: $md-green-50;
+}
+
+// tablet and up
+@media #{$md-tablet-media} {
+  .NavLink {
+    .md-list-tile { // navbar drawer mini
+      padding-left: 24px;
+    }
+  }
+}
+
+// only mobile
+@media only screen and (max-width: ($md-tablet-min-width - 1)) {
+  .hideOnMobile {
+    display: none;
+  }
 }

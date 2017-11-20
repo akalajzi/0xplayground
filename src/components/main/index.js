@@ -122,7 +122,7 @@ export default class Main extends Component {
                       0xdc5f5a9c3eb2f16db36c6c7f889f83dd232d71af
                     </div>
                   </FlyingMessage>
-                  <FlyingMessage right>
+                  <FlyingMessage right className='hideOnMobile'>
                     <div>
                       Have a suggestion?<br />
                       <Link to='/scribble'>Tell me about it!</Link>
