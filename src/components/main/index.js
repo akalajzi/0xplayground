@@ -11,7 +11,7 @@ import {
   NavigationDrawer,
 } from 'react-md';
 
-import Blockchain from 'src/components/blockchain/Blockchain'
+import Base from 'src/components/blockchain/Base'
 import NavLink from './NavLink'
 import AddressSearchNavItem from './customNavItems/AddressSearchNavItem'
 import Title from './Title'
@@ -98,7 +98,7 @@ export default class Main extends Component {
             gtag('config', 'UA-86122143-2')`}
           </script>
         </Helmet>
-        <Blockchain />
+        <Base />
         <NavigationDrawer
           autoclose
           toolbarTitle={<Title />}
