@@ -36,7 +36,6 @@ class Wallet extends Component {
 
   getWeb3Provider = () => {
     if (typeof window.web3 !== undefined && this.state.web3 === null) {
-      // this.web3 = window.web3
       this.setState({ web3: window.web3 })
     }
   }
@@ -70,7 +69,7 @@ class Wallet extends Component {
       this.getWeb3Provider()
       this.getActiveAccount()
       this.getInjectedNetwork()
-    }, 500)
+    }, 750)
     this.setState({ intervalId })
   }
 
