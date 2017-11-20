@@ -27,6 +27,11 @@ class Base extends Component {
 
   componentDidMount() {
     this.pollForMarketValue()
+
+    if (this.props.blockchainInfo) {
+      const networkId = _.find(this.props.blockchainInfo, item => item.name === 'networkId' ).value
+      this.props.setNetwork(networkId)
+    }
   }
 
   componentWillUnmount() {

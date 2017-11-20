@@ -90,8 +90,8 @@ export default class Main extends Component {
             content: 'Navigating the blockchain',
           }]}>
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Roboto:400,500,700" />
-          <script async src="https://www.googletagmanager.com/gtag/js?id=UA-86122143-2"></script>
-          <script>
+          <script key='gta' async src="https://www.googletagmanager.com/gtag/js?id=UA-86122143-2"></script>
+          <script key='gtb'>
             {`window.dataLayer = window.dataLayer || []
             function gtag(){dataLayer.push(arguments)}
             gtag('js', new Date())

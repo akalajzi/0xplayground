@@ -57,7 +57,4 @@ const scripts = [
   logServerStarted({
     type: 'server',
   });
-
-  // signal ready to pm2
-  process.send('ready');
 })();
