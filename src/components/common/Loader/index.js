@@ -1,10 +1,7 @@
-import React from 'react'
-import css from './loader.scss'
+import Loader from './Loader'
+import InlineLoader from './InlineLoader'
 
-const Loader = () => {
-  return(
-    <div className={css.loader}>Loading...</div>
-  )
+export {
+  Loader,
+  InlineLoader,
 }
-
-export default Loader

@@ -1,4 +1,4 @@
-import Loader from './Loader'
+import { Loader, InlineLoader } from './Loader'
 import AccountSearchForm from './AccountSearchForm'
 import CellTitle from './CellTitle'
 import CellTitleDescription from './CellTitleDescription'
@@ -14,6 +14,7 @@ import WhitePaper from './WhitePaper'
 
 export {
   Loader,
+  InlineLoader,
   AccountSearchForm,
   CellTitle,
   CellTitleDescription,
