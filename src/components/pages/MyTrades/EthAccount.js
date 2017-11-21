@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
-import abiDecoder from 'abi-decoder'
+// import abiDecoder from 'abi-decoder'
+// removed from package.json because its huge
 
 import {
   createTransactionListPayload,
