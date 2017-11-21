@@ -23,7 +23,7 @@ import UI from 'src/const/ui'
 
 const COLORS = UI.CHART_COLORS
 
-import { Loader } from 'src/components/common'
+import { Loader, InlineLoader } from 'src/components/common'
 
 export default class DailyTokenVolumeCard extends Component {
 
@@ -38,16 +38,18 @@ export default class DailyTokenVolumeCard extends Component {
 
   renderTokenVolumes = (tokenVolume) => {
     const { tokens, tokenPrices, fiat } = this.props
+    const loading = !tokenPrices
 
     let fiatVolume = 0.0
     _.forEach(tokenVolume, (volume, address) => {
-      if (tokenPrices && tokenPrices[address]) {
+      if (!loading && tokenPrices[address]) {
         fiatVolume += volume * tokenPrices[address]
       }
     })
 
     const volumesCol = Object.keys(tokenVolume).map((address) => {
-      return { address, volume: tokenVolume[address] * tokenPrices[address] }
+      const tokenPrice = loading ? 0 : tokenPrices[address]
+      return { address, volume: tokenVolume[address] * tokenPrice }
     })
     const volColSorted = _.sortBy(volumesCol, 'volume').reverse()
 
@@ -59,7 +61,7 @@ export default class DailyTokenVolumeCard extends Component {
         <TableColumn>{
           tokenPrices
           ? `${fiat.symbol} ${fiatVolume.toFixed(fiat.decimal_digits)}`
-          : '...'
+          : <InlineLoader />
         }</TableColumn>
       </TableRow>
     ]
@@ -72,7 +74,9 @@ export default class DailyTokenVolumeCard extends Component {
         <TableRow key={'tv' + item.address}>
           <TableColumn>{`${tokens[item.address].symbol} - ${tokens[item.address].name}`}</TableColumn>
           <TableColumn>{tokenVolume[item.address]}</TableColumn>
-          <TableColumn>{fiatVolume}</TableColumn>
+          <TableColumn>
+            { loading ? <InlineLoader /> : fiatVolume }
+          </TableColumn>
         </TableRow>
       )
     })
@@ -81,10 +85,10 @@ export default class DailyTokenVolumeCard extends Component {
 
   render() {
     const { collectedFees, tokens, tokenPrices } = this.props
-    const loading = !collectedFees || !tokens || !tokenPrices
+    const everythingLoading = !collectedFees || !tokens
     const tokenVolumeForChart = collectedFees && this.tokenVolumeForChart(collectedFees.tokenVolume, tokenPrices)
 
-    if (loading) { return <Loader /> }
+    if (everythingLoading) { return <Loader /> }
     return(
       <Grid>
         <Cell size={8}>
