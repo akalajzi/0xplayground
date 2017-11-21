@@ -24,6 +24,10 @@ export default class TradePrice extends PureComponent {
   }
 
   calculatePrice = (trade) => {
+    if (!this.props.tokens[trade.makerToken] || !this.props.tokens[trade.takerToken]) {
+      return null
+    }
+
     const makerTokenDecimals = this.props.tokens[trade.makerToken].decimals
     const makerAmount = new BigNumber(trade.filledMakerTokenAmount).div(10**makerTokenDecimals).toNumber()
     const takerTokenDecimals = this.props.tokens[trade.takerToken].decimals
