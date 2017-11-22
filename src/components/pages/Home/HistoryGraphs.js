@@ -75,7 +75,7 @@ export default class HistoryGraphs extends Component {
         zrxUsdPrice: parseFloat(day.zrxUsdPrice.toFixed(6)),
         ethUsdPrice: parseFloat(day.ethUsdPrice.toFixed(4)),
         tradeVolume: day.tradeVolumeUsd ? parseFloat(day.tradeVolumeUsd.toFixed(2)) : null, // data can be incomplete
-        feesPaid: day.feesPaidTotal ? parseFloat(day.feesPaidTotal.toFixed(2)) : null,
+        feesPaid: day.feesPaidTotal ? parseFloat(day.feesPaidTotal.toFixed(2)) : 0,
       }
     })
     this.setState({ sevenDaysData: data})
