@@ -18,6 +18,8 @@
 // Config API, for adding reducers and configuring our ReactQL app
 import config from 'kit/config';
 import api from 'src/const/api'
+import { log } from 'src/util/logger'
+
 
 /* App */
 // import Blockchain from 'src/server/blockchain'
@@ -214,6 +216,11 @@ if (SERVER) {
       // eslint-disable-next-line no-console
       console.log('Error: ', e.message);
     }
+    log({
+      'type': 'ERROR',
+      'extra': 'General, not catched',
+      'text': e.message,
+    })
     ctx.body = 'Hmph, I fucked up somewhere. Sit tight, Vitalik is on its way to fix it.';
   });
 

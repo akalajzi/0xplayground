@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import Helmet from 'react-helmet';
+import React, { Component } from 'react'
+import Helmet from 'react-helmet'
 import {
   Link,
   Route,
   Switch,
-} from 'react-router-dom';
+} from 'react-router-dom'
 import {
   Cell,
   Grid,
   NavigationDrawer,
-} from 'react-md';
+} from 'react-md'
 
 import Base from 'src/components/blockchain/Base'
 import NavLink from './NavLink'
